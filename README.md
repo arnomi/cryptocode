@@ -3,4 +3,4 @@ The cryptocode package provides a set of macros to ease the typesetting of pseud
 
 The cryptocode bundle is licensed under the LaTeX Project Public License
 
- -- Arno Mittelbach <mail[at]fistname-lastname.de>  11 Nov 2018
+ -- Arno Mittelbach <mail@arno-mittelbach.de>  23 Jun 2020
