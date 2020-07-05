@@ -1,0 +1,3981 @@
+%% Copyright 2018 Arno Mittelbach
+  %
+  % This work may be distributed and/or modified under the
+  % conditions of the LaTeX Project Public License, either version 1.3
+  % of this license or (at your option) any later version.
+  % The latest version of this license is in
+  %   http://www.latex-project.org/lppl.txt
+  % and version 1.3 or later is part of all distributions of LaTeX
+  % version 2005/12/01 or later.
+  %
+  % This work has the LPPL maintenance status `maintained'.
+  % 
+  % The Current Maintainer of this work is Arno Mittelbach.
+  %
+  % This work consists of the files cryptocode.tex and cryptocode.sty
+
+\documentclass[a4paper]{report}
+
+% more than one optional parameter
+\usepackage[usenames]{xcolor}
+\usepackage{hyperref}
+\usepackage[
+	n,
+	operators,
+	advantage,
+	sets,
+	adversary,
+	landau,
+	probability,
+	notions,	
+	logic,
+	ff,
+	mm,
+	primitives,
+	events,
+	complexity,
+	asymptotics,
+	keys]{cryptocode}
+
+
+\usepackage{csquotes}
+\usepackage{fullpage}
+\usepackage{dashbox}
+\usepackage{todonotes}
+
+\usepackage{url}
+
+\usetikzlibrary{shapes.callouts}
+
+\usepackage{listings}
+
+\usepackage{trace}
+
+\usepackage{makeidx}
+\usepackage{mdframed}
+
+\makeindex
+
+
+
+
+
+
+\author{Arno Mittelbach\\
+\texttt{mail@arno-mittelbach.de}}
+\title{\Huge Cryptocode \\ \large\textsc{Typesetting Cryptography}}
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.1,0.1,0.1}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+\lstset{language=[LaTeX]TeX,
+ backgroundcolor=\color{lightgray},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+ rulecolor=\color{lightgray},
+  basicstyle=\scriptsize,        % the size of the fonts that are used for the code
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{mygreen},    % comment style
+  escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+  extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+  frame=single,                    % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},       % keyword style
+  numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+  numbersep=5pt,                   % how far the line-numbers are from the code
+  numberstyle=\tiny\color{mygray}, % the style that is used for the line-numbers
+  rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  showstringspaces=false,          % underline spaces within strings only
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=1,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{mymauve},     % string literal style
+  frameround=ftff,
+  belowskip=0em,
+  aboveskip=1em,
+  tabsize=2,                       % sets default tabsize to 2 spaces
+  title=\lstname        }  
+
+\begin{document}
+
+\maketitle
+
+
+
+
+\begin{abstract}
+\thispagestyle{empty}
+The cryptocode package provides a set of macros to ease the typesetting of 
+pseudocode, algorithms and protocols (such as the one below). In addition it comes with a wide range of tools to typeset cryptographic papers (hence the name).
+This includes simple predefined commands for concepts such as 
+a security parameter $\secparam$ or advantage terms $\advantage{prf}{\adv,\prf} = \negl$ but also flexible and powerful
+environments to layout game-based proofs or black-box reductions.
+
+\vspace{2em}
+\begin{center}
+\fbox{
+\pseudocode{%
+\textbf{ Alice} \< \< \textbf{ Bob}  \\[0.1\baselineskip][\hline]
+ \<\< \\[-0.5\baselineskip]
+x \sample \ZZ_q \< \< \\
+ X \gets g^x \<\< \\
+ \< \sendmessageright*{\GG,q,g,X} \< \\
+ \<\< y \sample \ZZ_q \\
+ \<\< Y \gets g^y \\
+ \< \sendmessageleft*{Y} \< \\
+ \key_A \gets Y^x \<\< \key_B \gets X^y }
+}
+\end{center}
+
+
+\end{abstract}
+\newpage
+
+\pagenumbering{roman}
+
+\tableofcontents
+\thispagestyle{empty}
+\newpage
+
+\pagenumbering{arabic}
+
+
+\chapter{Cryptocode by Example}
+
+The cryptocode package provides a set of commands to ease the typesetting of 
+pseudocode, protocols, game-based proofs and black-box reductions. In addition it comes
+with a large number of predefined commands. In this chapter we present the various features of 
+cryptocode by giving small examples. But first, let's load the package
+
+\begin{lstlisting}
+\usepackage[
+	n,
+	advantage,
+	operators,
+	sets,
+	adversary,
+	landau,
+	probability,
+	notions,
+	logic,
+	ff,
+	mm,
+	primitives,
+	events,
+	complexity,
+	asymptotics,
+	keys
+	]{cryptocode}
+\end{lstlisting}
+
+Note that all the options refer to a set of commands. That is, without any options cryptocode will provide the mechanisms
+for writing pseudocode, protocols, game-based proofs and black-box reductions but not define additional commands,
+such as \lstinline$\pk$ or \lstinline$\sk$ (for typesetting public and private/secret keys) which are part of the keys option.
+We discuss the various options and associated commands in Chapter~\ref{chap:commands}.
+
+
+\section{Pseudocode}
+The cryptocode package tries to make writing pseudocode easy and enjoyable. The
+\lstinline$\pseudocode$ command takes a single parameter where you can start writing
+code in mathmode using \lstinline{\\} as line breaks. Following is an $\indcpa$ game
+definition using various commands from cryptocode to ease writing keys (\lstinline{\pk,\sk}),
+sampling (\lstinline{\sample}), and more:
+\begin{center}
+\fbox{\pseudocode[linenumbering,syntaxhighlight=auto]{%
+  b \sample \bin  \\
+  (\pk,\sk) \sample \kgen (\secparam)  \\
+  (\state,m_0,m_1) \sample \adv(\secparam, \pk, c)   \\
+  c \sample \enc(\pk,m_b)  \\
+  b' \sample \adv(\secparam, \pk, c, \state)  \\
+  return b = b' }}
+\end{center}
+
+
+The above code is generated by (the code is actually wrapped in an \lstinline$fbox$).
+\begin{lstlisting}
+\pseudocode[linenumbering,syntaxhighlight=auto]{%
+  b \sample \bin  \\
+  (\pk,\sk) \sample \kgen (\secparam)  \\
+  (\state,m_0,m_1) \sample \adv(\secparam, \pk, c)   \\
+  c \sample \enc(\pk,m_b)  \\
+  b' \sample \adv(\secparam, \pk, c, \state)  \\
+  return b = b' }
+\end{lstlisting}
+The pseudocode command thus takes a single mandatory argument (the code) plus an optional argument
+which allows you to specify options in a key=value fashion. In the above example we used the linenumbering
+option (which not surprisingly adds line numbers to the code) as well as the syntaxhighlighting option which
+highlights certain keywords (in the example it is responsible for setting \enquote{return} as \highlightkeyword[]{return}).
+
+It is easy to define a heading for your code. Either specify the header using the option \enquote{head} or use 
+the \lstinline$\procedure$ command which takes an additional argument to specify the headline.
+\begin{center}
+\fbox{\procedure[linenumbering]{$\indcpa_\enc^\adv$}{%
+  b \sample \bin  \\
+  (\pk,\sk) \sample \kgen (\secparam)  \\
+  (\state,m_0,m_1) \sample \adv(\secparam, \pk, c)   \\
+  c \sample \enc(\pk,m_b)  \\
+  b' \sample \adv(\secparam, \pk, c, \state) \\
+  \pcreturn b = b' }}
+\end{center}
+
+\begin{lstlisting}
+\procedure[linenumbering]{$\indcpa_\enc^\adv$}{%
+  b \sample \bin  \\
+  (\pk,\sk) \sample \kgen (\secparam)  \\
+  (\state,m_0,m_1) \sample \adv(\secparam, \pk, c)   \\
+  c \sample \enc(\pk,m_b)  \\
+  b' \sample \adv(\secparam, \pk, c, \state) \\
+  \pcreturn b = b' }
+\end{lstlisting}
+Here in the example we have not turned on the automatic syntax highlighting but used the command \lstinline$\pcreturn$
+to highlight the return statement. Besides \lstinline$\pcreturn$ there are a variant of predefined \enquote{keywords}
+such as \lstinline$\pcfor$, \lstinline$\pcif$, etc. (all prefixed with pc)
+
+There is a lot more that we will discuss in detail in Chapter~\ref{chap:pseudocode}. Here, for example
+is the same code with an overlay explanation and a division of the pseudocode.
+\begin{center}
+\fbox{
+\begin{pcimage}
+\procedure[linenumbering]{$\indcpa_\enc^\adv$}{%
+	 b \sample \bin  \\
+	 (\pk,\sk) \sample \kgen (\secparam)\pcnode{kgen}  \pclb
+	\pcintertext[dotted]{Setup Completed} 
+	 (m_0,m_1) \sample \adv(\secparam, \pk, c)  \\
+	  c \sample \enc(\pk,m_b)  \\
+	  b' \sample \adv(\secparam, \pk, c, \state) \\
+	  \pcreturn b = b' }
+
+\pcdraw{
+  \node[rectangle callout,callout absolute pointer=(kgen),fill=orange]
+      at ([shift={(+3,-1)}]kgen) {
+		\begin{varwidth}{3cm}
+			$\kgen(\secparam)$ samples a public key $\pk$ and a private key $\sk$.
+		\end{varwidth}
+  };
+}
+\end{pcimage}
+}
+\end{center}
+
+\begin{lstlisting}
+\begin{pcimage}
+\procedure[linenumbering]{$\indcpa_\enc^\adv$}{%
+	 b \sample \bin  \\
+	 (\pk,\sk) \sample \kgen (\secparam)\pcnode{kgen}  \pclb
+	\pcintertext[dotted]{Setup Completed} 
+	 (m_0,m_1) \sample \adv(\secparam, \pk, c)  \\
+	  c \sample \enc(\pk,m_b)  \\
+	  b' \sample \adv(\secparam, \pk, c, \state) \\
+	  \pcreturn b = b' }
+
+\pcdraw{
+  \node[rectangle callout,callout absolute pointer=(kgen),fill=orange]
+      at ([shift={(+3,-1)}]kgen) {
+		\begin{varwidth}{3cm}
+			$\kgen(\secparam)$ samples a public key $\pk$ and a private key $\sk$.
+		\end{varwidth}
+  };
+}
+\end{pcimage}
+\end{lstlisting}
+
+
+
+\section{Columns}
+The \lstinline$\pseudocode$ and \lstinline$\procedure$ commands allow the usage of multiple columns.
+You switch to a new column by inserting a \lstinline$\>$. This is similar to using an \lstinline$align$
+environment and placing a tabbing \& character.\footnote{In fact, the \emph{pseudocode} command
+is based on amsmath's flalign environment.}
+\begin{center}
+\fbox{%
+\pseudocode{%
+ \textbf{First} \> \textbf{Second} \> \textbf{Third} \> \textbf{Fourth} \\
+  b \sample \bin \> b \sample \bin \> b \sample \bin \> b \sample \bin}
+}
+\end{center}
+\begin{lstlisting}
+\pseudocode{%
+ \textbf{First} \> \textbf{Second} \> \textbf{Third} \> \textbf{Fourth} \\
+  b \sample \bin \> b \sample \bin \> b \sample \bin \> b \sample \bin}
+\end{lstlisting}
+As you can see the first column is left aligned the second right, the third left and so forth.
+In order to get only left aligned columns you could thus simply always skip a column by
+using \lstinline$\>\>$. You can also use \lstinline$\<$ a shorthand for \lstinline$\>\>$.
+\begin{center}
+\fbox{%
+\pseudocode{%
+ \textbf{First} \< \textbf{Second} \< \textbf{Third} \< \textbf{Fourth} \\
+  b \sample \bin \< b \sample \bin \< b \sample \bin \< b \sample \bin}
+}
+\end{center}
+
+\section{Protocols}
+Using columns makes it easy to write even complex protocols. Following is a simple
+three party protocol
+\begin{center}
+\fbox{%
+\pseudocode{%
+ \textbf{Alice} \< \< \textbf{Bob} \< \< \textbf{Charlie} \\[][\hline]
+ \text{work} \< \< \< \< \\
+ \< \sendmessageright{top=Work result,topstyle=red} \< \< \< \\
+ \< \< \text{work} \< \< \\
+ \< \< \<  \sendmessageright{top=Work result,bottom=Bottom message} \< \\
+ \< \<  \< \< \text{work} \\
+ \< \sendmessageleftx{8}{\text{A long message for Alice}} \< \\
+ \text{finalize} \< \< \< \< }
+}
+\end{center}
+\begin{lstlisting}
+\pseudocode{%
+ \textbf{Alice} \< \< \textbf{Bob} \< \< \textbf{Charlie} \\[][\hline]
+ \text{work} \< \< \< \< \\
+ \< \sendmessageright{top=Work result,topstyle=red} \< \< \< \\
+ \< \< \text{work} \< \< \\
+ \< \< \<  \sendmessageright{top=Work result,bottom=Bottom message} \< \\
+ \< \<  \< \< \text{work} \\
+ \< \sendmessageleftx{8}{\text{A long message for Alice}} \< \\
+ \text{finalize} \< \< \< \< }
+\end{lstlisting}
+The commands \lstinline$\sendmessageright$ and \lstinline$\sendmessageleft$ are very flexible and
+allow to style the sending of messages in various ways. Also note the \lstinline$\\[][\hline]$ at the end of the
+first line. Here the first optional argument allows us to specify the lineheight (similarly to the behavior in an
+align environment). The second optional argument allows us to, for example, draw a horizontal line.
+
+In multi player protocols such as the one
+above the commands  \lstinline$\sendmessagerightx$ and \lstinline$\sendmessageleftx$ (note the x at the end)
+allow to send messages over multiple columns. In the example, as we were using \lstinline$\<$ the
+final message thus spans 8 columns. 
+
+For basic protocols you might also utilize the \lstinline$\sendmessageright*$ and \lstinline$\sendmessageleft*$
+commands which simply take a message which is displayed.
+\begin{center}
+\fbox{%
+\pseudocode{%
+\textbf{ Alice} \< \< \textbf{ Bob}  \\[0.1\baselineskip][\hline]
+ \<\< \\[-0.5\baselineskip]
+x \sample \ZZ_q \< \< \\
+ X \gets g^x \<\< \\
+ \< \sendmessageright*{\GG,q,g,X} \< \\
+ \<\< y \sample \ZZ_q \\
+ \<\< Y \gets g^y \\
+ \< \sendmessageleft*{Y} \< \\
+ \key_A \gets Y^x \<\< \key_B \gets X^y 
+}
+}
+\end{center}
+\begin{lstlisting}
+\pseudocode{%
+\textbf{ Alice} \< \< \textbf{ Bob}  \\[0.1\baselineskip][\hline]
+ \<\< \\[-0.5\baselineskip]
+x \sample \ZZ_q \< \< \\
+ X \gets g^x \<\< \\
+ \< \sendmessageright*{\GG,q,g,X} \< \\
+ \<\< y \sample \ZZ_q \\
+ \<\< Y \gets g^y \\
+ \< \sendmessageleft*{Y} \< \\
+ \key_A \gets Y^x \<\< \key_B \gets X^y }
+\end{lstlisting}
+We will discuss protocols in greater detail in Chapter~\ref{chap:protocols}.
+
+\section{Game-based Proofs}
+Cryptocode supports authors in visualizing game-based proofs. It defines an environment
+\lstinline$gameproof$ which allows to wrap a number of game procedures displaying helpful
+information as to what changes from game to game, and to what each step is reduced.
+
+\vspace{2\baselineskip}
+\begin{center}
+\begin{gameproof}
+\gameprocedure[linenumbering,mode=text]{%
+ Step 1 \\
+ Step 2 \\
+ Step 3  
+ }
+\gameprocedure[mode=text]{%
+   Step 1  \\
+   \gamechange{Step 2 is different} \\
+   Step 3
+ }
+\addgamehop{1}{2}{hint={\footnotesize some hint}}
+\end{gameproof}
+\end{center}
+\begin{lstlisting}
+\begin{gameproof}
+\gameprocedure[linenumbering,mode=text]{%
+ Step 1 \\
+ Step 2 \\
+ Step 3  
+ }
+\gameprocedure[mode=text]{%
+   Step 1  \\
+   \gamechange{Step 2 is different} \\
+   Step 3
+ }
+\addgamehop{1}{2}{hint={\footnotesize some hint}}
+\end{gameproof}
+\end{lstlisting}
+Note that we made use of the option \enquote{mode=text} in the above example which tells the underlying pseudocode 
+command to not work in math mode but in plain text mode. We'll discuss how to visualize game-based proofs in Chapter~\ref{chap:gbproofs}.
+
+\section{Black-box Reductions}
+Cryptocode provides a strucured syntax to visualize black-box reductions. Basically cryptocode
+provides an environment to draw boxes that may have oracles and that can be communicated with.
+Cryptocode makes heavy use of TIKZ (\url{https://www.ctan.org/pkg/pgf}) for this, which gives you 
+quite some control over how things should look like. Additionally, as you can specify node names
+(for example the outer box in the next example is called \enquote{A}) you can easily extend the pictures
+by using plain TIKZ commands.
+
+\begin{bbrenv}[1cm]{A}[0.5cm]
+	\begin{bbrbox}[name=Reduction]
+	\pseudocode{
+		\text{Do something} \\
+		\text{Step 2} 
+	}
+
+	\begin{bbrenv}{B}
+		\begin{bbrbox}[name=Adversary,minheight=4cm]
+		\end{bbrbox}
+
+		\bbrmsgto{top=$m$}
+		\bbrmsgfrom{top=$\sigma$}
+		\bbrmsgtxt{\pseudocode{%
+			\text{more work} 
+		}}
+		\bbrmsgto{top=$m$}
+		\bbrmsgfrom{top=$\sigma$}
+
+		\bbrqryto{side=$m$}
+		\bbrqryfrom{side=$b$}
+	\end{bbrenv}
+
+	\pseudocode{
+		\text{finalize} 
+	}	
+
+	\end{bbrbox}
+	\bbrinput{input}
+	\bbroutput{output}
+
+	\begin{bbroracle}{OraA}
+		\begin{bbrbox}[name=Oracle 1,minheight=1cm]
+		\end{bbrbox}
+	\end{bbroracle}
+	\bbroracleqryto{top=$m$}
+	\bbroracleqryfrom{top=$b$}
+
+	\begin{bbroracle}{OraB}
+		\begin{bbrbox}[name=Oracle 2,minheight=1cm]
+		\end{bbrbox}
+	\end{bbroracle}
+	\bbroracleqryto{top=$m$}
+	\bbroracleqryfrom{top=$b$}
+\end{bbrenv}
+\begin{lstlisting}
+\begin{bbrenv}{A}
+	\begin{bbrbox}[name=Reduction]
+	\pseudocode{
+		\text{Do something} \\
+		\text{Step 2} 
+	}
+
+	\begin{bbrenv}{B}
+		\begin{bbrbox}[name=Adversary,minheight=4cm]
+		\end{bbrbox}
+
+		\bbrmsgto{top=$m$}
+		\bbrmsgfrom{top=$\sigma$}
+		\bbrmsgtxt{\pseudocode{%
+			\text{more work} 
+		}}
+		\bbrmsgto{top=$m$}
+		\bbrmsgfrom{top=$\sigma$}
+
+		\bbrqryto{side=$m$}
+		\bbrqryfrom{side=$b$}
+	\end{bbrenv}
+
+	\pseudocode{
+		\text{finalize} 
+	}	
+
+	\end{bbrbox}
+	\bbrinput{input}
+	\bbroutput{output}
+
+	\begin{bbroracle}{OraA}
+		\begin{bbrbox}[name=Oracle 1,minheight=1cm]
+		\end{bbrbox}
+	\end{bbroracle}
+	\bbroracleqryto{top=$m$}
+	\bbroracleqryfrom{top=$b$}
+
+	\begin{bbroracle}{OraB}
+		\begin{bbrbox}[name=Oracle 2,minheight=1cm]
+		\end{bbrbox}
+	\end{bbroracle}
+	\bbroracleqryto{top=$m$}
+	\bbroracleqryfrom{top=$b$}
+\end{bbrenv}
+\end{lstlisting}
+We'll discuss the details in Chapter~\ref{chap:bbr}.
+
+\chapter{Cryptographic Notation}
+\label{chap:commands}
+\index{package options}
+In this section we'll discuss the various commands for notation that can be loaded via package options.
+\begin{lstlisting}
+\usepackage[
+	n,
+	advantage,
+	operators,
+	sets,
+	adversary,
+	landau,
+	probability,
+	notions,
+	logic,
+	ff,
+	mm,
+	primitives,
+	events,
+	complexity,
+	asymptotics,
+	keys
+	]{cryptocode}
+\end{lstlisting}
+
+\textbf{Remark. } The commands defined so far are far from complete and are currently mostly targeted at what I needed in my
+papers (especially once you get to cryptographic notions and primitives). So please if you feel that something should be added
+drop me an email.
+
+\section{Security Parameter}
+\index{security parameter|see {package options}}
+\index{package options!security parameter}
+In cryptography we make use of a security parameter which is usually written as $1^n$ or $1^\lambda$. The cryptocode
+package, when loading either option \enquote{n} or option \enquote{lambda} will define the commands
+\begin{lstlisting}
+	\secpar
+	\secparam
+\end{lstlisting}
+The first command provides the \enquote{letter}, i.e., either $n$ or $\lambda$, whereas \lstinline$\secparam$ points
+to $1^\secpar$.
+
+\section{Advantage Terms}
+Load the package option ``advantage'' in order to define the command \lstinline$\advantage$ used to specify advantage terms such as:
+\[
+\advantage{prf}{\adv,\prf} = \negl
+\]
+\begin{lstlisting}
+	\advantage{prf}{\adv,\prf} = \negl
+\end{lstlisting}
+Specify an optional third parameter to replace the $(\secpar)$. 
+\begin{lstlisting}
+	\advantage{prf}{\adv,\prf}[(arg)]
+\end{lstlisting}
+In order to redefine the styles in which superscript and subscript are set redefine
+\begin{lstlisting}
+	\renewcommand{\pcadvantagesuperstyle}[1]{\mathrm{\MakeLowercase{#1}}}
+	\renewcommand{\pcadvantagesubstyle}[1]{#1}
+\end{lstlisting}
+
+\section{Math Operators}
+\index{operators|see {package options}}
+\index{package options!operators}
+\index{math operators|see {package options}}
+The \enquote{operators} option provides the following list of commands:
+
+\begin{center}
+\begin{tabular}{l p{6cm} l l}
+\textbf{Command} & \textbf{Description} & \textbf{Result} & \textbf{Example}  \\\hline
+\lstinline$\sample$ & Sampling from a distribution, or running a randomized procedure & $\sample$ & $b \sample \bin$ \\
+\lstinline$\floor{42.5}$ & Rounding down & $\floor{42.5}$ &  \\
+\lstinline$\ceil{41.5}$ & Rounding up & $\ceil{41.5}$ &  \\
+\lstinline$\Angle{x,y}$ & Vector product & $\Angle{x,y}$ &  \\
+\lstinline$\abs{42.9}$ & Absolute number & $\abs{42.9}$ &  \\
+\lstinline$\norm{x}$ & Norm & $\norm{x}$ & \\
+\lstinline$\concat$ & Verbose concatenation (I usually prefer simply \lstinline$\|$) & $\concat$ & $x \gets a\concat b$ \\
+\lstinline$\emptystring$ & The empty string & $\emptystring$ & $x \gets \emptystring$ 
+\end{tabular}
+\end{center}
+
+\section{Adversaries}
+\index{adversary|see {package options}}
+\index{package options!adversary}
+The \enquote{adversary} option provides the following list of commands:
+
+\begin{center}
+\begin{tabular}{l l l}
+\textbf{Command} & \textbf{Description} & \textbf{Result} \\\hline
+\lstinline$\adv$ & Adversary & $\adv$  \\
+\lstinline$\bdv$ & Adversary & $\bdv$  \\
+\lstinline$\cdv$ & Adversary & $\cdv$  \\
+\lstinline$\ddv$ & Adversary & $\ddv$  \\
+\lstinline$\mdv$ & Adversary & $\mdv$  \\
+\lstinline$\pdv$ & Adversary & $\pdv$  \\
+\lstinline$\sdv$ & Adversary & $\sdv$  
+\end{tabular}
+\end{center}
+
+The style in which an adversary is rendered is controlled via 
+\begin{lstlisting}
+\renewcommand{\pcadvstyle}[1]{\mathcal{#1}}
+\end{lstlisting}
+
+
+\section{Landau}
+\index{Landau|see {package options}}
+\index{package options!Landau}
+The \enquote{landau} option provides the following list of commands:
+
+\begin{center}
+\begin{tabular}{l l l}
+\textbf{Command} & \textbf{Description} & \textbf{Result} \\\hline
+\lstinline$\bigO{n^2}$ & Big O notation & $\bigO{n^2}$  \\
+\lstinline$\smallO{n^2}$ & small o notation & $\smallO{n^2}$  \\
+\lstinline$\bigOmega{n^2}$ & Big Omega notation & $\bigOmega{n^2}$  \\
+\lstinline$\bigsmallO{n^2}$ & Big and small O notation & $\bigsmallO{n^2}$  
+\end{tabular}
+\end{center}
+
+
+\section{Probabilities}
+\index{probability|see {package options}}
+\index{package options!probabilities}
+The \enquote{probability} option provides commands for writing probabilities. Use
+\begin{lstlisting}
+\prob{X=x}
+\probsub{x\sample{\bin^n}}{x=5}
+\condprob{X=x}{A=b}
+\condprobsub{x\sample{\bin^n}}{x=5}{A=b}
+\end{lstlisting}
+to write basic probabilities, probabilities with explicit probability spaces and conditional probabilities.
+\begin{align*}
+& \prob{X=x} \\
+& \probsub{x\sample{\bin^n}}{X=x} \\
+& \condprob{X=x}{A=b} \\
+& \condprobsub{x\sample{\bin^n}}{x=5}{A=b}
+\end{align*}
+You can control the probability symbol (Pr) by redefining
+\begin{lstlisting}
+\renewcommand{\probname}{Pr}
+\end{lstlisting}
+
+For expectations you can use
+\begin{lstlisting}
+\expect{X}
+\expsub{x,y\sample\set{1,\ldots,6}}{x+y}
+\condexp{X+Y}{Y>3}
+\condexpsub{x,y\sample\set{1,\ldots,6}}{x+y}{y>3}
+\end{lstlisting}
+yielding
+\begin{align*}
+& \expect{X} \\
+& \expsub{x,y\sample\set{1,\ldots,6}}{x+y} \\
+& \condexp{X+Y}{Y>3} \\
+& \condexpsub{x,y\sample\set{1,\ldots,6}}{x+y}{y>3} 
+\end{align*}
+You can control the expactation symbol ($\mathbb{E}$) by redefining
+\begin{lstlisting}
+\renewcommand{\expectationname}{\ensuremath{\mathbb{E}}}
+\end{lstlisting}
+
+The support $\supp{X}$ of a random variable $X$ can be written as
+\begin{lstlisting}
+\supp{X}
+\end{lstlisting}
+where again the name can be controlled via
+\begin{lstlisting}
+\renewcommand{\supportname}{Supp}
+\end{lstlisting}
+
+For denoting entropy and min-entropy use
+\begin{lstlisting}
+\entropy{X}
+\minentropy{X}
+\condentropy{X}{Y=5}
+\condminentropy{X}{Y=5}
+\condavgminentropy(X}{Y=5}
+\end{lstlisting}
+This yields 
+\begin{align*}
+& \entropy{X} \\
+& \minentropy{X} \\
+& \condentropy{X}{Y=5} \\
+& \condminentropy{X}{Y=5} \\
+& \condavgminentropy{X}{Y=5}
+\end{align*}
+
+\section{Sets}
+\index{sets|see {package options}}
+\index{package options!sets}
+The \enquote{sets} option provides commands for basic mathematical sets.
+You can write sets and sequences as
+\begin{lstlisting}
+\set{1, \ldots, 10}
+\sequence{1, \ldots, 10}
+\end{lstlisting}
+which is typeset as
+\begin{align*}
+& \set{1, \ldots, 10} \\
+& \sequence{1, \ldots, 10}
+\end{align*}
+
+In addation the following commands are provided
+\begin{center}
+\begin{tabular}{l l l}
+\textbf{Command} & \textbf{Description} & \textbf{Result} \\\hline
+\lstinline$\bin$ & The set containing 0 and 1 & $\bin$  \\
+\lstinline$\NN$ & Natural numbers & $\NN$  \\
+\lstinline$\ZZ$ & Integers & $\ZZ$  \\
+\lstinline$\QQ$ & Rational numbers & $\QQ$  \\
+\lstinline$\CC$ & Complex numbers & $\CC$  \\
+\lstinline$\RR$ & Reals & $\RR$  \\
+\lstinline$\PP$ & & $\PP$  \\
+\lstinline$\FF$ & & $\FF$  \\
+\end{tabular}
+\end{center}
+
+\section{Crypto Notions}
+\index{notions|see {package options}}
+\index{package options!notions}
+\index{Crypto notions|see {package options}}
+The \enquote{notions} option provides the following list of commands:
+
+\begin{center}
+\begin{tabular}{l l l}
+\textbf{Command} & \textbf{Description} & \textbf{Result} \\\hline
+\lstinline$\indcpa$ & IND-CPA security for encryption schemes & $\indcpa$  \\
+\lstinline$\indcca$ & IND-CCA security for encryption schemes & $\indcca$  \\
+\lstinline$\indccai$ & IND-CCA1 security for encryption schemes & $\indccai$  \\
+\lstinline$\indccaii$ &  IND-CCA2 security for encryption schemes & $\indccaii$  \\
+\lstinline$\priv$ & PRIV security for deterministic public-key encryption schemes & $\priv$  \\
+\lstinline$\ind$ & IND security (for deterministic public-key encryption schemes) & $\ind$  \\
+\lstinline$\prvcda$ & PRV-CDA security (for deterministic public-key encryption schemes)& $\prvcda$  \\
+\lstinline$\prvrcda$ & PRV\$-CDA security (for deterministic public-key encryption schemes) & $\prvrcda$  \\
+\lstinline$\kiae$ & Key independent authenticated encryption & $\kiae$  \\
+\lstinline$\kdae$ & Key dependent authenticated encryption & $\kdae$  \\
+\lstinline$\mle$ & Message locked encryption & $\mle$  \\
+\lstinline$\uce$ & Universal computational extractors & $\uce$  \\
+\end{tabular}
+\end{center}
+
+The style in which notions are displayed can be controlled via redefining
+\begin{lstlisting}
+\renewcommand{\pcnotionstyle}[1]{\ensuremath{\mathrm{#1}}}
+\end{lstlisting}
+
+\section{Logic}
+\index{logic|see {package options}}
+\index{package options!logic}
+The \enquote{logic} option provides the following list of commands:
+
+\begin{center}
+\begin{tabular}{l l l}
+\textbf{Command} & \textbf{Description} & \textbf{Result} \\\hline
+\lstinline$\AND$ & Logical AND & $\AND$  \\
+\lstinline$\NAND$ & Logical NAND & $\NAND$  \\
+\lstinline$\OR$ & Logical OR & $\OR$  \\
+\lstinline$\NOR$ & Logical NOR & $\NOR$  \\
+\lstinline$\XOR$ & Logical XOR & $\XOR$  \\
+\lstinline$\XNOR$ & Logical XNOR & $\XNOR$  \\
+\lstinline$\NOT$ & not & $\NOT$  \\
+\lstinline$\xor$ & exclusive or & $\xor$  \\
+\lstinline$\false$ & false & $\false$  \\
+\lstinline$\true$ & true & $\true$  
+\end{tabular}
+\end{center}
+
+
+% Function Families
+\section{Function Families}
+\index{ff|see {package options}}
+\index{package options!ff}
+\index{function families|see {package options}}
+The \enquote{ff} option provides the following list of commands:
+
+\begin{center}
+\begin{tabular}{l l l}
+\textbf{Command} & \textbf{Description} & \textbf{Result} \\\hline
+\lstinline$\kgen$ & Key generation & $\kgen$  \\
+\lstinline$\pgen$ & Parameter generation & $\pgen$  \\
+\lstinline$\eval$ & Evaluation & $\eval$  \\
+\lstinline$\invert$ & Inversion & $\invert$  \\
+\lstinline$\il$ & Input length & $\il$  \\
+\lstinline$\ol$ & Output length & $\ol$  \\
+\lstinline$\kl$ & Key length & $\kl$  \\
+\lstinline$\nl$ & Nonce length & $\nl$  \\
+\lstinline$\rl$ & Randomness length & $\rl$  
+\end{tabular}
+\end{center}
+
+The style in which these are displayed can be controlled via redefining
+\begin{lstlisting}
+\renewcommand{\pcalgostyle}[1]{\ensuremath{\mathsf{#1}}}
+\end{lstlisting}
+
+
+% Machine Model
+\section{Machine Model}
+\index{machine model|see {package options}}
+\index{package options!mm}
+\index{mm|see {package options}}
+The \enquote{mm} option provides the following list of commands:
+
+\begin{center}
+\begin{tabular}{l l l}
+\textbf{Command} & \textbf{Description} & \textbf{Result} \\\hline
+\lstinline$\CRKT$ & A circuit & $\CRKT$  \\
+\lstinline$\TM$ & A Turing machine & $\TM$  \\
+\lstinline$\PROG$ & A program & $\PROG$  \\
+\lstinline$\uTM$ & A universal Turing machine & $\uTM$  \\
+\lstinline$\uC$ & A universal Circuit & $\uC$  \\
+\lstinline$\uP$ & A universal Program & $\uP$  \\
+\lstinline$\tmtime$ & Time (of a TM) & $\tmtime$  \\
+\lstinline$\ppt$ & Probabilistic polynomial time & $\ppt$  
+\end{tabular}
+\end{center}
+
+The style in which these are displayed can be controlled via redefining
+\begin{lstlisting}
+\renewcommand{\pcmachinemodelstyle}[1]{\ensuremath{\mathsf{#1}}}
+\end{lstlisting}
+
+\section{Crypto Primitives}
+\index{primitives|see {package options}}
+\index{package options!primitives}
+\index{Crypto primitives|see {package options}}
+The \enquote{primitives} option provides the following list of commands:
+
+
+\begin{center}
+\begin{tabular}{l l l}
+\textbf{Command} & \textbf{Description} & \textbf{Result} \\\hline
+\lstinline$\prover$ & Proover & $\prover$  \\
+\lstinline$\verifier$ & Verifier & $\verifier$  \\
+\lstinline$\nizk$ & Non interactie zero knowledge & $\nizk$  \\
+\lstinline$\hash$ & A hash function & $\hash$  \\
+\lstinline$\gash$ & A hash function& $\gash$  \\
+\lstinline$\fash$ & A hash function & $\fash$  \\
+\lstinline$\enc$ & Encryption  & $\enc$  \\
+\lstinline$\dec$ & Decryption & $\dec$  \\
+\lstinline$\sig$ & Signing & $\sig$  \\
+\lstinline$\verify$ & Verifying & $\verify$  \\
+\lstinline$\obf$ & Obfuscation & $\obf$  \\
+\lstinline$\iO$ & Indistinguishability obfuscation & $\iO$  \\
+\lstinline$\diO$ & Differing inputs obfuscation & $\diO$  \\
+\lstinline$\mac$ & Message authentication & $\mac$  \\
+\lstinline$\puncture$ & Puncturing & $\puncture$  \\
+\lstinline$\source$ & A source & $\source$  \\
+\lstinline$\predictor$ & A predictor & $\predictor$  \\
+\lstinline$\sam$ & A sampler & $\sam$  \\
+\lstinline$\distinguisher$ & A distinguisher & $\distinguisher$  \\
+\lstinline$\dist$ & A distinguisher& $\dist$  \\
+\lstinline$\simulator$ & A simulator & $\simulator$  \\
+\lstinline$\ext$ & An extractor & $\ext$  
+\end{tabular}
+\end{center}
+
+The style in which these are displayed can be controlled via redefining
+\begin{lstlisting}
+\renewcommand{\pcalgostyle}[1]{\ensuremath{\mathsf{#1}}}
+\end{lstlisting}
+
+\section{Events}
+\index{events|see {package options}}
+\index{package options!events}
+The \enquote{events} option provides the following list of commands. 
+
+To classify an event use
+\begin{lstlisting}
+\event{Event}
+\nevent{Event}
+\end{lstlisting}
+where the second is meant as the negation. These are typset as
+\begin{align*}
+&\event{Event}\\
+&\nevent{Event}
+\end{align*}
+
+For bad events, use \lstinline$\bad$ ($\bad$).
+
+\section{Complexity}
+\index{complexity|see {package options}}
+\index{package options!complexity}
+The \enquote{complexity} option provides the following list of commands:
+
+\begin{center}
+\begin{tabular}{l l l}
+\textbf{Command} & \textbf{Result} \\\hline
+\lstinline$\npol$ &  $\npol$  \\
+\lstinline$\conpol$ &  $\conpol$  \\
+\lstinline$\pol$ &  $\pol$  \\
+\lstinline$\bpp$ & $\bpp$  \\
+\lstinline$\ppoly$ & $\ppoly$  \\
+\lstinline$\NC{1}$ &  $\NC1$  \\
+\lstinline$\AC{1}$ & $\AC1$  \\
+\lstinline$\TC{1}$ & $\TC1$ \\
+\lstinline$\AM$ &  $\AM$  \\
+\lstinline$\coAM$ &  $\coAM$  
+\end{tabular}
+\end{center}
+
+The style in which these are displayed can be controlled via redefining
+\begin{lstlisting}
+\renewcommand{\pccomplexitystyle}[1]{\ensuremath{\mathsf{#1}}}
+\end{lstlisting}
+
+\section{Asymptotics}
+\index{asymptotics|see {package options}}
+\index{package options!asymptotics}
+The \enquote{asymptotics} option provides the following list of commands:
+
+\begin{center}
+\begin{tabular}{l l p{7.5cm}}
+\textbf{Command} & \textbf{Description} & \textbf{Result} \\\hline
+\lstinline$\negl$ & A negligible function & $\negl$ (takes an optional argument \lstinline$\negl[a]$ ($\negl[a]$). Write \lstinline$\negl[]$ for $\negl[]$.)  \\
+\lstinline$\poly$ &  A polynomial & $\poly$ (takes an optional argument \lstinline$\poly[a]$ ($\poly[a]$). Write \lstinline$\poly[]$ for $\poly[]$.) \\
+\lstinline$\pp$ & some polynomial $\pp$ & $\pp$  \\
+\lstinline$\qq$ & some polynomial $\qq$ &  $\qq$  \\
+\end{tabular}
+\end{center}
+
+The style in which these are displayed can be controlled via redefining
+\begin{lstlisting}
+\renewcommand{\pcpolynomialstyle}[1]{\ensuremath{\mathrm{#1}}}
+\end{lstlisting}
+
+\section{Keys}
+\index{keys|see {package options}}
+\index{package options!keys}
+The \enquote{keys} option provides the following list of commands:
+
+
+\begin{center}
+\begin{tabular}{l l l}
+\textbf{Command} & \textbf{Description} & \textbf{Result} \\\hline
+\lstinline$\pk$ &public key & $\pk$  \\
+\lstinline$\vk$ &  verification key& $\vk$  \\
+\lstinline$\sk$ & secret key&  $\sk$  \\
+\lstinline$\key$ & a plain key& $\key$  \\
+\lstinline$\hk$ & hash key&  $\hk$  \\
+\lstinline$\gk$ &gash key & $\gk$  \\
+\lstinline$\fk$ & function key & $\fk$  
+\end{tabular}
+\end{center}
+
+The style in which these are displayed can be controlled via redefining
+\begin{lstlisting}
+\renewcommand{\pckeystyle}[1]{\ensuremath{\mathsf{#1}}}
+\end{lstlisting}
+
+
+\chapter{Pseudocode}
+\label{chap:pseudocode}
+
+In this chapter we discuss how to write pseudocode with the cryptocode library.
+
+\section{Basics}
+\index{\textbackslash pseudocode}
+
+The cryptocode package provides the command \emph{pseudocode} for typesetting algorithms.
+Consider the following definition of an IND-CPA game
+\begin{center}
+\fbox{%
+\pseudocode{%
+   b \sample \bin  \\
+   (\pk,\sk) \sample \kgen (\secparam)  \\
+   (m_0,m_1) \sample \adv(\secparam, \pk, c)  \\
+   c \sample \enc(\pk,m_b)  \\
+   b' \sample \adv(\secparam, \pk, c)  \\
+   \pcreturn b = b' }
+}
+\end{center}
+which is generated as
+\begin{lstlisting}
+\pseudocode{%
+   b \sample \bin  \\
+   (\pk,\sk) \sample \kgen (\secparam)  \\
+   (m_0,m_1) \sample \adv(\secparam, \pk, c)  \\
+   c \sample \enc(\pk,m_b)  \\
+   b' \sample \adv(\secparam, \pk, c)  \\
+   \pcreturn b = b' }
+\end{lstlisting}
+As you can see the pseudocode command provides a math based environment where you can simply start typing your pseudocode
+separating lines by \lstinline$\\$.
+
+
+\paragraph{Boxed appearance}
+Although most examples here appear centered and boxed this is not directly part of the pseudocode package but due to the examples being 
+typeset as
+\begin{lstlisting}
+\begin{center}
+\fbox{%
+Code
+}
+\end{center}
+\end{lstlisting}
+
+
+\subsection{Customizing Pseudocode}
+\index{lnstart}
+\index{head}
+\index{lnstartright}
+\index{linenumbering}
+\index{syntaxhighlight}
+\index{keywords}
+\index{keywordsindent}
+\index{codesize}
+\index{keywordsunindent}
+\index{keywordsuninindent}
+\index{addkeywords}
+\index{altkeywords}
+\index{mode}
+\index{space}
+\index{xshift}
+\index{colsep}
+\index{addtolength}
+\index{nodraft}
+\index{yshift}
+\index{bodylinesep}
+\index{headlinesep}
+\index{jot}
+\index{beginline}
+\index{endline}
+
+Besides the mandatory argument the \lstinline{\pseudocode} command can take an optional argument which consists of a list of key=value pairs
+separated by commas (,).
+\begin{lstlisting}
+\pseudocode[options]{body}
+\end{lstlisting}
+The following keys are available:
+\begin{description}
+\item[head]
+A header for the code
+\item[width]
+An exact width. If no width is specified, cryptocode tries to automatically compute the correct width.
+\item[lnstart]
+The starting line number when using line numbering.
+\item[lnstartright]
+The starting line number for right aligned line numberswhen using line numbering.
+\item[linenumbering]
+Enables line numbering.
+\item[syntaxhighlight]
+When set to \enquote{auto} cryptocode will attempt to automatically hightlight keywords such as \enquote{for}, \enquote{foreach}
+and \enquote{return}
+\item[keywords]
+Provide a comma separated list of keywords for automatic syntax highlighting. To customize the behavior of automatic spacing 
+you can provide keywords as
+\begin{description}
+\item[keywordsindent]
+After seeing this keyword all following lines will be indented one extra level.
+\item[keywordsunindent]
+After seeing this keyword the current and all following lines will be unindented one extra level.
+\item[keywordsuninindent]
+After seeing this keyword the current line will be unindented one level.
+\end{description}
+\item[addkeywords]
+Provide additional keywords for automatic syntax highlighting.
+\item[altkeywords]
+Provide a second list of keywords for automatic syntax highlighting that are highlighted differently.
+\item[mode]
+When set to text pseudocode will not start in math mode but in text mode.
+\item[space]
+Allows you to enable automatic spacing mode. If set to \enquote{keep} the spaces in the input are preserved.
+If set to \enquote{auto} it will try to detect spacing according to keywords such as \enquote{if} and \enquote{fi}.
+\item[codesize]
+Allows to specify the fontsize for the pseudocode. Set to \lstinline$\scriptsize$ for a smaller size.
+
+\item[colspace]
+Allows to insert spacing between columns. In particular this allows to also overlap columns by inserting negative space.
+
+\item[jot]
+Allows to specify extra space between each line. Use \lstinline$jot=1mm$.
+
+\item[beginline]
+Allows to specify a macro that is placed at the beginning of each line.
+
+\item[endline]
+Allows to specify a macro that is placed at the end of each line.
+
+\item[xshift]
+Allows horizontal shifting
+\item[yshift]
+Allows horizontal shifting
+
+\item[headlinesep]
+Specifies the distance between header and the line.
+\item[bodylinesep]
+Specifies the distance between body and the line.
+\item[colsep]
+Defines the space between columns.
+\item[addtolength]
+Is added to the automatically computed width of the pseudocode (which does not take colsep into account). 
+
+\item[valign]
+Controls the vertical alignment of the pseudocode. Pseudocode is wrapped in a minipage environment and valign value is passed as orientation for the minipage. By default valign is set to \enquote{t}.
+
+\item[nodraft]
+Forces syntax highlighting also in draft mode.
+\end{description}
+The following code 
+\begin{lstlisting}
+\pseudocode[linenumbering,syntaxhighlight=auto,head=Header]{ return null }
+\end{lstlisting}
+creates 
+\begin{center}
+\fbox{\pseudocode[linenumbering,syntaxhighlight=auto,head=Header]{ return null }}
+\end{center}
+
+\subsection{Customized Pseudocode Commands}
+\index{\textbackslash procedure}
+\index{\textbackslash createpseudocodecommand}
+\index{\textbackslash createprocedurecommand}
+
+Besides the  \lstinline{\pseudocode}  command the command  \lstinline{\procedure}
+provides easy access to generate code with a header. It takes the following form
+\begin{lstlisting}
+\procedure[options]{Header}{Body}
+\end{lstlisting}
+
+\subsubsection{Examples}
+\begin{center}
+\fbox{%
+\procedure{$\indcpa_\enc^\adv$}{%
+   b \sample \bin  \\
+   (\pk,\sk) \sample \kgen(\secparam)  \\
+   (m_0,m_1) \sample \adv(\secparam, \pk, c)  \\
+   c \sample \enc(\pk,m_b)  \\
+   b' \sample \adv(\secparam, \pk, c)  \\
+   \pcreturn b = b' }
+}
+\end{center}
+which is generated as
+\begin{lstlisting}
+\procedure{$\indcpa_\enc^\adv$}{%
+   b \sample \bin  \\
+   (\pk,\sk) \sample \kgen(\secparam)  \\
+   (m_0,m_1) \sample \adv(\secparam, \pk, c)  \\
+   c \sample \enc(\pk,m_b)  \\
+   b' \sample \adv(\secparam, \pk, c)  \\
+   \pcreturn b = b' }
+\end{lstlisting}
+
+You can define customized pseudocode commands which either take one optional argument and two mandatory arguments (as the procedure command)
+or one optional and one mandatory argument (as the pseudocode command). The following
+\begin{lstlisting}
+\createprocedurecommand{mypseudocode}{}{}{linenumbering}
+\createpseudocodecommand{myheadlesscmd}{}{}{linenumbering}
+\end{lstlisting}
+creates the commands \lstinline$\mypseudocode$ and \lstinline$\myheadlesscmd$ with line numbering always enabled. The first command
+has an identical interface as the \lstinline$\pseudocode$ command, the second has an interface as the \lstinline$\procedure$ command.
+The second and third argument that we kept empty when generating the commands allows us to specify commands that are executed at the
+very beginning when the command is called (argument 2) and a prefix for the header.
+
+
+\section{Indentation}
+\index{indentation}
+\index{\textbackslash pcind}
+\index{\textbackslash t}
+
+In order to indent code use \lstinline$\pcind$ or short \lstinline$\t$. You can also usecustomized spacing such as \lstinline$\quad$ or \lstinline$\hspace$
+when using the pseudocode command in math mode.
+\begin{center}
+\fbox{%
+\pseudocode{%
+   \pcfor i = 1..10 \pcdo  \\
+   \pcind T[i] \sample \bin^n \\
+   \pcfor i = 1..10 \pcdo  \\
+   \t T[i] \sample \bin^n }
+}
+\end{center}
+which is generated as
+\begin{lstlisting}
+\pseudocode{%
+   \pcfor i = 1..10 \pcdo  \\
+   \pcind T[i] \sample \bin^n  \\
+   \pcfor i = 1..10 \pcdo  \\
+   \t T[i] \sample \bin^n }
+\end{lstlisting}
+You can specify multiple levels via the optional first argument
+\begin{lstlisting}
+\pcind[level]
+\end{lstlisting}
+\begin{center}
+\fbox{%
+\pseudocode{%
+   \pcfor i = 1..10 \pcdo  \\
+   \pcind T[i] \sample \bin^n  \\
+   \pcind\pcind T[i] \sample \bin^n \\
+   \pcind[3] T[i] \sample \bin^n \\
+   \pcind[4] T[i] \sample \bin^n \\
+   \pcind[5] T[i] \sample \bin^n }
+}
+\end{center}
+\begin{lstlisting}
+\pseudocode{%
+   \pcfor i = 1..10 \pcdo  \\
+   \pcind T[i] \sample \bin^n  \\
+   \pcind\pcind T[i] \sample \bin^n \\
+   \pcind[3] T[i] \sample \bin^n \\
+   \pcind[4] T[i] \sample \bin^n \\
+   \pcind[5] T[i] \sample \bin^n }
+\end{lstlisting}
+
+\index{\textbackslash pcindentname}
+You can customize the indentation shortcut by redefining
+\begin{lstlisting}
+\renewcommand{\pcindentname}{t}
+\end{lstlisting}
+
+\subsubsection{Automatic Indentation}
+The pseudocode command comes with an option \enquote{space=auto} which tries to detect the correct indentation from the use of
+keywords. When it sees one of the following keywords
+\begin{lstlisting}
+\pcif, \pcfor, \pcwhile, \pcrepeat, \pcforeach
+\end{lstlisting}
+it will increase the indentation starting from the next line. It will again remove the indentation on seeing 
+\begin{lstlisting}
+\pcfi, \pcendif, \pcendfor, \pcendwhile, \pcuntil, \pcendforeach
+\end{lstlisting}
+Additionally, on seeing
+\begin{lstlisting}
+\pcelse, \pcelseif
+\end{lstlisting}
+it will remove the indentation for that particular line. Thus the following 
+\begin{center}
+\fbox{\pseudocode[space=auto]{%
+\pcfor a \in [10] \pcdo \\
+	\pcfor a \in [10] \pcdo \\
+		\pcfor a \in [10] \pcdo \\
+			\pcif a = b \pcthen \\
+				\text{some operation} \\
+			\pcelseif a = c \pcthen \\
+				\text{some operation} \\
+			\pcelse \\
+				\text{some default operation} \\
+			\pcfi \\
+		\pcendfor \\
+	\pcendfor \\
+\pcendfor \\
+\pcreturn a}}
+\end{center}
+can be obtained by:
+\begin{lstlisting}
+\pseudocode[space=auto]{%
+\pcfor a \in [10] \pcdo \\
+	\pcfor a \in [10] \pcdo \\
+		\pcfor a \in [10] \pcdo \\
+			\pcif a = b \pcthen \\
+				\text{some operation} \\
+			\pcelseif a = c \pcthen \\
+				\text{some operation} \\
+			\pcelse \\
+				\text{some default operation} \\
+			\pcfi \\
+		\pcendfor \\
+	\pcendfor \\
+\pcendfor \\
+\pcreturn a}
+\end{lstlisting}
+Note that the manual indentation in the above example is not necessary for the outcome. Further note that the same
+works when using automatic syntax highlighting (see Section~\ref{sec:syntaxhighlight}).
+
+\subsubsection{Keep Input Indentation}
+\label{sec:keepindent}
+The pseudocode package comes with an experimental feature that preserves the spacing in the input. This can be enabled with
+the option \enquote{space=keep}. Thus the above can also be written as
+\begin{center}
+\pseudocode[space=keep]{%
+\pcfor i = 1..10 \pcdo  \\
+    T[i] \sample \bin^n  \\
+        T[i] \sample \bin^n \\
+            T[i] \sample \bin^n \\
+                T[i] \sample \bin^n \\
+                    T[i] \sample \bin^n }
+\end{center}
+\begin{lstlisting}
+\pseudocode[space=keep]{%
+\pcfor i = 1..10 \pcdo  \\
+    T[i] \sample \bin^n  \\
+        T[i] \sample \bin^n \\
+            T[i] \sample \bin^n \\
+                T[i] \sample \bin^n \\
+                    T[i] \sample \bin^n }
+\end{lstlisting}
+Note that automatic spacing only works when the \lstinline$\pseudocode$ command is not wrapped within another command.
+Thus in order to get a frame box \lstinline$\fbox{\pseudocode[space=keep]{code}}$ will not work but you would need to use
+an environment such as one offered by the \emph{mdframed} package ((\url{https://www.ctan.org/pkg/mdframed}). Also see
+Section~\ref{sec:keepindent-problem}.
+
+ 
+\section{Textmode}
+\index{text mode}
+
+By default pseudocode enables \LaTeX' math mode. You can change this behavior and tell the pseudocode command to interpret the content
+in text mode by setting the option \enquote{mode=text}.
+\begin{center}
+\fbox{\pseudocode[mode=text]{%
+This is \\
+\t simply text}}
+\end{center}
+\begin{lstlisting}
+\pseudocode[mode=text]{%
+This is \\
+\t simply text}
+\end{lstlisting}
+
+\section{Syntax Highlighting}
+\label{sec:syntaxhighlight}
+
+\index{\textbackslash pcabort}
+\index{\textbackslash pcfail}
+\index{\textbackslash pccontinue}
+\index{\textbackslash pccomment}
+\index{\textbackslash pcdo}
+\index{\textbackslash pcdone}
+\index{\textbackslash pcelse}
+\index{\textbackslash pcelseif}
+\index{\textbackslash pcfi}
+\index{\textbackslash pcendif}
+\index{\textbackslash pcforeach}
+\index{\textbackslash pcendforeach}
+\index{\textbackslash pcglobvar}
+\index{\textbackslash pcif}
+\index{\textbackslash pcin}
+\index{\textbackslash pcnew}
+\index{\textbackslash pcnull}
+\index{\textbackslash pcparse}
+\index{\textbackslash pcrepeat}
+\index{\textbackslash pcuntil}
+\index{\textbackslash pcreturn}
+\index{\textbackslash pcthen}
+\index{\textbackslash pctrue}
+\index{\textbackslash pcwhile}
+\index{\textbackslash pcendwhile}
+
+
+In the above examples we have used commands \lstinline$\pcreturn$ and \lstinline$\pcfor$ to highlight certain keywords.
+Besides the \emph{pcreturn}, \emph{pcfor} and \emph{pcdo} (where the pc stands for pseudocode) that were used in the above 
+examples the package defines the following set of constants:
+
+\begin{center}
+\begin{tabular}{lll}
+ \textbf{name} & \textbf{usage} & \textbf{outcome} \\ 
+ pcabort & \lstinline$\pcabort$ & \pcabort\\
+ pccontinue & \lstinline$\pccontinue$ & \pccontinue \\
+ pccomment & \lstinline$\pccomment{comment}$ & \pccomment{comment} \\
+ pcdo & \lstinline$\pcdo$ & \pcdo \\
+ pcdone & \lstinline$\pcdone$ & \pcdone \\
+ pcfail & \lstinline$\pcfail$ & \pcfail \\
+ pcfalse & \lstinline$\pcfalse$ & \pcfalse \\
+ pcif & \lstinline$\pcif$ & \pcif \\
+ pcfi & \lstinline$\pcfi$ & \pcfi \\
+ pcendif & \lstinline$\pcendif$ & \pcendif \\ 
+ pcelse & \lstinline$\pcelse$ & \pcelse \\
+ pcelseif & \lstinline$\pcelseif$ & \pcelseif \\ 
+ pcfor  & \lstinline$\pcfor$ & \pcfor \\
+ pcendfor  & \lstinline$\pcendfor$ & \pcendfor \\ 
+ pcforeach  & \lstinline$\pcforeach$ & \pcforeach \\
+ pcendforeach  & \lstinline$\pcendforeach$ & \pcendforeach \\ 
+ pcglobvar & \lstinline$\pcglobvar$ & \pcglobvar \\
+ pcin & \lstinline$\pcin$ & \pcin \\
+ pcnew & \lstinline$\pcnew$ & \pcnew \\
+ pcnull & \lstinline$\pcnull$ & \pcnull \\
+ pcparse & \lstinline$\pcparse$ & \pcparse \\
+ pcrepeat & \lstinline$\pcrepeat{10}$ & \pcrepeat{10} \\
+ pcreturn & \lstinline$\pcreturn$ & \pcreturn \\ 
+ pcuntil & \lstinline$\pcuntil$ & \pcuntil \\
+ pcthen & \lstinline$\pcthen$ & \pcthen \\
+ pctrue & \lstinline$\pctrue$ & \pctrue \\
+ pcwhile & \lstinline$\pcwhile$ & \pcwhile \\
+ pcendwhile & \lstinline$\pcendwhile$ & \pcendwhile \\
+\end{tabular}
+\end{center}
+Note that \lstinline{\pcdo}, \lstinline{\pcin} and \lstinline{\pcthen} have a leading space. This is due to their usual usage scenarios
+such as
+\begin{center}
+\pseudocode{\pcfor i \pcin \{1,\ldots,10\}}
+\end{center}
+Furthermore all constants have a trailing space. This can be removed by adding the optional parameter [] such as
+\begin{center}
+\pseudocode{\pcfor i \pcin[] \{1,\ldots,10\}}
+\end{center}
+\begin{lstlisting}
+\pseudocode{\pcfor i \pcin[] \{1,\ldots,10\}}
+\end{lstlisting}
+
+\index{highlight keywords}
+\index{emphasize|see highlight keywords}
+\index{\textbackslash highlightkeyword}
+In order to change the font you can overwrite the command \lstinline{\highlightkeyword} which is defined as
+\begin{lstlisting}
+\newcommand{\highlightkeyword}[2][\ ]{\ensuremath{\mathbf{#2}}#1}
+\end{lstlisting}
+
+\subsubsection{Automatic Syntax Highlighting}
+The pseudocode command comes with an experimental feature to automatically highlight keywords. This can be activated via
+the option \enquote{syntaxhighlight=auto}. The preset list of keywords it looks for are
+\begin{lstlisting}
+for ,foreach ,return ,{ do }, in ,new ,if ,null ,null,true ,true,until ,{ to },false ,false,{ then },repeat ,else ,done ,done,fi 
+\end{lstlisting}
+Note that the keywords are matched with spaces and note the grouping for trailing spaces. That is, the \enquote{ do } keyword won't match within the string \enquote{don't}.
+Via the option \enquote{keywords} you can provide a custom list of keywords.
+Thus the following bubblesort variant (taken from \url{http://en.wikipedia.org/wiki/Bubble_sort}) 
+\begin{center}
+\fbox{\procedure[syntaxhighlight=auto]{Bubblesort(A : list of items)}{
+   n \gets \mathsf{length}(A) \\
+   repeat \\
+   \t s \gets false \\
+   \t  for i = 1 to n-1 do \\
+   \t\t  \pccomment{if this pair is out of order} \\
+   \t\t   if A[i-1] > A[i] then \\
+   \t\t\t \pccomment{swap them and remember something changed} \\
+   \t\t\t     \mathsf{swap}( A[i-1], A[i] ) \\
+   \t\t\t       s \gets true \\
+   until \neg s }
+}
+\end{center}
+can be typeset as
+\begin{lstlisting}
+\procedure[syntaxhighlight=auto]{Bubblesort(A : list of items)}{
+   n \gets \mathsf{length}(A) \\
+   repeat \\
+   \t s \gets false \\
+   \t  for i = 1 to n-1 do \\
+   \t\t  \pccomment{if this pair is out of order} \\
+   \t\t   if A[i-1] > A[i] then \\
+   \t\t\t \pccomment{swap them and remember something changed} \\
+   \t\t\t     \mathsf{swap}( A[i-1], A[i] ) \\
+   \t\t\t       s \gets true \\
+   until \neg s }
+\end{lstlisting}
+
+\index{addkeywords}
+You can also define additional keywords using the \enquote{addkeywords} option. This would allow us to specify \enquote{length} and \enquote{swap} in the above example. Combined with automatic spacing we could thus get
+\begin{center}
+\procedure[space=keep,syntaxhighlight=auto,addkeywords={swap,length}]{Bubblesort(A : list of items)}{
+n \gets length(A) \\
+repeat \\
+    s \gets false \\
+    for i=1 to n-1 do \\
+        \pccomment{if this pair is out of order} \\
+        if A[i-1]>A[i] then \\
+            \pccomment{swap them and remember something changed} \\
+            swap(A[i-1], A[i]) \\
+            s \gets true \\
+until \neg{}s }
+\end{center}
+Simply by writing (note the \lstinline$\neg{}$ in order to not have a space before $s$):
+\begin{lstlisting}
+\procedure[space=keep,syntaxhighlight=auto,addkeywords={swap,length}]{Bubblesort(A : list of items)}{
+n \gets length(A) \\
+repeat \\
+    s \gets false \\
+    for i=1 to n-1 do \\
+        \pccomment{if this pair is out of order} \\
+        if A[i-1]>A[i] then \\
+            \pccomment{swap them and remember something changed} \\
+            swap(A[i-1], A[i]) \\
+            s \gets true \\
+until \neg{}s }
+\end{lstlisting}
+Also note that a simple \lstinline$\fbox$ around the above \lstinline$\procedure$ command has the effect that the automatic spacing fails. 
+For this also see Section~\ref{sec:keepindent-problem}. As an alternative we could use automatic spacing and insert \enquote{group end}
+keywords such as \enquote{fi}:
+\begin{center}
+\fbox{\procedure[space=auto,syntaxhighlight=auto,addkeywords={swap,length}]{Bubblesort(A : list of items)}{
+n \gets length(A) \\
+repeat \\
+    s \gets false \\
+    for i=1 to n-1 do \\
+        \pccomment{assuming this pair is out of order} \\
+        if A[i-1]>A[i] then \\
+            \pccomment{swap them and remember something changed} \\
+            swap(A[i-1], A[i]) \\
+            s \gets true \\
+        endif \\
+     endfor \\
+until \neg s }}
+\end{center}
+The last example is generated as (note that here fbox is fine.)
+\begin{lstlisting}
+\fbox{\procedure[space=auto,syntaxhighlight=auto,addkeywords={swap,length}]{Bubblesort(A : list of items)}{
+n \gets length(A) \\
+repeat \\
+    s \gets false \\
+    for i=1 to n-1 do \\
+        \pccomment{assuming this pair is out of order} \\
+        if A[i-1]>A[i] then \\
+            \pccomment{swap them and remember something changed} \\
+            swap(A[i-1], A[i]) \\
+            s \gets true \\
+        endif \\
+     endfor \\
+until \neg s }}
+\end{lstlisting}
+
+\subsection{Alternative Keywords}
+\index{altkeywords}
+There is a second keyword list that you can add keywords to which are highlighted not via \lstinline$\highlightkeyword$ but via \lstinline$\highlightaltkeyword$
+where alt stands for alternate. This allows you to have two different keyword styles which are by default defined as
+\begin{lstlisting}
+\newcommand{\highlightkeyword}[2][\ ]{\ensuremath{\mathbf{#2}}#1}
+\newcommand{\highlightaltkeyword}[1]{\ensuremath{\mathsf{#1}}}
+\end{lstlisting}
+This allows you to rewrite the above example and highlight the different nature of swap and length.
+\begin{center}
+\fbox{\procedure[space=auto,syntaxhighlight=auto,altkeywords={swap,length}]{Bubblesort(A : list of items)}{
+n \gets length(A) \\
+repeat \\
+    s \gets false \\
+    for i=1 to n-1 do \\
+        \pccomment{assuming this pair is out of order} \\
+        if A[i-1]>A[i] then \\
+            \pccomment{swap them and remember something changed} \\
+            swap(A[i-1], A[i]) \\
+            s \gets true \\
+        endif \\
+     endfor \\
+until \neg s }}
+\end{center}
+\begin{lstlisting}
+\procedure[space=auto,syntaxhighlight=auto,addkeywords={swap,length}]{Bubblesort(A : list of items)}{
+n \gets length(A) \\
+repeat \\
+    s \gets false \\
+    for i=1 to n-1 do \\
+        \pccomment{assuming this pair is out of order} \\
+        if A[i-1]>A[i] then \\
+            \pccomment{swap them and remember something changed} \\
+            swap(A[i-1], A[i]) \\
+            s \gets true \\
+        endif \\
+     endfor \\
+until \neg s }
+\end{lstlisting}
+
+\subsection{Draft Mode}
+\index{nodraft}
+\index{performance}
+\index{draft mode}
+Automatic syntax highlighting is a somewhat expensive operation as it requires several rounds of regular expression matching.
+In order to speed up compilation the pseudocode command will not attempt automatic highlighting when the document is in draft mode.
+When in draft mode and you want to force a specific instance of \lstinline$\pseudocode$ to render the code with automatic syntax
+highlighting you can use the option \lstinline$nodraft$.
+
+
+\section{Line Numbering}
+\index{line numbering}
+\index{\textbackslash pcln}
+\index{\textbackslash pclnr}
+\index{\textbackslash pcrln}
+The pseudocode command allows to insert line numbers into pseudocode. You can either manually control line numbering or simply turn on the option
+\enquote{linenumbering}.
+\begin{center}
+\fbox{%
+\procedure[linenumbering]{$\indcpa_\enc^\adv$}{%
+  b \sample \bin \\
+ (\pk,\sk) \sample \kgen\secparam)  \\
+  \label{tmp:line:label}   (m_0,m_1) \sample \adv(\secparam, \pk, c)  \\
+  c \sample \enc(\pk,m_b)  \\
+  b' \sample \adv(\secparam, \pk, c)  \\
+ \pcreturn b = b' }
+}
+\end{center}
+is generated by 
+\begin{lstlisting}
+\procedure[linenumbering]{$\indcpa_\enc^\adv$}{%
+  b \sample \bin \\
+ (\pk,\sk) \sample \kgen\secparam)  \\
+  \label{tmp:line:label}   (m_0,m_1) \sample \adv(\secparam, \pk, c)  \\
+  c \sample \enc(\pk,m_b)  \\
+  b' \sample \adv(\secparam, \pk, c)  \\
+ \pcreturn b = b' }
+\end{lstlisting}
+Note how you can use labels such as \lstinline$\label{tmp:line:label}$ which now points to \ref{tmp:line:label}.
+
+\subsection{Manually Inserting Line Numbers}
+In order to manually insert line numbers use the command \lstinline$\pcln$.
+\begin{center}
+\fbox{%
+\procedure{$\indcpa_\enc^\adv$}{%
+ \pcln  b \sample \bin \\
+ \pcln   (\pk,\sk) \sample \kgen\secparam)  \\
+ \pcln\label{tmp:line:label2}   (m_0,m_1) \sample \adv(\secparam, \pk, c)  \\
+ \pcln   c \sample \enc(\pk,m_b)  \\
+ \pcln   b' \sample \adv(\secparam, \pk, c)  \\
+ \pcln   \pcreturn b = b' }
+}
+\end{center}
+is generated by 
+\begin{lstlisting}
+\procedure{$\indcpa_\enc^\adv$}{%
+ \pcln  b \sample \bin \\
+ \pcln   (\pk,\sk) \sample \kgen\secparam)  \\
+ \pcln\label{tmp:line:label2}   (m_0,m_1) \sample \adv(\secparam, \pk, c)  \\
+ \pcln   c \sample \enc(\pk,m_b)  \\
+ \pcln   b' \sample \adv(\secparam, \pk, c)  \\
+ \pcln   \pcreturn b = b' }
+\end{lstlisting}
+Note that the label \emph{tmp:line:label2} now points to line number \ref{tmp:line:label2}.
+
+
+
+\subsection{Start Values}
+You can specify the start value (-1) of the counter by setting the option \enquote{lnstart}.
+\begin{lstlisting}
+\procedure[lnstart=10,linenumbering]{Header}{Body}
+\end{lstlisting}
+\begin{center}
+\fbox{%
+\procedure[lnstart=10,linenumbering]{$\indcpa_\enc^\adv$}{%
+  b \sample \bin \\
+   (\pk,\sk) \sample \kgen\secparam)  \\
+   (m_0,m_1) \sample \adv(\secparam, \pk, c)  \\
+   c \sample \enc(\pk,m_b)  \\
+   b' \sample \adv(\secparam, \pk, c)  \\
+   \pcreturn b = b' }
+}
+\end{center}
+
+\subsection{Separators}
+\index{\textbackslash pclnseparator}
+The commands \lstinline$\pclnseparator$ defines the separator between the pseudocode and the line numbering. By
+default the left separator is set to (:) colon. Also see Section~\ref{sec:protocol:separator}.
+
+
+\section{Subprocedures}
+\index{subprocedure}
+The pseudocode package allows the typesetting of sub procedures such as
+
+\begin{center}
+\procedure[linenumbering]{$\indcpa_\enc^\adv$}{%
+   b \sample \bin  \\
+   (\pk,\sk) \sample \kgen(\secparam)  \\
+   (m_0,m_1) \sample  \begin{subprocedure}%
+ \dbox{\procedure{$\adv(\secparam, \pk, c)$}{%
+  	 \text{Step 1}  \\
+  	 \text{Step 2}  \\
+	 \pcreturn m_0, m_1 }}
+  \end{subprocedure}  \\
+   c \sample \enc(\pk,m_b)  \\
+   b' \sample \adv(\secparam, \pk, c)  \\
+   \pcreturn b = b' }
+ \end{center}
+ 
+To create a subprocedure use the \emph{subprocedure} environment. The above example is generated via
+ \begin{lstlisting}
+\procedure[linenumbering]{$\indcpa_\enc^\adv$}{%
+   b \sample \bin  \\
+   (\pk,\sk) \sample \kgen(\secparam)  \\
+   (m_0,m_1) \sample \begin{subprocedure}%
+ \dbox{\procedure{$\adv(\secparam, \pk, c)$}{%
+  	 \text{Step 1}  \\
+  	 \text{Step 2}  \\
+	 \pcreturn m_0, m_1 }}
+  \end{subprocedure}  \\
+   c \sample \enc(\pk,m_b)  \\
+   b' \sample \adv(\secparam, \pk, c)  \\
+   \pcreturn b = b' }
+\end{lstlisting}
+Here the dbox command (from the dashbox package) is used to generate a dashed box around the sub procedure. 
+
+\subsection{Numbering in Subprocedures}
+Subprocedures as normal pseudocode allow you to create line numbers. By default the line numbering starts with 1 in a subprocedure while
+ensuring that the outer numbering remains intact. Also note that the linenumbering on the outer procedure in the above example is inherited
+by the subprocedure. For more control, either use manual numbering or set the option \enquote{linenumbering=off} on the subprocedure.
+
+\begin{center}
+\procedure{$\indcpa_\enc^\adv$}{%
+  \pcln  b \sample \bin  \\
+  \pcln  (\pk,\sk) \sample \kgen(\secparam)  \\
+  \pcln  (m_0,m_1) \sample \begin{subprocedure}%
+ \dbox{\procedure{$\adv(\secparam, \pk, c)$}{%
+  	\pcln \text{Step 1}  \\
+  	\pcln \text{Step 2}  \\
+	\pcln \pcreturn m_0, m_1 }}
+  \end{subprocedure}  \\
+ \pcln   c \sample \enc(\pk,m_b)  \\
+ \pcln   b' \sample \adv(\secparam, \pk, c)  \\
+ \pcln   \pcreturn b = b' }
+ \end{center}
+  \begin{lstlisting}
+\procedure{$\indcpa_\enc^\adv$}{%
+  \pcln  b \sample \bin  \\
+  \pcln  (\pk,\sk) \sample \kgen(\secparam)  \\
+  \pcln  (m_0,m_1) \sample \begin{subprocedure}%
+  \dbox{\procedure{$\adv(\secparam, \pk, c)$}{%
+  	\pcln \text{Step 1}  \\
+  	\pcln \text{Step 2}  \\
+	\pcln \pcreturn m_0, m_1 }}
+  \end{subprocedure}  \\
+ \pcln   c \sample \enc(\pk,m_b)  \\
+ \pcln   b' \sample \adv(\secparam, \pk, c)  \\
+ \pcln   \pcreturn b = b' }
+\end{lstlisting}
+
+
+\section{Stacking Procedures}
+You can stack procedures horizontally or vertically using the environments \enquote{pchstack} and \enquote{pcvstack}. 
+\begin{lstlisting}
+\begin{pchstack}[center] body \end{pchstack}
+\begin{pcvstack}[center] body \end{pcvstack}
+\end{lstlisting}
+
+The following example displays two procedures next to one another. As a spacing between two horizontally outlined procedures
+use \lstinline{\pchspace} which takes an optional length as a parameter.
+
+\begin{pchstack}[center]
+\procedure{$\indcpa_\enc^\adv$}{%
+  \pcln  b \sample \bin  \\
+  \pcln  (\pk,\sk) \sample \kgen(\secparam)  \\
+  \pcln  (m_0,m_1) \sample \adv^O(\secparam, \pk)  \\
+ \pcln   c \sample \enc(\pk,m_b)  \\
+ \pcln   b' \sample \adv(\secparam, \pk, c)  \\
+ \pcln   \pcreturn b = b' }
+
+\pchspace
+
+ \procedure{Oracle $O$}{%
+  \pcln  \text{line 1}  \\
+  \pcln  \text{line 2}  
+}
+\end{pchstack}
+
+\begin{lstlisting}
+\begin{pchstack}[center]
+\procedure{$\indcpa_\enc^\adv$}{%
+  \pcln  b \sample \bin  \\
+  \pcln  (\pk,\sk) \sample \kgen(\secparam)  \\
+  \pcln  (m_0,m_1) \sample \adv^O(\secparam, \pk)  \\
+ \pcln   c \sample \enc(\pk,m_b)  \\
+ \pcln   b' \sample \adv(\secparam, \pk, c)  \\
+ \pcln   \pcreturn b = b' }
+
+\pchspace
+
+ \procedure{Oracle $O$}{%
+  \pcln  \text{line 1}  \\
+  \pcln  \text{line 2}  
+}
+\end{pchstack}
+\end{lstlisting}
+
+
+Similarly you can stack two procedures vertically using the \enquote{pcvstack} environment. As a spacing between two vertically stacked procedures
+use \lstinline{\pcvspace} which takes an optional length as a parameter.
+
+
+\begin{pcvstack}[center]
+\procedure{$\indcpa_\enc^\adv$}{%
+  \pcln  b \sample \bin  \\
+  \pcln  (\pk,\sk) \sample \kgen(\secparam)  \\
+  \pcln  (m_0,m_1) \sample \adv^O(\secparam, \pk)  \\
+ \pcln   c \sample \enc(\pk,m_b)  \\
+ \pcln   b' \sample \adv(\secparam, \pk, c)  \\
+ \pcln   \pcreturn b = b' }
+
+\pcvspace
+
+ \procedure{Oracle $O$}{%
+  \pcln  \text{line 1}  \\
+  \pcln  \text{line 2}  
+}
+\end{pcvstack}
+
+
+\begin{lstlisting}
+\begin{pcvstack}[center]
+\procedure{$\indcpa_\enc^\adv$}{%
+  \pcln  b \sample \bin  \\
+  \pcln  (\pk,\sk) \sample \kgen(\secparam)  \\
+  \pcln  (m_0,m_1) \sample \adv^O(\secparam, \pk)  \\
+ \pcln   c \sample \enc(\pk,m_b)  \\
+ \pcln   b' \sample \adv(\secparam, \pk, c)  \\
+ \pcln   \pcreturn b = b' }
+
+\pcvspace
+
+ \procedure{Oracle $O$}{%
+  \pcln  \text{line 1}  \\
+  \pcln  \text{line 2}  
+}
+\end{pcvstack}
+\end{lstlisting}
+
+
+Horizontal and vertical stacking can be combined
+\begin{pchstack}[center]
+
+\begin{pcvstack}%
+\procedure{$\indcpa_\enc^\adv$}{%
+  \pcln  b \sample \bin \\
+  \pcln  (\pk,\sk) \sample \kgen(\secparam)  \\
+  \pcln  (m_0,m_1) \sample \adv^{O,H_1,H_2}(\secparam, \pk)  \\
+ \pcln   c \sample \enc(\pk,m_b)  \\
+ \pcln   b' \sample \adv(\secparam, \pk, c)  \\
+ \pcln   \pcreturn b = b' }
+
+\pcvspace
+
+\begin{pchstack}
+ \procedure{Oracle $O$}{%
+  \pcln  \text{line 1}  \\
+  \pcln  \text{line 2}  
+}
+
+ \procedure{Oracle $H_1$}{%
+  \pcln  \text{line 1}  \\
+  \pcln  \text{line 2}  
+}
+
+ \procedure{Oracle $H_2$}{%
+  \pcln  \text{line 1}  \\
+  \pcln  \text{line 2}  
+}
+\end{pchstack}
+\end{pcvstack}
+
+\pchspace
+
+\procedure{$\indcpa_\enc^\adv$}{%
+  \pcln  b \sample \bin  \\
+  \pcln  (\pk,\sk) \sample \kgen(\secparam)  \\
+  \pcln  (m_0,m_1) \sample \adv^O(\secparam, \pk)  \\
+ \pcln   c \sample \enc(\pk,m_b)  \\
+ \pcln   b' \sample \adv(\secparam, \pk, c)  \\
+ \pcln   \pcreturn b = b' }
+
+\end{pchstack}
+
+
+\begin{lstlisting}
+\begin{pchstack}[center]
+\begin{pcvstack}
+\procedure{$\indcpa_\enc^\adv$}{%
+  \pcln  b \sample \bin  \\
+  \pcln  (\pk,\sk) \sample \kgen(\secparam)  \\
+  \pcln  (m_0,m_1) \sample \adv^{O,H_1,H_2}(\secparam, \pk)  \\
+ \pcln   c \sample \enc(\pk,m_b)  \\
+ \pcln   b' \sample \adv(\secparam, \pk, c)  \\
+ \pcln   \pcreturn b = b' }
+
+\pcvspace
+
+\begin{pchstack}
+ \procedure{Oracle $O$}{%
+  \pcln  \text{line 1}  \\
+  \pcln  \text{line 2}  
+}
+
+ \procedure{Oracle $H_1$}{%
+  \pcln  \text{line 1}  \\
+  \pcln  \text{line 2}  
+}
+
+ \procedure{Oracle $H_2$}{%
+  \pcln  \text{line 1}  \\
+  \pcln  \text{line 2}  
+}
+\end{pchstack}
+\end{pcvstack}
+
+\pchspace
+
+\procedure{$\indcpa_\enc^\adv$}{%
+  \pcln  b \sample \bin  \\
+  \pcln  (\pk,\sk) \sample \kgen(\secparam)  \\
+  \pcln  (m_0,m_1) \sample \adv^O(\secparam, \pk)  \\
+ \pcln   c \sample \enc(\pk,m_b)  \\
+ \pcln   b' \sample \adv(\secparam, \pk, c)  \\
+ \pcln   \pcreturn b = b' }
+
+\end{pchstack}
+\end{lstlisting}
+
+\section{Divisions and Linebreaks}
+\index{linebreaks}
+\index{\textbackslash hline}
+Within the pseudocode command you generate linebreaks as \lstinline$\\$. In order to specify the linewidth you can add an optional argument
+\begin{lstlisting}
+\\[height]
+\end{lstlisting}
+Furthermore, you can add, for example a horizontal line by using the second optional argument and write
+\begin{lstlisting}
+\\[][\hline]
+\end{lstlisting}
+
+\begin{center}
+\fbox{
+\procedure{$\indcpa_\enc^\adv$}{%
+  \pcln  b \sample \bin  \\[2\baselineskip][\hline\hline]
+  \pcln  (\pk,\sk) \sample \kgen(\secparam)  \\
+  \pcln  (m_0,m_1) \sample \adv^O(\secparam, \pk)  \\
+ \pcln   c \sample \enc(\pk,m_b)  \\
+ \pcln   b' \sample \adv(\secparam, \pk, c)  \\
+ \pcln   \pcreturn b = b' }
+}
+\end{center}
+
+\begin{lstlisting}
+\procedure{$\indcpa_\enc^\adv$}{%
+  \pcln  b \sample \bin  \\[2\baselineskip][\hline\hline]
+  \pcln  (\pk,\sk) \sample \kgen(\secparam)  \\
+  \pcln  (m_0,m_1) \sample \adv^O(\secparam, \pk)  \\
+ \pcln   c \sample \enc(\pk,m_b)  \\
+ \pcln   b' \sample \adv(\secparam, \pk, c)  \\
+ \pcln   \pcreturn b = b' }
+\end{lstlisting}
+
+\section{Matrices and Math Environments within pseudocode}
+
+In order to work its magic, cryptocode (in particular within the \lstinline{\pseudocode} command) mingles with a few low level commands such as
+\lstinline{\\} or \lstinline{\halign}. The effect of this is, that when you use certain math environments, for example, to create matrices, within pseudocode
+the result may be unexpected. Consider the following example
+
+\begin{lstlisting}
+\pseudocode{
+\text{compute } P = \begin{pmatrix}
+    A \\ B + C
+\end{pmatrix}
+}
+\end{lstlisting}
+
+which, somewhat unexpectedly, yields
+
+\begin{center}
+\fbox{
+\pseudocode{
+\text{compute } P = \begin{pmatrix}
+    A \\ B + C
+\end{pmatrix}
+}
+}
+\end{center}
+
+That is, the alignment is somewhat off. In order, to allow for the \emph{pmatrix} environment to properly work without interference from \lstinline{\pseudocode}
+you can wrap it into a \emph{pcmbox} environment (where pcmbox is short for pseudocode math box). This ensures that the low-level changes introduced by  \lstinline{\pseudocode} are not active.
+
+\begin{lstlisting}
+\pseudocode{
+\text{compute } P = \begin{pcmbox}\begin{pmatrix}
+    A \\ B + C
+\end{pmatrix}\end{pcmbox}
+}
+\end{lstlisting}
+
+\begin{center}
+\fbox{
+\pseudocode{
+\text{compute } P = \begin{pcmbox}\begin{pmatrix}
+    A \\ B + C
+\end{pmatrix}\end{pcmbox}
+}
+}
+\end{center}
+
+
+\section{Fancy Code with Overlays}
+
+Consider the \indcpa\ game. Here we have a single adversary $\adv$ that is called twice, first to output two messages then
+given the ciphertext of one of the messages to \enquote{guess} which one was encrypted. Often this is not visualized.
+Sometimes an additional state $\state$ is passed as we have in the following example on the left. On the right,
+we visualize the same thing in a bit more fancy way.
+
+\begin{center}
+
+\pchstack{
+
+\procedure{$\indcpa_\enc^\adv$}{%
+  \pcln  b \sample \bin  \\
+  \pcln  (\pk,\sk) \sample \kgen (\secparam)  \\
+  \pcln  (\state,m_0,m_1) \sample \adv(\secparam, \pk, c) \pcnode{start}  \\
+ \pcln   c \sample \enc(\pk,m_b)  \\
+ \pcln   b' \sample \adv(\secparam, \pk, c, \state) \pcnode{end} \\
+ \pcln   \pcreturn b = b' }
+
+
+\pchspace[1cm]
+
+\begin{pcimage}
+\procedure{$\indcpa_\enc^\adv$}{%
+	\pcln  b \sample \bin  \\
+	\pcln  (\pk,\sk) \sample \kgen (\secparam)  \\
+	\pcln  (m_0,m_1) \sample \adv(\secparam, \pk, c) \pcnode{start}  \\
+	\pcln   c \sample \enc(\pk,m_b)  \\
+	\pcln   b' \sample \adv(\secparam, \pk, c, \state) \pcnode{end} \\
+	\pcln   \pcreturn b = b' }
+	
+\pcdraw{
+	\path[->] (start) edge[bend left=50] node[right]{$\state$} (start|-end);
+}
+\end{pcimage}
+
+}
+\end{center}
+
+The image on the right is generated by:
+\begin{lstlisting}
+\begin{pcimage}
+\procedure{$\indcpa_\enc^\adv$}{%
+	\pcln  b \sample \bin  \\
+	\pcln  (\pk,\sk) \sample \kgen (\secparam)  \\
+	\pcln  (m_0,m_1) \sample \adv(\secparam, \pk, c) \pcnode{start}  \\
+	\pcln   c \sample \enc(\pk,m_b)  \\
+	\pcln   b' \sample \adv(\secparam, \pk, c, \state) \pcnode{end} \\
+	\pcln   \pcreturn b = b' }
+	
+\pcdraw{
+	\path[->] (start) edge[bend left=50] node[right]{$\state$} (start|-end);
+}
+\end{pcimage}
+\end{lstlisting}
+
+In order to achieve the above effect cryptocode utilizes TIKZ underneath. The
+\lstinline$pcnode$ command generates TIKZ nodes and additionally we wrapped the 
+pseudocode (or procedure) command in an \lstinline$\begin{pcimage}\end{pcimage}$ environment
+which allows us to utilize these nodes later, for example using the  \lstinline$\pcdraw$
+command. We can achieve a similar effect without an additional pcimage environment as
+
+\begin{lstlisting}
+\procedure{$\indcpa_\enc^\adv$}{%
+	\pcln  b \sample \bin  \\
+	\pcln  (\pk,\sk) \sample \kgen (\secparam)  \\
+	\pcln  (m_0,m_1) \sample \adv(\secparam, \pk, c) \pcnode{start}  \\
+	\pcln   c \sample \enc(\pk,m_b)  \\
+	\pcln   b' \sample \adv(\secparam, \pk, c, \state) \pcnode{end}[draw={
+		\path[->] (start) edge[bend left=50] node[right]{$\state$} (start|-end);
+	}] \\
+	\pcln   \pcreturn b = b' }
+\end{lstlisting}
+
+\pagebreak
+\subsection{Example: Explain your Code}
+As an exmaple of what you can do with this, let us put an explanation to a line of the code.
+
+\begin{center}
+\begin{pcimage}
+\procedure{$\indcpa_\enc^\adv$}{%
+	\pcln  b \sample \bin  \\
+	\pcln  (\pk,\sk) \sample \kgen (\secparam)\pcnode{kgen}  \\
+	\pcln  (m_0,m_1) \sample \adv(\secparam, \pk, c)  \\
+	\pcln   c \sample \enc(\pk,m_b)  \\
+	\pcln   b' \sample \adv(\secparam, \pk, c, \state) \\
+	\pcln   \pcreturn b = b' }
+
+\pcdraw{
+  \node[rectangle callout,callout absolute pointer=(kgen),fill=orange]
+      at ([shift={(+3,+1)}]kgen) {
+		\begin{varwidth}{3cm}
+			$\kgen(\secparam)$ samples a public key $\pk$ and a private key $\sk$.
+		\end{varwidth}
+  };
+}
+\end{pcimage}
+\end{center}
+
+\begin{lstlisting}
+\begin{center}
+\begin{pcimage}
+\procedure{$\indcpa_\enc^\adv$}{%
+	\pcln  b \sample \bin  \\
+	\pcln  (\pk,\sk) \sample \kgen (\secparam)\pcnode{kgen}  \\
+	\pcln  (m_0,m_1) \sample \adv(\secparam, \pk, c)  \\
+	\pcln   c \sample \enc(\pk,m_b)  \\
+	\pcln   b' \sample \adv(\secparam, \pk, c, \state) \\
+	\pcln   \pcreturn b = b' }
+
+\pcdraw{
+  \node[rectangle callout,callout absolute pointer=(kgen),fill=orange]
+      at ([shift={(+3,+1)}]kgen) {
+		\begin{varwidth}{3cm}
+			$\kgen(\secparam)$ samples a public key $\pk$ and a private key $\sk$.
+		\end{varwidth}
+  };
+}
+\end{pcimage}
+\end{center}
+\end{lstlisting}
+
+
+\chapter{Tabbing Mode}
+\label{chap:tabbing}
+\index{\&}
+\index{Tabbing Mode}
+\index{\textbackslash $"<$}
+\index{\textbackslash $">$}
+In the following chapter we discuss how to create multiple columns within a \lstinline$pseudocode$ command.
+Within a \lstinline$pseudocode$ command you can switch to a new column by inserting a \lstinline$\>$. 
+This is similar to using an \lstinline$align$ environment and placing a tabbing character (\&). Also,
+similarly to using \lstinline$align$ you should ensure that the number of \lstinline$\>$ are identical
+on each line.
+\begin{center}
+\fbox{%
+\pseudocode{%
+ \textbf{First} \> \textbf{Second} \> \textbf{Third} \> \textbf{Fourth} \\
+  b \sample \bin \> b \sample \bin \> b \sample \bin \> b \sample \bin}
+}
+\end{center}
+\begin{lstlisting}
+\pseudocode{%
+ \textbf{First} \> \textbf{Second} \> \textbf{Third} \> \textbf{Fourth} \\
+  b \sample \bin \> b \sample \bin \> b \sample \bin \> b \sample \bin}
+\end{lstlisting}
+As you can see the first column is left aligned the second right, the third left and so forth.
+In order to get only left aligned columns you could thus simply always skip a column by
+using \lstinline$\>\>$. You can also use \lstinline$\<$ a shorthand for \lstinline$\>\>$.
+\begin{center}
+\fbox{%
+\pseudocode{%
+ \textbf{First} \< \textbf{Second} \< \textbf{Third} \< \textbf{Fourth} \\
+  b \sample \bin \< b \sample \bin \< b \sample \bin \< b \sample \bin}
+}
+\end{center}
+\begin{lstlisting}
+\pseudocode{%
+ \textbf{First} \< \textbf{Second} \< \textbf{Third} \< \textbf{Fourth} \\
+  b \sample \bin \< b \sample \bin \< b \sample \bin \< b \sample \bin}
+\end{lstlisting}
+
+\paragraph{Column Spacing}
+\index{colsep}
+\index{addtolength}
+You can control the space between columns using the option \enquote{colsep=2em}. Note that when doing so you should
+additionally use \enquote{addtolength=5em} (where 5em depends on the number of columns) in order to avoid having
+overfull hboxes.
+\begin{center}
+\fbox{%
+\pseudocode[colsep=1em,addtolength=10em]{%
+ \textbf{First} \< \textbf{Second} \< \textbf{Third} \< \textbf{Fourth} \\
+  b \sample \bin \< b \sample \bin \< b \sample \bin \< b \sample \bin}
+}
+\end{center}
+\begin{lstlisting}
+\pseudocode{%
+\pseudocode[colsep=1em,addtolength=10em]{%
+ \textbf{First} \< \textbf{Second} \< \textbf{Third} \< \textbf{Fourth} \\
+  b \sample \bin \< b \sample \bin \< b \sample \bin \< b \sample \bin}
+\end{lstlisting}
+
+This is basically all you need to know in order to go on to writing protocols with the
+cryptocode package. So unless you want to know a bit more about tabbing (switching columns)
+and learn some of the internals, feel free to proceed to Chapter~\ref{chap:protocols}.
+
+
+\section{Tabbing in Detail}
+At the heart of the pseudocode package is an align (or rather a flalign*) environment which allows you to use basic math writing. Usually an align (or flalign) environment uses \& as tabbing characters. The pseudocode comes in two modes the first of which changes the default align behavior. That is, it automatically adds a tabbing character to the beginning and end of each line and changes the tabbing character to \lstinline$\>$. This mode is called mintabmode and is active by default.
+
+In mintabmode in order to make use of extra columns in the align environment (which we will use shortly in order to write protocols) you can use \lstinline$\>$ as you would use \& normally. But, don't forget that there is an alignment tab already placed at the beginning and end of each line. So the following example
+\begin{center}
+\fbox{%
+\pseudocode{%
+ \textbf{Alice} \> \> \textbf{Bob}  \\
+ b \sample \bin \> \> \\
+ \> \xrightarrow{\text{send over } b} \>  \\
+ \> \> \text{do something}}
+}
+\end{center}
+is generated by
+\begin{lstlisting}
+\pseudocode{%
+ \textbf{Alice} \> \> \textbf{Bob}  \\
+ b \sample \bin \> \> \\
+ \> \xrightarrow{\text{send over } b} \>  \\
+ \> \> \text{do something}}
+\end{lstlisting}
+
+In Chapter~\ref{chap:protocols} we'll discuss how to write protocols in detail.
+The next two sections are rather technical, so feel free to skip them.
+
+
+\subsection{Overriding The Tabbing Character}
+\index{\textbackslash pctabname}
+If you don't like \lstinline$\>$ as the tabbing character you can choose a custom command by overwriting \lstinline$\pctabname$.
+For example
+\begin{lstlisting}
+\renewcommand{\pctabname}{\myTab}
+
+\pseudocode{%
+ \textbf{Alice} \myTab \myTab \textbf{Bob}  \\
+ b \sample \bin \myTab \myTab \\
+ \myTab \xrightarrow{\text{send over } b} \myTab  \\
+ \myTab \myTab \text{do something}}
+\end{lstlisting}
+
+\subsection{Custom Line Spacing and Horizontal Rules}
+\index{\textbackslash pclb}
+As explained underlying the pseudocode command is an flalign environment. This would allow the use
+of \lstinline$\\[spacing]$ to specifiy the spacing between two lines or of \lstinline$[\\\hline]$ 
+to insert a horizontal rule. In order to achieve the same effect within the pseudocode command you
+can use \lstinline$\\[spacing][\hline]$. You can also use \lstinline$\pclb$ to get a line break which
+does not insert the additional alignment characters. 
+
+\chapter{Protocols}
+\label{chap:protocols}
+
+The pseudocode package can also be used to write protocols such as
+\begin{center}
+\fbox{%
+\procedure{My Protocol}{%
+ \textbf{Alice} \> \> \textbf{Bob}  \\
+ b \sample \bin \> \> \\
+ \> \xrightarrow{\text{send over } b} \>  \\
+ \> \> \text{do something}    \\
+ \> \xleftarrow{\text{send over sth. else}} \>   \\
+ \text{finalize} \> \>}
+ }
+\end{center}
+which uses the tabbing feature of align and is generated as
+\begin{lstlisting}
+\procedure{My Protocol}{%
+ \textbf{Alice} \> \> \textbf{Bob}  \\
+ b \sample \bin \> \> \\
+ \> \xrightarrow{\text{send over } b} \>  \\
+ \> \> \text{do something}    \\
+ \> \xleftarrow{\text{send over sth. else}} \>   \\
+ \text{finalize} \> \>}
+}
+\end{lstlisting}
+
+\index{\textbackslash sendmessageright*}
+\index{\textbackslash sendmessageright}
+\index{\textbackslash sendmessageleft*}
+\index{\textbackslash sendmessageleft}
+In order to get nicer message arrows use the commands \lstinline$\sendmessageright*{message}$ and \lstinline$\sendmessageleft*{message}$.
+Both take an additional optional argument specifying the length of the arrow and both are run
+in math mode.
+\begin{lstlisting}
+\sendmessageright*[3.5cm]{message}
+\sendmessageleft*[3.5cm]{message}
+\end{lstlisting}
+
+
+\begin{center}
+\fbox{%
+\procedure{My Protocol}{%
+ \textbf{Alice} \> \> \textbf{Bob}  \\
+ b \sample \bin \> \> \\
+ \> \sendmessageright*{\text{send over } b} \>  \\
+ \> \> \text{do something}    \\
+ \> \sendmessageleft*{\text{send over sth. else}} \>   \\
+ \text{finalize} \> \> }
+ }
+\end{center}
+\begin{lstlisting}
+\procedure{My Protocol}{%
+ \textbf{Alice} \> \> \textbf{Bob}  \\
+ b \sample \bin \> \> \\
+ \> \sendmessageright*{\text{send over } b} \>  \\
+ \> \> \text{do something}    \\
+ \> \sendmessageleft*{\text{send over sth. else}} \>   \\
+ \text{finalize} \> \> }
+\end{lstlisting}
+
+Besides the starred version there is also the unstarred version which allows more flexibility. Note that a crucial difference between
+the starred and unstarred versions are that  \lstinline$\sendmessageleft*{message}$ wraps an aligned environment around the message.
+\begin{center}
+\procedure{My Protocol}{%
+ \textbf{Alice} \> \> \textbf{Bob}  \\
+ b \sample \bin \> \> \\
+ \> \sendmessageright{centercol=3,top=send over $b$,bottom=Text below,topstyle={draw,solid,yshift=0.25cm},style={dashed}} \>  \\
+ \> \> \text{do something}    \\
+ \> \sendmessageleft{length=8cm,top=send over sth. else} \>   \\
+ \text{finalize} \> \> }
+\end{center}
+\begin{lstlisting}
+\procedure{My Protocol}{%
+ \textbf{Alice} \> \> \textbf{Bob}  \\
+ b \sample \bin \> \> \\
+ \> \sendmessageright{centercol=3,top=send over $b$,bottom=Text below,topstyle={draw,solid,yshift=0.25cm},style={dashed}} \>  \\
+ \> \> \text{do something}    \\
+ \> \sendmessageleft{length=8cm,top=send over sth. else} \>   \\
+ \text{finalize} \> \> }
+\end{lstlisting}
+The unstarred commands take key-value pairs. The following keys are available:
+\begin{description}
+\item[top]
+The content to display on top of the arrow. 
+\item[bottom]
+The content to display below the arrow.
+\item[left]
+The content to display on the left of the arrow.
+\item[right]
+The content to display on the right of the arrow.
+\item[topstyle]
+The TIKZ style to be used for the top node.
+\item[bottomstyle]
+The TIKZ style to be used for the bottom node.
+\item[rightstyle]
+The TIKZ style to be used for the right node.
+\item[leftstyle]
+The TIKZ style to be used for the left node.
+\item[length]
+The length of the arrow.
+\item[style]
+The style of the arrow.
+\item[width]
+The width of the column
+\item[centercol]
+Can be used to ensure that the message is displayed in the center. This should be set to the
+column index. In the above example, the message column is the third column (note that there is
+a column left of alice that  is automatically inserted.).
+\end{description}
+
+
+\section{Tabbing}
+When typesetting protocols you might find that using two tabs instead of a single tab usually provides
+a better result as this ensures that all columns are left aligned. 
+For this you can use \lstinline$\<$ instead of \lstinline$\>$ (see Chapter~\ref{chap:tabbing}).
+
+Following is once more the example from before but now with double tapping. 
+\begin{center}
+\fbox{%
+\procedure{My Protocol}{%
+ \textbf{Alice} \< \< \textbf{Bob}  \\
+ b \sample \bin \< \< \\
+ \< \sendmessageright*{\text{send over } b} \<  \\
+ \< \< \text{do something}    \\
+ \< \sendmessageleft*{\text{send over sth. else}} \<   \\
+ \text{finalize} \< \< }
+ }
+\end{center}
+
+\section{Multiline Messages}
+Using the send message commands you can easily generate multiline messages as the command
+wraps an \emph{aligned} environment around the message.
+\begin{center}
+\fbox{%
+\procedure{My Protocol}{%
+ \textbf{Alice} \< \< \textbf{Bob}  \\
+ b \sample \bin \< \< \\
+ \< \sendmessageright*{\text{send over } b\\ \text{second line}} \<  \\
+ \< \< \text{do something}    \\
+ \< \sendmessageleft*{&\text{left aligned}\\ &\text{multiline message}} \<   \\
+ \text{finalize} \< \<}
+ }
+\end{center}
+\begin{lstlisting}
+\procedure{My Protocol}{%
+ \textbf{Alice} \< \< \textbf{Bob}  \\
+ b \sample \bin \< \< \\
+ \< \sendmessageright*{\text{send over } b\\ \text{second line}} \<  \\
+ \< \< \text{do something}    \\
+ \< \sendmessageleft*{&\text{left aligned}\\ &\text{multiline message}} \<   \\
+ \text{finalize} \< \<}
+\end{lstlisting}
+
+
+
+\subsection{Multiplayer Protocols}
+
+You are not limited to two players. In order to send messages skipping players use \lstinline$\sendmessagerightx$ and \lstinline$\sendmessageleftx$.
+\begin{lstlisting}
+\sendmessagerightx[width]{columnspan}{Text}
+\sendmessageleftx[width]{columnspan}{Text}
+\end{lstlisting}
+
+\begin{center}
+\fbox{%
+\procedure{Multiparty Protocol}{%
+ \textbf{Alice} \< \< \textbf{Bob} \< \< \textbf{Charlie} \\
+ \text{work} \< \< \< \< \\
+ \< \sendmessageright{top=Work result} \< \< \< \\
+ \< \< \text{work} \< \< \\
+ \< \< \<  \sendmessageright{top=Work result,bottom=Bottom message} \< \\
+ \< \<  \< \< \text{work} \\
+ \< \sendmessageleftx[7cm]{8}{\text{A long message for Alice}} \< \\
+ \text{finalize} \< \< \< \< }
+}
+\end{center}
+
+\begin{lstlisting}
+\begin{center}
+\procedure{Multiparty Protocol}{%
+ \textbf{Alice} \< \< \textbf{Bob} \< \< \textbf{Charlie} \\
+ \text{work} \< \< \< \< \\
+ \< \sendmessageright{top=Work result} \< \< \< \\
+ \< \< \text{work} \< \< \\
+ \< \< \<  \sendmessageright{top=Work result,bottom=Bottom message} \< \\
+ \< \<  \< \< \text{work} \\
+ \< \sendmessageleftx[7cm]{8}{\text{A long message for Alice}} \< \\
+ \text{finalize} \< \< \< \< }
+\end{lstlisting}
+Note that for the last message from Charlie to Alice we needed to specify the number of passed
+over colums (\lstinline$\sendmessageleftx[7cm]{8}{message}$). As we were passing
+4 \lstinline$\<$ where each creates 2 columns, the total was 8 columns.
+
+
+\subsection{Divisions}
+You can use \lstinline$\pcintertext$ in order to divide protocols (or other pseudocode for that matter).
+\begin{lstlisting}
+\pcintertext[dotted|center]{Division Text}
+\end{lstlisting}
+Note that in order to use the \lstinline$\pcintertext$ you need to use \lstinline$\pclb$ as the line break for the line
+before. Also see Chapter~\ref{chap:tabbing}.
+
+\begin{center}
+\fbox{%
+\procedure{My Protocol}{%
+\textbf{Alice} \< \< \textbf{Bob}  \\
+ b \sample \bin \< \<  \pclb
+ \pcintertext[dotted]{Some Division} \\
+ \< \sendmessageright*{\text{send over } b} \<  \\
+ \< \< \text{do something} \pclb
+ \pcintertext[dotted]{Another Division} \\
+ \< \sendmessageleft*{\text{message}} \<   \\
+ \text{finalize} \< \< }
+}
+\end{center}
+
+\begin{lstlisting}
+\procedure{My Protocol}{%
+\textbf{Alice} \< \< \textbf{Bob}  \\
+ b \sample \bin \< \<  \pclb
+ \pcintertext[dotted]{Some Division} \\
+ \< \sendmessageright*{\text{send over } b} \<  \\
+ \< \< \text{do something} \pclb
+ \pcintertext[dotted]{Another Division} \\
+ \< \sendmessageleft*{\text{message}} \<   \\
+ \text{finalize} \< \< }
+\end{lstlisting}
+
+
+
+\section{Line Numbering in Protocols}
+Protocols can be numbered similarly to plain pseudocode. Additionally to the \lstinline$\pcln$ there are the commands \lstinline$\pclnr$ and \lstinline$\pcrln$. The first
+allows you to right align line numbers but uses the same counter as \lstinline$\pcln$. The second uses a different counter.
+
+\begin{center}
+\fbox{%
+\procedure{My Protocol}{%
+\pcln  \textbf{Alice} \< \< \textbf{Bob} \< \\
+\pcln b \sample \bin \< \< \< \\
+ \< \sendmessageright*{\text{send over } b} \< \< \pclnr\\
+ \< \< \text{do something} \<  \pclnr \\
+ \< \sendmessageleft*{\text{send over sth. else}} \<\<  \pclnr \\
+\pcln \text{finalize} \< \< \<}
+}
+\end{center}
+Which is generated as
+\begin{lstlisting}
+\procedure{My Protocol}{%
+\pcln  \textbf{Alice} \< \< \textbf{Bob} \< \\
+\pcln b \sample \bin \< \< \< \\
+ \< \sendmessageright*{\text{send over } b} \< \< \pclnr\\
+ \< \< \text{do something} \<  \pclnr \\
+ \< \sendmessageleft*{\text{send over sth. else}} \<\<  \pclnr \\
+\pcln \text{finalize} \< \< \<}
+\end{lstlisting}
+
+
+
+And using \lstinline$\pcrln$:
+\begin{center}
+\fbox{%
+\procedure{My Protocol}{%
+\pcln  \textbf{Alice} \< \< \textbf{Bob} \<  \\
+\pcln b \sample \bin \< \< \< \\
+ \< \sendmessageright*{\text{send over } b} \<\<  \pcrln\\
+ \< \< \text{do something}   \< \pcrln \\
+ \< \sendmessageleft*{\text{send over sth. else}} \<  \< \pcrln \\
+\pcln \text{finalize} \< \< \< }
+}
+\end{center}
+Which is generated as
+\begin{lstlisting}
+\procedure{My Protocol}{%
+\pcln  \textbf{Alice} \< \< \textbf{Bob}  \\
+\pcln b \sample \bin \< \< \\
+\< \sendmessageright*{\text{send over } b} \<  \pcrln\\
+\< \< \text{do something}   \pcrln \\
+\< \sendmessageleft*{\text{send over sth. else}} \<  \pcrln \\
+\pcln \text{finalize} \< \< }
+\end{lstlisting}
+
+
+
+
+\subsection{Separators}
+\label{sec:protocol:separator}
+The commands \lstinline$\pclnseparator$ and \lstinline$\pcrlnseparator$ define the separators between the pseudocode and line numbering. By default the left separator is set to (:) colon and the right separator is set to a space of 3 pt.
+
+
+\section{Sub Protocols}
+
+Use the \enquote{subprocedure} function also to create sub protocols. 
+
+\begin{center}
+\fbox{%
+\procedure{My Protocol}{%
+ \textbf{Alice} \< \< \textbf{Bob}  \\
+ b \sample \bin \< \< \\
+ \< \sendmessageright*{\text{send over } b} \<  \\
+ \< \< \text{do something}    \\
+ \<\< \dbox{\begin{subprocedure}\procedure{Subprotocol}{
+ \< \< \textbf{Charlie}  \\
+\text{something more} \< \<  \\
+ \< \sendmessageright*[1.5cm]{\text{message}} \<  \\
+ \< \< \text{some processing}  \\
+ \< \< \text{more processing}  \\ 
+ \< \sendmessageleft*[1.5cm]{\text{message}} \<  \\
+ \< \sendmessageright*[1.5cm]{\text{message}} \<  \\
+ \< \sendmessageleft*[1.5cm]{\text{message}} \<  \\
+}\end{subprocedure}}  \\
+ \< \sendmessageleft*{\text{send over sth. else}} \<   \\
+ \text{finalize} \< \< }
+}
+\end{center}
+
+
+\begin{lstlisting}
+\procedure{My Protocol}{%
+ \textbf{Alice} \< \< \textbf{Bob}  \\
+ b \sample \bin \< \< \\
+ \< \sendmessageright*{\text{send over } b} \<  \\
+ \< \< \text{do something}    \\
+ \<\< \dbox{\begin{subprocedure}\procedure{Subprotocol}{
+ \< \< \textbf{Charlie}  \\
+\text{something more} \< \<  \\
+ \< \sendmessageright*[1.5cm]{\text{message}} \<  \\
+ \< \< \text{some processing}  \\
+ \< \< \text{more processing}  \\ 
+ \< \sendmessageleft*[1.5cm]{\text{message}} \<  \\
+ \< \sendmessageright*[1.5cm]{\text{message}} \<  \\
+ \< \sendmessageleft*[1.5cm]{\text{message}} \<  \\
+}\end{subprocedure}}  \\
+ \< \sendmessageleft*{\text{send over sth. else}} \<   \\
+ \text{finalize} \< \< }
+\end{lstlisting}
+
+
+
+
+
+
+\chapter{Game Based Proofs}
+\label{chap:gbproofs}
+
+\section{Basics}
+\index{gameproof}
+\index{gameprocedure}
+
+Besides displaying pseudocode the package also comes with commands to display game based proofs. A proof
+is wrapped in the \emph{gameproof} environment. 
+\begin{lstlisting}
+\begin{gameproof}
+proof goes here
+\end{gameproof}
+\end{lstlisting}
+Within the proof environment you can use the command \lstinline$\gameprocedure$ which works similarly to the pseudocode
+command and produces a heading of the form $\pcgamename_{\text{counter}}$ where counter is a consecutive counter.
+Thus, we can create the following setup
+\begin{center}
+\begin{gameproof}
+\gameprocedure[linenumbering,mode=text]{%
+ Step 1  \\
+ Step 2  
+ }
+\gameprocedure[mode=text]{%
+ Step 1  \\
+ Step 2  
+ }
+\end{gameproof}
+\end{center}
+by using
+\begin{lstlisting}
+\begin{gameproof}
+\gameprocedure[linenumbering,mode=text]{%
+ Step 1  \\
+ Step 2  
+ }
+\gameprocedure[mode=text]{%
+ Step 1  \\
+ Step 2  
+ }
+\end{gameproof}
+\end{lstlisting}
+
+
+
+\subsection{Highlight Changes}
+\index{highlight game change}
+\index{\textbackslash gamechange}
+In order to highlight changes from one game to the next use \lstinline$\gamechange$.
+\begin{center}
+\begin{gameproof}
+\gameprocedure[linenumbering,mode=text]{%
+ Step 1  \\
+ Step 2  
+ }
+\gameprocedure[mode=text]{%
+ Step 1  \\
+ \gamechange{Step 2}
+ }
+\end{gameproof}
+\end{center}
+\begin{lstlisting}
+\begin{gameproof}
+\gameprocedure[linenumbering,mode=text]{%
+ Step 1  \\
+ Step 2  
+ }
+\gameprocedure[mode=text]{%
+ Step 1  \\
+ \gamechange{Step 2}
+ }
+\end{gameproof}
+\end{lstlisting}
+
+\subsection{Boxed games}
+\index{\textbackslash tbxgameprocedure}
+Use \lstinline$\tbxgameprocedure$ in order to create two consecutive games where the second game is \emph{boxed}. Use
+\lstinline$\pcbox$ to create boxed statements.
+\begin{center}
+\begin{gameproof}
+\gameprocedure{%
+ \pcln  \text{Step 1}  \\
+ \pcln  \text{Step 2}  
+ }
+\tbxgameprocedure{%
+   \text{Step 1}; \pcbox{\text{Alternative step 1}}  \\
+   \gamechange{\text{Step 2 is different}}  
+ }
+\gameprocedure{%
+  \text{Step 1}  \\
+  \text{\gamechange{Step 2}}  
+ } 
+\end{gameproof}
+\end{center}
+
+\begin{lstlisting}
+\begin{gameproof}
+\gameprocedure{%
+ \pcln  \text{Step 1}  \\
+ \pcln  \text{Step 2}  
+ }
+\tbxgameprocedure{%
+   \text{Step 1}; \pcbox{\text{Alternative step 1}}  \\
+   \gamechange{\text{Step 2 is different}}  
+ }
+\gameprocedure{%
+ \pcln  \text{Step 1}  \\
+ \pcln  \text{\gamechange{Step 2}}  
+ } 
+\end{gameproof}
+\end{lstlisting}
+
+\subsection{Reduction Hints}
+\index{\textbackslash addgamehop}
+In a game based proof in order to go from one game to the next we usually give a reduction, for example, we show that
+the difference between two games is bound by the security of some pseudorandom generator $\mathsf{PRG}$. To give a hint
+within the pseudocode that the difference between two games is down to ``something'' you can use the \lstinline$\addgamehop$
+command.
+\begin{lstlisting}
+\addgamehop{startgame}{endgame}{options}
+\end{lstlisting}
+Here options allows you to specify the hint as well as the style. The following options are available
+\begin{description}
+\item[hint]
+The hint text
+\item[nodestyle]
+A TIKZ style to be used for the node.
+\item[pathstyle]
+A TIKZ style to be used for the path.
+\item[edgestyle]
+A TIKZ style to be used for the edge. This defaults to \enquote{bend left}.
+\end{description}
+
+\vspace{1ex}
+\begin{center}
+\begin{gameproof}
+\gameprocedure{%
+ \pcln  \text{Step 1}  \\
+ \pcln  \text{Step 2}  
+ }
+\gameprocedure{%
+   \text{Step 1}  \\
+   \gamechange{\text{Step 2 is different}}  
+ }
+\addgamehop{1}{2}{hint=\footnotesize some hint,nodestyle=red}
+\end{gameproof}
+\end{center}
+\begin{lstlisting}
+\begin{gameproof}
+\gameprocedure{%
+ \pcln  \text{Step 1}  \\
+ \pcln  \text{Step 2}  
+ }
+\gameprocedure{%
+   \text{Step 1}  \\
+   \gamechange{\text{Step 2 is different}}  
+ }
+\addgamehop{1}{2}{hint=\footnotesize some hint,nodestyle=red}
+\end{gameproof}
+\end{lstlisting}
+The edgestyle allows you to specify how the hint is displayed. If you, for example want a straight line, rather than the curved arrow simply
+use 
+\begin{lstlisting}
+\addgamehop{1}{2}{hint=\footnotesize some hint,edgestyle=}
+\end{lstlisting}
+
+
+
+If game proofs do not fit into a single picture you can specify start and end hints using the commands
+\begin{lstlisting}
+\addstartgamehop[first game]{options}
+\addendgamehop[last game]{options}
+\end{lstlisting}
+
+\begin{center}
+\begin{gameproof}
+\gameprocedure{%
+ \pcln  \text{Step 1}  \\
+ \pcln  \text{Step 2}  
+ }
+\gameprocedure{%
+   \text{Step 1}  \\
+   \gamechange{\text{Step 2 is different}}  
+ }
+ \addstartgamehop{hint=\footnotesize some hint,edgestyle=}
+\addgamehop{1}{2}{hint=\footnotesize some hint}
+ \addendgamehop{hint=\footnotesize some outgoing hint,edgestyle=}
+\end{gameproof}
+\end{center}
+
+
+\begin{lstlisting}
+\begin{gameproof}
+\gameprocedure{%
+ \pcln  \text{Step 1}  \\
+ \pcln  \text{Step 2}  
+ }
+\gameprocedure{%
+   \text{Step 1}  \\
+   \gamechange{\text{Step 2 is different}}  
+ }
+ \addstartgamehop{hint=\footnotesize some hint,edgestyle=}
+\addgamehop{1}{2}{hint=\footnotesize some hint}
+ \addendgamehop{hint=\footnotesize some outgoing hint,edgestyle=}
+\end{gameproof}
+\end{lstlisting}
+
+\subsection{Numbering and Names}
+By default the \emph{gameproof} environment starts to count from 1 onwards. Its optional parameters allow you to specify a custom
+name for your game and the starting number.
+\begin{lstlisting}
+\begin{gameproof}[options]
+\end{lstlisting}
+
+\begin{center}
+\begin{gameproof}[nr=5,name=\mathsf{MyGame},arg=(1^n)]
+\gameprocedure{%
+ \pcln  \text{Step 1}  \\
+ \pcln  \text{Step 2}  
+ }
+\gameprocedure{%
+   \text{Step 1}  \\
+   \gamechange{\text{Step 2 is different}}  
+ }
+\addstartgamehop{hint=\footnotesize some ingoing hint}
+\addgamehop{6}{7}{hint=\footnotesize some hint}
+ \addendgamehop{hint=\footnotesize some outgoing hint}
+\end{gameproof}
+\end{center}
+
+\begin{lstlisting}
+\begin{gameproof}[nr=5,name=$\mathsf{MyGame}$,arg=$(1^n)$]
+\gameprocedure{%
+ \pcln  \text{Step 1}  \\
+ \pcln  \text{Step 2}  
+ }
+\gameprocedure{%
+   \text{Step 1}  \\
+   \gamechange{\text{Step 2 is different}}  
+ }
+\addstartgamehop{hint=\footnotesize some ingoing hint}
+\addgamehop{6}{7}{hint=\footnotesize some hint}
+ \addendgamehop{hint=\footnotesize some outgoing hint}
+\end{gameproof}
+\end{lstlisting}
+
+
+\subsection{Default Name and Argument}
+The default name and argument are controlled via the commands \lstinline$\pcgamename$ and \lstinline$\gameprocedurearg$.
+
+\begin{center}
+\begin{tabular}{ll}
+\textbf{Command} & \textbf{Default} \\
+\lstinline$\pcgamename$ & \lstinline$\mathsf{Game}$ \\
+\lstinline$\gameprocedurearg$ & \lstinline$(\secpar)$
+\end{tabular}
+\end{center}
+
+
+\subsection{Two Directional Games}
+\index{\textbackslash bxgameprocedure}
+\index{\textbackslash addloopgamehop}
+You can use the \lstinline$\bxgameprocedure$ to generate games for going in two directions. Use the \lstinline$\addloopgamehop$
+to add the gamehop in the middle.
+
+\vspace{1cm}
+\begin{center}
+\begin{gameproof}
+\bxgameprocedure{4}{%
+ \pcln  \text{Step 1}; \pcbox{Alternative} \\
+ \pcln  \text{Step 2}  
+ }
+\bxgameprocedure{3}{%
+   \text{Step 1}; \pcbox{Alternative}  \\
+   \gamechange{\text{Step 2 is different}}  
+ }
+ \addstartgamehop{hint=\footnotesize some hint,edgestyle=}
+\addgamehop{1}{2}{hint=\footnotesize some hint,edgestyle=}
+ \addloopgamehop{hint=\footnotesize some loop hint}
+ \addgamehop{2}{1}{hint=\footnotesize some hint}
+\end{gameproof}
+\end{center}
+
+
+\begin{lstlisting}
+\begin{gameproof}
+\bxgameprocedure{4}{%
+ \pcln  \text{Step 1}; \pcbox{Alternative} \\
+ \pcln  \text{Step 2}  
+ }
+\bxgameprocedure{3}{%
+   \text{Step 1}; \pcbox{Alternative}  \\
+   \gamechange{\text{Step 2 is different}}  
+ }
+ \addstartgamehop{hint=\footnotesize some hint,edgestyle=}
+\addgamehop{1}{2}{hint=\footnotesize some hint,edgestyle=}
+ \addloopgamehop{hint=\footnotesize some loop hint}
+ \addgamehop{2}{1}{hint=\footnotesize some hint}
+\end{gameproof}
+\end{lstlisting}
+
+\subsection{Styling game procedures}
+It may come in handy to define default style arguments for the underlying pseudocode 
+command used by \lstinline$\gameprocedure$. For this you can
+define the default arguments by calling \lstinline{\setgameproceduredefaultstyle} to 
+for example:
+
+\begin{lstlisting}
+\setgameproceduredefaultstyle{beginline=\vphantom{\bin^\prg_\prg}
+\end{lstlisting}
+
+The default is to not set any options.
+
+\section{Game Descriptions}
+Cryptocode also comes with an environment to provide textual descriptions of games such as
+
+
+ \begin{gamedescription}[name=MyGame,nr=2]
+\describegame
+ This is the third game. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis condimentum velit et orci volutpat, sed ultrices lorem lobortis. Nam vehicula, justo eu varius interdum, felis mi consectetur dolor, ac posuere nulla lacus varius diam. Etiam dapibus blandit leo, et porttitor augue lacinia auctor.
+
+\describegame[inhint=reduction target]
+ This is the second game. The arrow at the side indicates the reduction target.
+ \end{gamedescription}
+ 
+ The above example is generated as
+ 
+\begin{lstlisting}
+\begin{gamedescription}[name=MyGame,nr=2]
+\describegame
+This is the third game. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis condimentum velit et orci volutpat, sed ultrices lorem lobortis. Nam vehicula, justo eu varius interdum, felis mi consectetur dolor, ac posuere nulla lacus varius diam. Etiam dapibus blandit leo, et porttitor augue lacinia auctor.
+
+\describegame[inhint=reduction target]
+This is the second game. The arrow at the side indicates the reduction target.
+\end{gamedescription}
+\end{lstlisting}
+
+The \emph{gamedescription} environment takes an optional argument to specify name and counter (defaults to Game and 0). The command 
+\lstinline$\describegame$ starts a new game description and can allows you to provide a reduction hint using the option parameter \emph{inhint}.
+
+\begin{center}
+\begin{tabular}{ll}
+\textbf{Parameter} & \textbf{Description} \\
+\lstinline$inhint$ & Displays an ingoing arrow to denote the reduction target for this game hop.\\
+\lstinline$length$ & Allows to control the length of the arrow. \\
+\lstinline$nodestyle$ & Allows to control the style of the node. \\
+\lstinline$hint$ &  Instead of having an ingoing arrow, this adds an outgoing arrow. \\
+\end{tabular}
+\end{center}
+
+
+\chapter{Black-box Reductions}
+\label{chap:bbr}
+\index{bbrenv}
+\index{bbrbox}
+\index{\textbackslash bbrinput}
+\index{\textbackslash bbroutput}
+
+The cryptocode package comes with support for drawing basic black box reductions. A reduction is
+always of the following form.
+
+\begin{lstlisting}
+\begin{bbrenv}{A}
+\begin{bbrbox}[name=Box Name]
+% The Box's content
+\end{bbrbox}
+% Commands to display communication, input output etc
+\end{bbrenv}
+\end{lstlisting}
+That is, a \enquote{bbrenv} (where bbr is short for black-box reduction) environment which takes a single
+\enquote{bbrbox} environment and some additional commands. 
+
+The following is a simple example drawing one (black)box with some code and input output:
+
+\begin{bbrenv}[1cm]{A}[1cm]
+	\begin{bbrbox}[name=Box Name]
+	\pseudocode{
+		\text{step 1} \\
+		\text{step 2} \\
+		\pcfor \text{some condition} \pcdo \\
+		\pcind\text{step 3} 
+	}
+	\end{bbrbox}
+	\bbrinput{input}
+	\bbroutput{output}
+\end{bbrenv}
+
+This box is generated as
+\begin{lstlisting}
+\begin{bbrenv}[1cm]{A}[1cm]
+	\begin{bbrbox}[name=Box Name]
+	\pseudocode{
+		\text{step 1} \\
+		\text{step 2} \\
+		\pcfor \text{some condition} \pcdo \\
+		\pcind\text{step 3} 
+	}
+	\end{bbrbox}
+	\bbrinput{input}
+	\bbroutput{output}
+\end{bbrenv}
+\end{lstlisting}
+
+The commands \lstinline$bbrinput$ and \lstinline$bbroutput$ allow to specify input and output for the latest
+\enquote{bbrenv} environment. The optional parameters for the \lstinline$bbrenv$ environment allow to specify leading and trailing space (this
+may become necessary when using inputs and outputs).
+The single argument to the bbrenv environment needs to specify a unique identifier
+(unique for the current reduction). This id is used as an internal TIKZ node name (\url{https://www.ctan.org/pkg/pgf}).
+\begin{lstlisting}
+\begin{bbrenv}[vspace before]{UNIQUE IDENTIFIER}[vspace after]
+\end{lstlisting}
+As we are drawing a TIKZ image, note that we can easily later customize the image using the labels that we
+have specified on the way. 
+
+\begin{bbrenv}[1cm]{A}[1cm]
+	\begin{bbrbox}[name=Box Name]
+	\pseudocode{
+		\text{step 1} \\
+		\text{step 2} \\
+		\pcfor \text{some condition} \pcdo \\
+		\pcind\text{step 3} 
+	}
+	\end{bbrbox}
+	\bbrinput{input}
+	\bbroutput{output}
+
+	\filldraw[fill=blue] (A.north) circle (4pt);
+	\filldraw[fill=blue] (A.west) circle (4pt);
+	\filldraw[fill=blue] (A.east) circle (4pt);
+	\filldraw[fill=blue] (A.south) circle (4pt);
+\end{bbrenv}
+\begin{lstlisting}
+\begin{bbrenv}{A}
+	\begin{bbrbox}[name=Box Name]
+	\pseudocode{
+		\text{step 1} \\
+		\text{step 2} \\
+		\pcfor \text{some condition} \pcdo \\
+		\pcind\text{step 3} 
+	}
+	\end{bbrbox}
+	\bbrinput{input}
+	\bbroutput{output}
+
+	\filldraw[fill=blue] (A.north) circle (4pt);
+	\filldraw[fill=blue] (A.west) circle (4pt);
+	\filldraw[fill=blue] (A.east) circle (4pt);
+	\filldraw[fill=blue] (A.south) circle (4pt);
+\end{bbrenv}
+\end{lstlisting}
+
+The \enquote{bbrbox} takes as single argument a comma separated list of key value pairs. In the example we have used
+\begin{lstlisting}
+name=Box Name
+\end{lstlisting}
+to specify the label. The following options are available
+
+\index{namepos}
+\index{namestyle}
+\index{abovesep}
+\index{minheight}
+\index{xshift}
+\index{yshift}
+\begin{center}
+\begin{tabular}{ll}
+\textbf{Option} & \textbf{Description} \\ \hline
+name & Specifies the box's label \\
+namepos & Specifies the position (left, center, right, top left, top center, top right, middle) \\
+namestyle & Specifies the style of the name \\
+abovesep & Space above box (defaults to \lstinline$\baselineskip$) \\
+minheight & The minimal height \\
+addheight & Additional height at the end of the box \\
+xshift & Allows horizontal positioning \\
+yshift & Allows horizontal positioning \\
+style & allows to customize the node
+\end{tabular}
+\end{center}
+
+
+\section{Nesting of Boxes}
+Boxes can be nested. For this simply insert a bbrenv (together with a single bbrbox) environment into an
+existing bbrbox.
+
+\begin{bbrenv}[1cm]{A}[0.5cm]
+	\begin{bbrbox}[name=Box Name]
+	\pseudocode{
+		\text{step 1} \\
+		\text{step 2} \\
+		\pcfor \text{some condition} \pcdo \\
+		\pcind\text{step 3} 
+	}
+
+	\begin{bbrenv}{B}
+		\begin{bbrbox}[name=Inner Box]
+		\pseudocode{
+			\text{inner step 1} \\
+			\text{inner step 2} 
+		}
+		\end{bbrbox}
+	\end{bbrenv}
+
+	\pseudocode{
+		\text{step 4} \\
+		\text{step 5} 
+	}
+	\end{bbrbox}
+	\bbrinput{input}
+	\bbroutput{output}
+\end{bbrenv}
+
+\begin{lstlisting}
+\begin{bbrenv}{A}
+	\begin{bbrbox}[name=Box Name]
+	\pseudocode{
+		\text{step 1} \\
+		\text{step 2} \\
+		\pcfor \text{some condition} \pcdo \\
+		\pcind\text{step 3} 
+	}
+
+	\begin{bbrenv}{B}
+		\begin{bbrbox}[name=Inner Box]
+		\pseudocode{
+			\text{inner step 1} \\
+			\text{inner step 2} 
+		}
+		\end{bbrbox}
+	\end{bbrenv}
+
+	\pseudocode{
+		\text{step 4} \\
+		\text{step 5} 
+	}
+	\end{bbrbox}
+	\bbrinput{input}
+	\bbroutput{output}
+\end{bbrenv}
+\end{lstlisting}
+
+\section{Messages and Queries}
+\index{\textbackslash bbrmsgto}
+\index{\textbackslash bbrmsgfrom}
+\index{\textbackslash bbrqryto}
+\index{\textbackslash bbrqryfrom}
+
+You can send messages and queries to boxes. For this use the commands 
+\begin{lstlisting}
+\bbrmsgto{options}
+\bbrmsgfrom{options}
+\bbrqryto{options}
+\bbrqryfrom{options}
+\end{lstlisting}
+By convention messages are on the left of boxes and queries on the right. Commands ending on to
+make an arrow to the right while commands ending on from make an arrow to the left. The \emph{options}
+define how the message is drawn and consists of a key-value pairs separated by \enquote{,}.
+
+For example, to draw a message with a label on top and on the side use
+\begin{lstlisting}
+\bbrmsgto{top=Top Label, side=Side Label}
+\end{lstlisting}
+If your label contains a \enquote{,} (comma), then group the label in $\{\}$ (curly brackets).
+\begin{lstlisting}
+\bbrmsgto{top=Top Label, side={Side, Label}}
+\end{lstlisting}
+
+Following is a complete example. Notice that cryptocode takes care of the vertical positioning.
+
+\begin{bbrenv}[1cm]{A}[0.5cm]
+	\begin{bbrbox}[name=Box Name]
+	\pseudocode{
+		\text{step 1} \\
+		\text{step 2} \\
+		\pcfor \text{some condition} \pcdo \\
+		\pcind\text{step 3} 
+	}
+
+	\begin{bbrenv}{B}
+		\begin{bbrbox}[name=Inner Box]
+		\pseudocode{
+			\text{inner step 1} \\
+			\text{inner step 2} 
+		}
+		\end{bbrbox}
+		
+		\bbrmsgto{top={$m_0,m_1$}}
+		\bbrmsgfrom{top=$q$}
+
+
+		\bbrqryto{top={$m_0,m_1$}}
+		\bbrqryfrom{top=$q$}
+
+	\end{bbrenv}
+
+	\pseudocode{
+		\text{step 4} \\
+		\text{step 5} 
+	}
+	\end{bbrbox}
+	\bbrinput{input}
+	\bbroutput{output}
+\end{bbrenv}
+
+\begin{lstlisting}
+\begin{bbrenv}{A}
+	\begin{bbrbox}[name=Box Name]
+	\pseudocode{
+		\text{step 1} \\
+		\text{step 2} \\
+		\pcfor \text{some condition} \pcdo \\
+		\pcind\text{step 3} 
+	}
+
+	\begin{bbrenv}{B}
+		\begin{bbrbox}[name=Inner Box]
+		\pseudocode{
+			\text{inner step 1} \\
+			\text{inner step 2} 
+		}
+		\end{bbrbox}
+		
+		\bbrmsgto{top={$m_0,m_1$}}
+		\bbrmsgfrom{top=$q$}
+
+
+		\bbrqryto{top={$m_0,m_1$}}
+		\bbrqryfrom{top=$q$}
+
+	\end{bbrenv}
+
+	\pseudocode{
+		\text{step 4} \\
+		\text{step 5} 
+	}
+	\end{bbrbox}
+	\bbrinput{input}
+	\bbroutput{output}
+\end{bbrenv}
+\end{lstlisting}
+
+\subsection{Options}
+Besides specifying labels for top, side and bottom you can further specify how cryptocode renders the message.
+Remember that underneath the reduction commands is a TIKZ image (\url{https://www.ctan.org/pkg/pgf/}).
+For each label position (top, side, bottom) a node is generated. You can provide additional properties for
+this node using the options:
+\begin{itemize}
+\item topstyle
+\item sidestyle
+\item bottomstyle
+\end{itemize}
+You can additionally provide custom names for the nodes for later reference using
+\begin{itemize}
+\item topname
+\item sidename
+\item osidename
+\item bottomname
+\end{itemize}
+The \enquote{osidename} allows you to provide a name for the \enquote{other side}. 
+Via the option \enquote{length} you can specify the length of the arrow.
+
+
+\begin{bbrenv}[1cm]{A}[0.5cm]
+	\begin{bbrbox}[name=Box Name]
+	\pseudocode{
+		\text{step 1} \\
+		\text{step 2} \\
+		\pcfor \text{some condition} \pcdo \\
+		\pcind\text{step 3} 
+	}
+
+	\begin{bbrenv}{B}
+		\begin{bbrbox}[name=Inner Box]
+		\pseudocode{
+			\text{inner step 1} \\
+			\text{inner step 2} \\
+		}
+		\end{bbrbox}
+		
+		\bbrmsgto{top={$m_0,m_1$},side=Side Label, bottom=$b$, length=2cm,
+				  topstyle={draw, solid}, sidestyle={red}, bottomstyle={draw, dashed}}
+
+	\end{bbrenv}
+
+	\pseudocode{
+		\text{step 4} \\
+		\text{step 5} \\
+	}
+	\end{bbrbox}
+	\bbrinput{input}
+	\bbroutput{output}
+\end{bbrenv}
+
+\begin{lstlisting}
+\begin{bbrenv}{A}
+	\begin{bbrbox}[name=Box Name]
+	\pseudocode{
+		\text{step 1} \\
+		\text{step 2} \\
+		\pcfor \text{some condition} \pcdo \\
+		\pcind\text{step 3} 
+	}
+
+	\begin{bbrenv}{B}
+		\begin{bbrbox}[name=Inner Box]
+		\pseudocode{
+			\text{inner step 1} \\
+			\text{inner step 2} \\
+		}
+		\end{bbrbox}
+		
+		\bbrmsgto{top={$m_0,m_1$},side=Side Label, bottom=$b$, length=2cm,
+				  topstyle={draw, solid}, sidestyle={red}, bottomstyle={draw, dashed}}
+
+	\end{bbrenv}
+
+	\pseudocode{
+		\text{step 4} \\
+		\text{step 5} \\
+	}
+	\end{bbrbox}
+	\bbrinput{input}
+	\bbroutput{output}
+\end{bbrenv}
+\end{lstlisting}
+
+
+\subsection{Add Space}
+\index{\textbackslash bbrmsgspace}
+\index{\textbackslash bbrqryspace}
+If the spacing between messages is not sufficient you can use the \lstinline$bbrmsgspace$ and
+\lstinline$bbrqryspace$ commands to add additional space.
+
+\begin{bbrenv}[1cm]{A}[0.5cm]
+	\begin{bbrbox}[name=Reduction]
+	\pseudocode{
+		\text{Do something} 
+	}
+
+	\begin{bbrenv}{B}
+
+		\begin{bbrbox}[name=Adversary,minheight=3cm,xshift=4cm]
+
+		\end{bbrbox}
+		
+		\bbrmsgto{top=$m$}
+		\bbrmsgspace{1.5cm}
+		\bbrmsgfrom{top=$\sigma$}
+
+		\bbrqryto{top=$m$}
+		\bbrqryspace{1cm}
+		\bbrqryfrom{top=$\sigma$}
+
+	\end{bbrenv}
+
+	\end{bbrbox}
+	\bbrinput{input}
+	\bbroutput{output}
+\end{bbrenv}
+
+\begin{lstlisting}
+\begin{bbrenv}{A}
+	\begin{bbrbox}[name=Reduction]
+	\pseudocode{
+		\text{Do something} 
+	}
+
+	\begin{bbrenv}{B}
+
+		\begin{bbrbox}[name=Adversary,minheight=3cm,xshift=4cm]
+
+		\end{bbrbox}
+		
+		\bbrmsgto{top=$m$}
+		\bbrmsgspace{1.5cm}
+		\bbrmsgfrom{top=$\sigma$}
+
+		\bbrqryto{top=$m$}
+		\bbrqryspace{1cm}
+		\bbrqryfrom{top=$\sigma$}
+
+	\end{bbrenv}
+
+	\end{bbrbox}
+	\bbrinput{input}
+	\bbroutput{output}
+\end{bbrenv}
+\end{lstlisting}
+
+
+\subsection{Loops}
+\index{\textbackslash bbrloop}
+Often an adversary may send poly many queries to an oracle, or a reduction sends many queries to an adversary.
+Consider the following setting
+
+\begin{bbrenv}[1cm]{A}[0.5cm]
+	\begin{bbrbox}[name=Reduction]
+	\pseudocode{
+		\text{Do something} 
+	}
+
+	\begin{bbrenv}{B}
+
+		\begin{bbrbox}[name=Adversary,minheight=3cm,xshift=4cm]
+
+		\end{bbrbox}
+		
+		\bbrmsgto{top=$m$,sidename=BeginLoop}
+		\bbrmsgfrom{top=$\sigma$,sidename=EndLoop}
+
+	\end{bbrenv}
+
+	\end{bbrbox}
+	\bbrinput{input}
+	\bbroutput{output}
+\end{bbrenv}
+
+\begin{lstlisting}
+\begin{bbrenv}{A}
+	\begin{bbrbox}[name=Reduction]
+	\pseudocode{
+		\text{Do something} 
+	}
+
+	\begin{bbrenv}{B}
+
+		\begin{bbrbox}[name=Adversary,minheight=3cm,xshift=4cm]
+
+		\end{bbrbox}
+		
+		\bbrmsgto{top=$m$}
+		\bbrmsgfrom{top=$\sigma$}
+
+	\end{bbrenv}
+
+	\end{bbrbox}
+	\bbrinput{input}
+	\bbroutput{output}
+\end{bbrenv}
+\end{lstlisting}
+
+First note that by specifying the minheight and xshift option we shifted the adversary box a bit to the right
+and enlarged its box. Further we specified custom names for the node on the  side of the two messages. We
+can now use the \lstinline$bbrloop$ command to visualize that these two messages are exchanged $q$ many times
+\begin{lstlisting}
+\bbrloop{BeginLoop}{EndLoop}{center=$q$}
+\end{lstlisting}
+The \lstinline$bbrloop$ command takes two node names and a config which allows you to specify if the label is
+to be shown on the left, center or right. Here is the result.
+
+\begin{bbrenv}[1cm]{A}[0.5cm]
+	\begin{bbrbox}[name=Reduction]
+	\pseudocode{
+		\text{Do something} 
+	}
+
+	\begin{bbrenv}{B}
+
+		\begin{bbrbox}[name=Adversary,minheight=3cm,xshift=4cm]
+
+		\end{bbrbox}
+		
+		\bbrmsgto{top=$m$,sidename=BeginLoop}
+		\bbrmsgspace{0.5cm}
+		\bbrmsgfrom{top=$\sigma$,sidename=EndLoop}
+		\bbrloop{BeginLoop}{EndLoop}{center=$q$}
+
+	\end{bbrenv}
+
+	\end{bbrbox}
+	\bbrinput{input}
+	\bbroutput{output}
+\end{bbrenv}
+
+\begin{lstlisting}
+\begin{bbrenv}{A}
+	\begin{bbrbox}[name=Reduction]
+	\pseudocode{
+		\text{Do something} 
+	}
+
+	\begin{bbrenv}{B}
+
+		\begin{bbrbox}[name=Adversary,minheight=3cm,xshift=4cm]
+
+		\end{bbrbox}
+		
+		\bbrmsgto{top=$m$,sidename=BeginLoop}
+		\bbrmsgspace{0.5cm}
+		\bbrmsgfrom{top=$\sigma$,sidename=EndLoop}
+		\bbrloop{BeginLoop}{EndLoop}{center=$q$}
+
+	\end{bbrenv}
+
+	\end{bbrbox}
+	\bbrinput{input}
+	\bbroutput{output}
+\end{bbrenv}
+\end{lstlisting}
+
+\subsection{Intertext}
+\index{\textbackslash bbrmsgtxt}
+\index{\textbackslash bbrqrytxt}
+
+If your reduction needs to do some extra work between queries use the \lstinline$\bbrmsgtxt$
+and \lstinline$\bbrqrytxt$ commands.
+\begin{lstlisting}
+\bbrmsgtxt[options]{Text}
+\bbrqrytxt[options]{Text}
+\end{lstlisting}
+
+\begin{bbrenv}[1cm]{A}[0.5cm]
+	\begin{bbrbox}[name=Reduction]
+	\pseudocode{
+		\text{Do something} 
+	}
+
+	\begin{bbrenv}{B}
+
+		\begin{bbrbox}[name=Adversary,minheight=3cm,xshift=4cm]
+
+		\end{bbrbox}
+		
+		\bbrmsgto{top=$m$}
+		\bbrmsgtxt{\pseudocode{
+			do \\
+			some \\
+			work
+		}}
+		\bbrmsgfrom{top=$\sigma$}
+
+		\bbrqryto{top=$m$}
+		\bbrqrytxt[beforeskip=0.5cm,nodestyle={draw,dashed},xshift=2cm]{\pseudocode{
+			do \\
+			some \\
+			work
+		}}
+		\bbrqryfrom{top=$\sigma$}
+
+	\end{bbrenv}
+
+	\end{bbrbox}
+	\bbrinput{input}
+	\bbroutput{output}
+\end{bbrenv}
+
+\begin{lstlisting}
+\begin{bbrenv}{A}
+	\begin{bbrbox}[name=Reduction]
+	\pseudocode{
+		\text{Do something} 
+	}
+
+	\begin{bbrenv}{B}
+
+		\begin{bbrbox}[name=Adversary,minheight=3cm,xshift=4cm]
+
+		\end{bbrbox}
+		
+		\bbrmsgto{top=$m$}
+		\bbrmsgtxt{\pseudocode{
+			do \\
+			some \\
+			work
+		}}
+		\bbrmsgfrom{top=$\sigma$}
+
+		\bbrqryto{top=$m$}
+		\bbrqrytxt[beforeskip=0.5cm,nodestyle={draw,dashed},xshift=2cm]{\pseudocode{
+			do \\
+			some \\
+			work
+		}}
+		\bbrqryfrom{top=$\sigma$}
+
+	\end{bbrenv}
+
+	\end{bbrbox}
+	\bbrinput{input}
+	\bbroutput{output}
+\end{bbrenv}
+\end{lstlisting}
+
+\section{Oracles}
+\index{bbroracle}
+\index{hdistance}
+\index{vdistance}
+Each box can have one or more oracles which are drawn on the right hand side of the box. An oracle
+is created similarly to a \emph{bbrenv} environment using the \emph{bbroracle} environment. Oracles
+go behind the single \emph{bbrbox} environment within an \emph{bbrenv} enviornment.
+
+\begin{bbrenv}[1cm]{A}[0.5cm]
+	\begin{bbrbox}[name=Reduction]
+	\pseudocode{
+		\text{Do something} 
+	}
+
+	\begin{bbrenv}{B}
+		\begin{bbrbox}[name=Adversary,minheight=3cm,xshift=4cm]
+		\end{bbrbox}
+
+	\end{bbrenv}
+
+	\end{bbrbox}
+	\bbrinput{input}
+	\bbroutput{output}
+
+	\begin{bbroracle}{OraA}
+		\begin{bbrbox}[name=Oracle 1]
+		\end{bbrbox}
+	\end{bbroracle}
+
+	\begin{bbroracle}{OraB}[vdistance=2cm,hdistance=3cm]
+		\begin{bbrbox}[name=Oracle 2]
+		\end{bbrbox}
+	\end{bbroracle}
+\end{bbrenv}
+
+
+\begin{lstlisting}
+\begin{bbrenv}{A}
+	\begin{bbrbox}[name=Reduction]
+	\pseudocode{
+		\text{Do something} 
+	}
+
+	\begin{bbrenv}{B}
+		\begin{bbrbox}[name=Adversary,minheight=3cm,xshift=4cm]
+		\end{bbrbox}
+
+	\end{bbrenv}
+
+	\end{bbrbox}
+	\bbrinput{input}
+	\bbroutput{output}
+
+	\begin{bbroracle}{OraA}
+		\begin{bbrbox}[name=Oracle 1]
+		\end{bbrbox}
+	\end{bbroracle}
+
+	\begin{bbroracle}{OraB}[vdistance=2cm,hdistance=3cm]
+		\begin{bbrbox}[name=Oracle 2]
+		\end{bbrbox}
+	\end{bbroracle}
+\end{bbrenv}
+\end{lstlisting}
+Via the option \enquote{hdistance=length} and \enquote{vdistance=length} you can control the horizontal and vertical position of the oracle. By default this value is set to 1.5cm and \lstinline$\baselineskip$.
+
+
+\subsection{Communicating with Oracles}
+\index{\textbackslash bbroracleqryfrom}
+\index{\textbackslash bbroracleqryto}
+As oracles use the \emph{bbrbox} environment we can directly use the established ways to send messages and
+queries to oracles. In addition you can use the \lstinline$\bbroracleqryfrom$ and \lstinline$\bbroracleqryto$.
+\begin{lstlisting}
+\bbroracleqryfrom{options}
+\bbroracleqryto{options}
+\end{lstlisting}
+Here options allow you to specify where the label goes (top, bottom). In addition you can use
+\lstinline$\bbroracleqryspace$ to generate extra space between oracle messages. Note
+that oracle messages need to be added after the closing \lstinline$\end{bbroracle}$ command.
+
+\begin{bbrenv}[1cm]{A}[0.5cm]
+	\begin{bbrbox}[name=Reduction]
+	\pseudocode{
+		\text{Do something} 
+	}
+
+	\begin{bbrenv}{B}
+		\begin{bbrbox}[name=Adversary,minheight=3cm,xshift=3cm]
+		\end{bbrbox}
+
+	\end{bbrenv}
+
+	\end{bbrbox}
+	\bbrinput{input}
+	\bbroutput{output}
+
+	\begin{bbroracle}{OraA}
+		\begin{bbrbox}[name=Oracle 1,minheight=1cm]
+		\end{bbrbox}
+	\end{bbroracle}
+	\bbroracleqryfrom{top=$m$}
+	\bbroracleqryto{top=$b$}
+
+	\begin{bbroracle}{OraB}
+		\begin{bbrbox}[name=Oracle 2,minheight=1cm]
+		\end{bbrbox}
+	\end{bbroracle}
+	\bbroracleqryfrom{bottom=$m$}
+	\bbroracleqryto{bottom=$b$}
+\end{bbrenv}
+
+\begin{lstlisting}
+\begin{bbrenv}{A}
+	\begin{bbrbox}[name=Reduction]
+	\pseudocode{
+		\text{Do something} 
+	}
+
+	\begin{bbrenv}{B}
+		\begin{bbrbox}[name=Adversary,minheight=3cm,xshift=3cm]
+		\end{bbrbox}
+
+	\end{bbrenv}
+
+	\end{bbrbox}
+	\bbrinput{input}
+	\bbroutput{output}
+
+	\begin{bbroracle}{OraA}
+		\begin{bbrbox}[name=Oracle 1,minheight=1cm]
+		\end{bbrbox}
+	\end{bbroracle}
+	\bbroracleqryfrom{top=$m$}
+	\bbroracleqryto{top=$b$}
+
+	\begin{bbroracle}{OraB}
+		\begin{bbrbox}[name=Oracle 2,minheight=1cm]
+		\end{bbrbox}
+	\end{bbroracle}
+	\bbroracleqryfrom{bottom=$m$}
+	\bbroracleqryto{bottom=$b$}
+\end{bbrenv}
+\end{lstlisting}
+
+\section{Challengers}
+\index{bbrchallenger}
+\index{hdistance}
+\index{vdistance}
+Each box can have one or more challengers which are drawn on the left hand side of the box. Challengers
+behave identically to oracles with the exception that they are to the left of the box. A challenger
+is created similarly to a \emph{bbrenv} environment using the \emph{bbrchallenger} environment. Challengers
+go behind the single \emph{bbrbox} environment within an \emph{bbrenv} enviornment.
+
+\begin{bbrenv}[1cm]{A}[0.5cm]
+	\begin{bbrbox}[name=Adversary,minheight=2cm]
+	\pseudocode{
+		\text{Do something} 
+	}
+
+	\end{bbrbox}
+	\bbrinput{input}
+	\bbroutput{output}
+
+	\begin{bbrchallenger}{ChaA}
+		\begin{bbrbox}[name=Challenger,minheight=2cm]
+		
+		\end{bbrbox}
+	\end{bbrchallenger}
+\end{bbrenv}
+
+
+\begin{lstlisting}
+\begin{bbrenv}{A}
+	\begin{bbrbox}[name=Adversary,minheight=2cm]
+	\pseudocode{
+		\text{Do something} 
+	}
+
+	\end{bbrbox}
+	\bbrinput{input}
+	\bbroutput{output}
+
+	\begin{bbrchallenger}{ChaA}
+		\begin{bbrbox}[name=Challenger,minheight=2cm]
+		
+		\end{bbrbox}
+	\end{bbrchallenger}
+\end{bbrenv}
+\end{lstlisting}
+Via the option \enquote{hdistance=length} and \enquote{vdistance=length} you can control the horizontal and vertical position of the challenger. By default this value is set to 1.5cm and \lstinline$\baselineskip$.
+
+
+\subsection{Communicating with Challengers}
+\index{\textbackslash bbrchallengerqryfrom}
+\index{\textbackslash bbrchallengerqryto}
+As challengers use the \emph{bbrbox} environment we can directly use the established ways to send messages and
+queries to oracles. In addition you can use the \lstinline$\bbrchallengerqryfrom$ and \lstinline$\bbrchallengerqryto$.
+\begin{lstlisting}
+\bbrchallengerqryfrom{options}
+\bbrchallengerqryto{options}
+\end{lstlisting}
+Here options allow you to specify where the label goes (top, bottom). In addition you can use
+\lstinline$\bbrchallengerqryspace$ to generate extra space between oracle messages. Note
+that challenger messages need to be added after the closing \lstinline$\end{bbrchallenger}$ command.
+
+\vspace{2em}
+\begin{bbrenv}[1cm]{A}[0.5cm]
+	\begin{bbrbox}[name=Adversary,minheight=2cm]
+	\pseudocode{
+		\text{Do something} 
+	}
+
+	\end{bbrbox}
+	\bbrinput{input}
+	\bbroutput{output}
+
+	\begin{bbrchallenger}{ChaA}
+		\begin{bbrbox}[name=Challenger,minheight=2cm]
+		
+		\end{bbrbox}
+	\end{bbrchallenger}
+
+	\bbrchallengerqryfrom{top=$m$}
+	\bbrchallengerqryto{bottom=$b$}
+\end{bbrenv}
+
+\begin{lstlisting}
+\begin{bbrenv}{A}
+	\begin{bbrbox}[name=Adversary,minheight=2cm]
+	\pseudocode{
+		\text{Do something} 
+	}
+
+	\end{bbrbox}
+	\bbrinput{input}
+	\bbroutput{output}
+
+	\begin{bbrchallenger}{ChaA}
+		\begin{bbrbox}[name=Challenger,minheight=2cm]
+		
+		\end{bbrbox}
+	\end{bbrchallenger}
+
+	\bbrchallengerqryfrom{top=$m$}
+	\bbrchallengerqryto{bottom=$b$}
+\end{bbrenv}
+\end{lstlisting}
+
+\section{Examples}
+A reduction for full domain hash.
+
+
+\begin{bbrenv}{Red}
+
+	\begin{bbrbox}[name=\textsc{Reduction }$\bdv$]
+
+		\pseudocode{
+			j \sample [q] 
+		}
+		
+		\vspace{2ex}
+		\emph{/* begin simulation */}
+		
+		\begin{bbrenv}{Adv}
+			\begin{bbrbox}[name=$\adv$,minheight=7.5cm,style={fill=black},namestyle={color=white},xshift=3cm,yshift=0.75cm]
+			\end{bbrbox}
+
+			\bbrinput{$\fk$}
+			\bbroutput{$\sigma$}			
+			
+			\bbrmsgfrom{top=$m_1$}
+			\bbrmsgto{bottom=$\$$,beforeskip=-0.5\baselineskip,afterskip=-0.5\baselineskip}
+			
+			\bbrmsgvdots
+			
+			\bbrmsgfrom{top=$m_{j-1}$}
+			\bbrmsgto{bottom=$\$$,beforeskip=-0.5\baselineskip,afterskip=-0.5\baselineskip}
+			
+			\bbrmsgfrom{top=$m_j$}
+			\bbrmsgto{bottom=$y$,beforeskip=-0.5\baselineskip,afterskip=-0.5\baselineskip}
+
+			\bbrmsgfrom{top=$m_{j+1}$}
+			\bbrmsgto{bottom=$\$$,beforeskip=-0.5\baselineskip,afterskip=-0.5\baselineskip}
+
+			\bbrmsgvdots
+			
+			\bbrmsgfrom{top=$m_q$}
+			\bbrmsgto{bottom=$\$$,beforeskip=-0.5\baselineskip,afterskip=-0.5\baselineskip}
+
+			\begin{bbroracle}{Sign}
+				\begin{bbrbox}[name=Sign,namepos=center,style={draw},minheight=1cm]
+				\end{bbrbox}
+			\end{bbroracle}
+
+			\bbroracleqryto{top=$m$}
+			\bbroracleqryfrom{top=$\sigma$}			
+
+		\end{bbrenv}
+		
+	
+		\pcdraw{
+			\node[left=2cm of Adv.north west] (startsim) {};
+			\node[left=2cm of Adv.south west] (endsim) {};			
+			\draw[->,thick] (startsim) -- (endsim);
+			\node[rotate=90, left=2.75cm of Adv.west,anchor=center] () {\textsc{Simulation of Random Oracle}};
+		}
+		
+		\vspace{-3ex}
+		\emph{/* end simulation */}
+		
+		\pseudocode{
+		 y \gets \sigma
+		}
+
+	\end{bbrbox}
+	\bbrqryfrom{beforeskip=0.25cm,top={$(\fk, y)$},side={\dbox{\pseudocode{
+	  \fk \sample \fash.\kgen(\secparam) \\ x \sample \bin^{\fash.\il(\secpar)} \\ y \gets \fash.\eval(\fk, x)} 
+	}}}
+	\bbrqryto{beforeskip=10.75cm,side=\pseudocode{y \in \fash^{-1}(\fk, x)}}
+\end{bbrenv}
+
+\begin{lstlisting}
+\begin{bbrenv}{Red}
+
+	\begin{bbrbox}[name=\textsc{Reduction }$\bdv$]
+
+		\pseudocode{
+			j \sample [q] 
+		}
+		
+		\vspace{2ex}
+		\emph{/* begin simulation */}
+		
+		\begin{bbrenv}{Adv}
+			\begin{bbrbox}[name=$\adv$,minheight=7.5cm,style={fill=black},namestyle={color=white},xshift=3cm,yshift=0.75cm]
+			\end{bbrbox}
+
+			\bbrinput{$\fk$}
+			\bbroutput{$\sigma$}			
+			
+			\bbrmsgfrom{top=$m_1$}
+			\bbrmsgto{bottom=$\$$,beforeskip=-0.5\baselineskip,afterskip=-0.5\baselineskip}
+			
+			\bbrmsgvdots
+			
+			\bbrmsgfrom{top=$m_{j-1}$}
+			\bbrmsgto{bottom=$\$$,beforeskip=-0.5\baselineskip,afterskip=-0.5\baselineskip}
+			
+			\bbrmsgfrom{top=$m_j$}
+			\bbrmsgto{bottom=$y$,beforeskip=-0.5\baselineskip,afterskip=-0.5\baselineskip}
+
+			\bbrmsgfrom{top=$m_{j+1}$}
+			\bbrmsgto{bottom=$\$$,beforeskip=-0.5\baselineskip,afterskip=-0.5\baselineskip}
+
+			\bbrmsgvdots
+			
+			\bbrmsgfrom{top=$m_q$}
+			\bbrmsgto{bottom=$\$$,beforeskip=-0.5\baselineskip,afterskip=-0.5\baselineskip}
+
+			\begin{bbroracle}{Sign}
+				\begin{bbrbox}[name=Sign,namepos=center,style={draw},minheight=1cm]
+				\end{bbrbox}
+			\end{bbroracle}
+
+			\bbroracleqryto{top=$m$}
+			\bbroracleqryfrom{top=$\sigma$}			
+
+		\end{bbrenv}
+		
+	
+		\pcdraw{
+			\node[left=2cm of Adv.north west] (startsim) {};
+			\node[left=2cm of Adv.south west] (endsim) {};			
+			\draw[->,thick] (startsim) -- (endsim);
+			\node[rotate=90, left=2.75cm of Adv.west,anchor=center] () {\textsc{Simulation of Random Oracle}};
+		}
+		
+		\vspace{-3ex}
+		\emph{/* end simulation */}
+		
+		\pseudocode{
+		 y \gets \sigma
+		}
+
+	\end{bbrbox}
+	\bbrqryfrom{beforeskip=0.25cm,top={$(\fk, y)$},side={\dbox{\pseudocode{
+	  \fk \sample \fash.\kgen(\secparam) \\ x \sample \bin^{\fash.\il(\secpar)} \\ y \gets \fash.\eval(\fk, x)} 
+	}}}
+	\bbrqryto{beforeskip=10.75cm,side=\pseudocode{y \in \fash^{-1}(\fk, x)}}
+\end{bbrenv}
+\end{lstlisting}
+
+
+\chapter{Known Issues}
+
+\section{Pseudocode KeepSpacing within Commands}
+\label{sec:keepindent-problem}
+\index{\textbackslash fbox}
+\index{framebox}
+The \enquote{space=keep} option of pseudocode which should output spacing identical to that of the input 
+will fail, if the pseudocode command is called from within another command. An example is to
+wrap the \lstinline$\pseudocode$ command with an \lstinline$\fbox$. As a workaround for generating frame boxes you should hence
+use a package such as \emph{mdframed} (\url{https://www.ctan.org/pkg/mdframed}) which provides a frame environment.
+
+\begin{mdframed}
+\pseudocode[space=keep,mode=text]{        Pseudocode                with         - spaces -}
+\end{mdframed}
+\begin{lstlisting}
+\pseudocode[space=keep,mode=text]{        Pseudocode                with         - spaces -}
+\end{lstlisting}
+
+As an alternative you could use a \emph{savebox} (in combination with the \lstinline$lrbox$ environment):
+ 
+\newsavebox{\mypcbox}
+\begin{lrbox}{\mypcbox}%
+\pseudocode[space=keep,mode=text]{        Pseudocode                with         - spaces -}%
+\end{lrbox}
+\fbox{\usebox{\mypcbox}}
+
+\begin{lstlisting}
+\newsavebox{\mypcbox}
+\begin{lrbox}{\mypcbox}%
+\pseudocode[space=keep,mode=text]{        Pseudocode                with         - spaces -}%
+\end{lrbox}
+\fbox{\usebox{\mypcbox}}
+\end{lstlisting}
+
+\section{AMSFonts}
+\index{amsfonts}
+\index{noamsfonts|see {package options}}
+\index{package options!noamsfonts}
+Some packages are not happy with the \enquote{amsfonts} package. Cryptocode will attempt to load amsfonts if it is loaded
+with either the \enquote{sets} or the \enquote{probability} option. In order to not load amsfonts you can additionally add the
+\enquote{noamsfonts} at the very end. Note that in this case you should ensure that the command \lstinline$\mathbb$ is defined
+as this is used by most of the commands in \enquote{sets} and some of the commands in \enquote{probability}.
+
+\section{Hyperref}
+The hyperref package (\url{https://www.ctan.org/pkg/hyperref}) should be loaded before cryptocode. If this is not possible
+call the \lstinline$\pcfixhyperref$ after \lstinline$\begin{document}$. 
+
+\printindex
+
+
+
+\end{document}
+

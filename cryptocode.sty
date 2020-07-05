@@ -1,0 +1,2040 @@
+ %% Copyright 2018 Arno Mittelbach
+  %
+  % This work may be distributed and/or modified under the
+  % conditions of the LaTeX Project Public License, either version 1.3
+  % of this license or (at your option) any later version.
+  % The latest version of this license is in
+  %   http://www.latex-project.org/lppl.txt
+  % and version 1.3 or later is part of all distributions of LaTeX
+  % version 2005/12/01 or later.
+  %
+  % This work has the LPPL maintenance status `maintained'.
+  % 
+  % The Current Maintainer of this work is Arno Mittelbach.
+  %
+  % This work consists of the files cryptocode.tex and cryptocode.sty
+  %
+  % Changelog
+  %
+  % 2016/11/30
+  % - changed \pckeystyle to ensure that subscripts on \sk and \pk are aligned the same 
+  %   before, $(\sk_R, \pk_R)$ had slightly misaligned subscripts due to Tex treating 
+  %   subscripts on composite objects with descenders differently than without.
+  %   see https://groups.google.com/forum/#!msg/comp.text.tex/IaXu_xBG06Q/CibRPH5GCAAJ
+  % - added \NAND
+  % - added pcmbox environment for matrices in pseudocode
+  %
+  % 2016/12/02
+  % - changed minheight for bbrbox environment to actually reflect a minimum height in tikz
+  %   the old minheight which added space at the bottom was preserved as addheight
+  % - added namepos middle for bbrbox
+  % - added pcfail
+  % - added valign to pseudocode to allow minipage vertical alignment
+  % - added \setgameproceduredefaultstyle
+  % - ensure line numbers are right aligned to allow for two digit linenumbers having the same width
+  %
+  % 2017/08/26
+  % - added \pcabort
+  % - better control whitespace for \pcif, \pcelse, \pcelseif
+  %
+  % 2017/10/02
+  % - side and oside support to \bbroracleqryto and \bbroracleqryfrom
+  % - add bottom to namepos in bbrbox
+  % - names for brrinput and bbroutput
+  % - angle for bbrloop
+  % - fix length for bbrinput
+  % - introduce hoffset for bbrinput
+  % 
+  % 2017/12/21
+  % - added \pcunless
+  %
+  % 2018/11/11
+  % replace obsolete l3regex
+  %
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{cryptocode}
+  [2018/11/11 v0.3.0 Cryptocode LaTeX package for typesetting pseudocode, algorithms and protocols as well as cryptographic proofs.]
+
+
+\def\hi{Hello, this is cryptocode.}
+\let\myDate\date
+
+\RequirePackage{amsmath}
+\RequirePackage{mathtools}
+%\usepackage{l3tl-analysis} % uncomment for debugging
+
+%%%
+% option modes
+\newif\ifpc@orderofgrowth
+\newif\ifpc@algorithmstyle
+\newif\ifpc@amsfonts
+\newif\ifpc@advantage
+\newif\ifpc@primitives
+
+%%%
+% 
+\DeclareOption{operators}{
+	\providecommand{\sample}{\hskip2.3pt{\gets\!\!\mbox{\tiny${\$}$\normalsize}}\,}
+	
+	\providecommand{\floor}[1]{\ensuremath{\left\lfloor #1\right\rfloor}}
+	\providecommand{\ceil}[1]{\ensuremath{\left\lceil #1\right\rceil}}
+	\providecommand{\Angle}[1]{\ensuremath{\left\langle #1\right\rangle}}
+	\providecommand{\abs}[1]{\ensuremath{\left\lvert #1 \right\rvert}}
+	\providecommand{\norm}[1]{\ensuremath{\left\|#1\right\|}}
+	\providecommand{\concat}{\ensuremath{\|}}
+	
+	\providecommand{\emptystring}{\ensuremath{\varepsilon}}
+}
+
+\DeclareOption{adversary}{
+	\providecommand{\pcadvstyle}[1]{\mathcal{#1}}
+	
+	\providecommand{\adv}{\ensuremath{\pcadvstyle{A}}}
+	\providecommand{\bdv}{\ensuremath{\pcadvstyle{B}}}
+	\providecommand{\cdv}{\ensuremath{\pcadvstyle{C}}}
+	\providecommand{\ddv}{\ensuremath{\pcadvstyle{D}}}
+	\providecommand{\mdv}{\ensuremath{\pcadvstyle{M}}}
+	\providecommand{\pdv}{\ensuremath{\pcadvstyle{P}}}
+	\providecommand{\rdv}{\ensuremath{\pcadvstyle{R}}}
+	\providecommand{\sdv}{\ensuremath{\pcadvstyle{S}}}
+}
+
+\DeclareOption{landau}{
+	\pc@orderofgrowthtrue
+	
+	\providecommand{\bigO}[1]{\ensuremath{\mathcal{O}\olrk{#1}}}
+        \providecommand{\smallO}[1]{\ensuremath{\text{o}\olrk{#1}}}
+        \providecommand{\bigOmega}[1]{\ensuremath{\Omega\olrk{#1}}}
+        \providecommand{\smallOmega}[1]{\ensuremath{\omega\olrk{#1}}}
+        \providecommand{\bigsmallO}[1]{\ensuremath{\Theta\olrk{#1}}}
+}
+
+\DeclareOption{probability}{
+	\pc@orderofgrowthtrue
+	\pc@amsfontstrue
+
+	\providecommand{\probname}{Pr}
+	\providecommand{\expectationname}{\ensuremath{\mathbb{E}}}
+	\providecommand{\supportname}{Supp}
+
+	\providecommand{\prob}[1]{\ensuremath{\operatorname{\probname}\elrk{#1}}}
+	\providecommand{\probsub}[2]{\ensuremath{\operatorname{\probname}_{#1}\elrk{#2}}}
+	\providecommand{\condprob}[2]{\ensuremath{\prob{#1\,\left|\,#2\vphantom{#1}\right.}}}
+	\providecommand{\condprobsub}[3]{\ensuremath{\probsub{#1}{#2\,\left|\,#3\vphantom{#1}\right.}}}
+   
+	\providecommand{\expect}[1]{\ensuremath{\operatorname{\expectationname}\elrk{#1}}}
+	\providecommand{\expsub}[2]{\ensuremath{\operatorname{\expectationname}_{#1}\elrk{#2}}}
+	\providecommand{\condexp}[2]{\ensuremath{\expect{#1\,\left|\,#2\vphantom{#1}\right.}}}
+	\providecommand{\condexpsub}[3]{\ensuremath{\expsub{#1}{#2\,\left|\,#3\vphantom{#1}\right.}}}
+
+	\providecommand{\supp}[1]{  \ensuremath{\operatorname{Supp}\olrk{#1}}}
+	
+	\providecommand{\entropy}[1]{\ensuremath{\operatorname{H}\olrk{#1}}}
+   	\providecommand{\condentropy}[2]{\ensuremath{\operatorname{H}\olrk{#1\,\left|\,#2\vphantom{#1}\right.}}}    	
+	\providecommand{\minentropy}[1]{\ensuremath{\operatorname{H_\infty}\olrk{#1}}}
+    	\providecommand{\condminentropy}[2]{\ensuremath{\operatorname{H_\infty}\olrk{#1\,\left|\,#2\vphantom{#1}\right.}}}    
+    	\providecommand{\condavgminentropy}[2]{\ensuremath{\operatorname{\tilde{H}_\infty}\olrk{#1\,\left|\,#2\vphantom{#1}\right.}}}        	
+}
+
+\DeclareOption{sets}{
+        \pc@orderofgrowthtrue
+        \pc@amsfontstrue
+
+        \providecommand\NN{\mathbb{N}}
+        \providecommand\ZZ{\mathbb{Z}}
+        \providecommand\CC{\mathbb{C}}
+        \providecommand\QQ{\mathbb{Q}}
+        \providecommand\RR{\mathbb{R}}
+        \providecommand\PP{\mathbb{P}}
+        \providecommand\FF{\mathbb{F}}
+        \providecommand\GG{\mathbb{G}}            
+
+        \providecommand{\set}[1]{\ensuremath{\clrk{#1}}}
+	\providecommand{\sequence}[1]{\ensuremath{\olrk{#1}}}
+	\providecommand{\bin}{\ensuremath{\{0,1\}}}
+}
+
+\DeclareOption{noamsfonts}{
+	\pc@amsfontsfalse
+}
+
+
+\DeclareOption{notions}{
+	\providecommand{\pcnotionstyle}[1]{\ensuremath{\mathrm{#1}}}
+		
+	\providecommand{\indcpa}{\pcnotionstyle{IND\pcmathhyphen{}CPA}}
+	\providecommand{\indcca}{\pcnotionstyle{IND\pcmathhyphen{}CCA}}
+	\providecommand{\indccai}{\pcnotionstyle{IND\pcmathhyphen{}CCA1}}
+	\providecommand{\indccaii}{\pcnotionstyle{IND\pcmathhyphen{}CCA2}}
+	\providecommand{\priv}{\pcnotionstyle{PRIV}}
+	\providecommand{\ind}{\pcnotionstyle{IND}}
+	\providecommand{\indcda}{\pcnotionstyle{IND\pcmathhyphen{}CDA}}
+	\providecommand{\prvcda}{\pcnotionstyle{PRV\pcmathhyphen{}CDA}}
+	\providecommand{\prvrcda}{\pcnotionstyle{PRV\$\pcmathhyphen{}CDA}}
+	\providecommand{\kiae}{\pcnotionstyle{KIAE}}
+	\providecommand{\kdae}{\pcnotionstyle{KDAE}}
+	\providecommand{\mle}{\pcnotionstyle{MLE}}	
+	\providecommand{\uce}{\pcnotionstyle{UCE}}
+}
+
+\DeclareOption{logic}{
+        \providecommand{\AND}{\ensuremath{\mathrm{AND}}}
+        \providecommand{\OR}{\ensuremath{\mathrm{OR}}}
+        \providecommand{\NOR}{\ensuremath{\mathrm{NOR}}}
+        \providecommand{\NOT}{\ensuremath{\mathrm{NOT}}}
+        \providecommand{\NAND}{\ensuremath{\mathrm{NAND}}}        
+		\providecommand{\XOR}{\ensuremath{\mathrm{XOR}}}		
+		\providecommand{\XNOR}{\ensuremath{\mathrm{XNOR}}}		
+		\providecommand{\xor}{\ensuremath{\oplus}}        
+        \providecommand{\false}{\mathsf{false}} 
+        \providecommand{\true}{\mathsf{true}}
+}
+
+
+% Function Families
+\DeclareOption{ff}{
+	\pc@algorithmstyletrue
+
+	\providecommand{\kgen}{\pcalgostyle{KGen}}
+	\providecommand{\pgen}{\pcalgostyle{Pgen}}
+	\providecommand{\eval}{\pcalgostyle{Eval}}
+	\providecommand{\invert}{\pcalgostyle{Inv}}	
+	
+	\providecommand{\il}{\pcalgostyle{il}}
+	\providecommand{\ol}{\pcalgostyle{ol}}
+	\providecommand{\kl}{\pcalgostyle{kl}}
+	\providecommand{\nl}{\pcalgostyle{nl}}
+	\providecommand{\rl}{\pcalgostyle{rl}}
+}
+
+% Machine Model
+\DeclareOption{mm}{
+	\pc@algorithmstyletrue
+	
+	\providecommand{\pcmachinemodelstyle}[1]{\ensuremath{\mathsf{#1}}}
+
+        \providecommand{\CRKT}{\pcmachinemodelstyle{C}}
+        \providecommand{\TM}{\pcmachinemodelstyle{M}}
+        \providecommand{\PROG}{\pcmachinemodelstyle{P}}
+        
+        \providecommand{\uTM}{\pcmachinemodelstyle{UM}}
+        \providecommand{\uC}{\pcmachinemodelstyle{UC}}
+        \providecommand{\uP}{\pcmachinemodelstyle{UEval}}
+
+        \providecommand{\csize}{\pcmachinemodelstyle{size}}        
+        \providecommand{\tmtime}{\pcmachinemodelstyle{time}}
+        \providecommand{\ppt}{\pcalgostyle{PPT}}
+}
+
+\DeclareOption{advantage}{
+	\pc@advantagetrue
+}
+
+\DeclareOption{primitives}{
+	\pc@primitivestrue
+	\pc@algorithmstyletrue
+}
+
+\DeclareOption{events}{
+	\providecommand{\event}[1]{\ensuremath{\mathsf{#1}}}
+	\providecommand{\nevent}[1]{\ensuremath{\overline{\event{#1}}}}
+
+	\providecommand{\bad}{\ensuremath{\event{bad}}}
+}
+
+\DeclareOption{complexity}{
+	\providecommand{\pccomplexitystyle}[1]{\ensuremath{\mathsf{#1}}}
+
+	\providecommand{\npol}{\pccomplexitystyle{NP}}
+	\providecommand{\conpol}{\ensuremath{\mathsf{co}}\pccomplexitystyle{NP}}
+	\providecommand{\pol}{\pccomplexitystyle{P}}
+	\providecommand{\bpp}{\pccomplexitystyle{BPP}}
+	\providecommand{\ppoly}{\ensuremath{\pol/\mathrm{poly}}}
+
+	\providecommand{\AM}{\pccomplexitystyle{AM}}
+	\providecommand{\coAM}{\ensuremath{\mathsf{co}}\pccomplexitystyle{AM}}
+
+	\providecommand{\AC}[1]{\ensuremath{\ifthenelse{\equal{#1}{}}{\pccomplexitystyle{AC}}{\pccomplexitystyle{AC}^{#1}}}}
+	\providecommand{\NC}[1]{\ensuremath{\ifthenelse{\equal{#1}{}}{\pccomplexitystyle{NC}}{\pccomplexitystyle{NC}^{#1}}}}
+	\providecommand{\TC}[1]{\ensuremath{\ifthenelse{\equal{#1}{}}{\pccomplexitystyle{TC}}{\pccomplexitystyle{TC}^{#1}}}}
+}
+
+\DeclareOption{asymptotics}{
+	\pc@orderofgrowthtrue
+
+	\providecommand{\pcpolynomialstyle}[1]{\mathsf{#1}}
+	
+	\providecommand{\negl}[1][\secpar]{\ensuremath{\pcpolynomialstyle{negl}\ifthenelse{\equal{#1}{}}{}{\olrk{#1}}}}
+  	\providecommand{\poly}[1][\secpar]{\ensuremath{\pcpolynomialstyle{poly}\ifthenelse{\equal{#1}{}}{}{\olrk{#1}}}}
+	
+	\providecommand{\pp}{\ensuremath{\pcpolynomialstyle{p}}}
+	\providecommand{\qq}{\ensuremath{\pcpolynomialstyle{q}}}	
+}
+
+\DeclareOption{keys}{
+            \providecommand{\pckeystyle}[1]{\ensuremath{\mathsf{\protect\vphantom{p}#1}}}
+            
+            \providecommand{\pk}{\pckeystyle{pk}}
+            \providecommand{\vk}{\pckeystyle{vk}}
+            \providecommand{\sk}{\pckeystyle{sk}}
+            \providecommand{\key}{\pckeystyle{k}}
+            \providecommand{\hk}{\pckeystyle{hk}}
+            \providecommand{\gk}{\pckeystyle{gk}}
+            \providecommand{\fk}{\pckeystyle{fk}}
+            
+            \providecommand{\st}{\pckeystyle{st}}
+            \providecommand{\state}{\pckeystyle{state}}            
+}
+
+\DeclareOption{n}{
+	\providecommand{\secpar}{\ensuremath{n}}
+	\providecommand{\secparam}{\ensuremath{1^\secpar}}
+}
+
+\DeclareOption{lambda}{
+	\renewcommand{\secpar}{\ensuremath{\lambda}}
+	\renewcommand{\secparam}{\ensuremath{1^\secpar}}
+}
+
+\DeclareOption*{%
+	\PackageError{crypto code}{Unknown option ‘\CurrentOption’}%
+}
+
+\ExecuteOptions{n}
+
+\ProcessOptions\relax
+
+\RequirePackage{etex}
+
+%amsfonts
+\ifpc@amsfonts
+	\RequirePackage{amsfonts}
+\fi
+\RequirePackage{xcolor}
+\RequirePackage{calc}
+\RequirePackage{tikz}
+\usetikzlibrary{positioning,calc}
+\RequirePackage{ifthen}
+\RequirePackage{xargs}
+\RequirePackage{pgf}
+%\RequirePackage{mathabx}
+\RequirePackage{forloop}
+\RequirePackage{array}
+\RequirePackage{xparse}
+\RequirePackage{expl3}
+\RequirePackage{pbox}
+\RequirePackage{varwidth}
+\RequirePackage{suffix}
+\RequirePackage{etoolbox}
+\RequirePackage{environ}
+%\RequirePackage{xspace}
+\RequirePackage{xkeyval}
+
+\ifpc@advantage
+	\newcommand{\pcadvantagesuperstyle}[1]{\mathrm{\MakeLowercase{#1}}}
+	\newcommand{\pcadvantagesubstyle}[1]{#1}
+	\newcommandx*{\advantage}[3][3=(\secpar)]{\ensuremath{\mathsf{Adv}^{\pcadvantagesuperstyle{#1}}_{\pcadvantagesubstyle{#2}}#3}}
+\fi
+
+\ifpc@primitives	
+	% zero knowledge
+	\providecommand{\prover}{\pcalgostyle{P}}
+	\providecommand{\verifier}{\pcalgostyle{V}}
+	\providecommand{\nizk}{\pcalgostyle{NIZK}}
+	
+	% hash
+	\providecommand{\hash}{\pcalgostyle{H}}
+	\providecommand{\gash}{\pcalgostyle{G}}
+	\providecommand{\fash}{\pcalgostyle{F}}
+	
+	% encryption
+	\providecommand{\enc}{\pcalgostyle{Enc}}
+	\providecommand{\dec}{\pcalgostyle{Dec}}
+	
+	% signatures
+	\providecommand{\sig}{\pcalgostyle{Sig}}
+	\providecommand{\verify}{\pcalgostyle{Vf}}
+	
+	% obfuscation
+	\providecommand{\obf}{\pcalgostyle{O}}
+	\providecommand{\iO}{\pcalgostyle{iO}}
+	\providecommand{\diO}{\pcalgostyle{diO}}
+	
+	% PRF, PRG
+	\providecommand{\prf}{\pcalgostyle{PRF}}
+	\providecommand{\prg}{\pcalgostyle{PRG}}
+	
+	% Mac
+	\providecommand{\mac}{\pcalgostyle{MAC}}
+	
+	% puncture
+	\providecommand{\puncture}{\pcalgostyle{Puncture}}
+	
+	% Misc
+	\providecommand{\source}{\pcalgostyle{S}}
+	\providecommand{\predictor}{\pcalgostyle{P}}
+	\providecommand{\sam}{\pcalgostyle{Sam}}
+	\providecommand{\dist}{\pcalgostyle{D}}
+	\providecommand{\distinguisher}{\pcalgostyle{Dist}}
+	\providecommand{\simulator}{\pcalgostyle{Sim}}
+	\providecommand{\ext}{\pcalgostyle{Ext}}
+	\providecommand{\extractor}{\ext}	
+\fi
+
+%%
+% math hyphen
+\mathchardef\pcmathhyphen ="2D
+
+%%%
+% order of growth helper
+\ifpc@orderofgrowth
+\providecommand{\olrk}[1]{\ifx\nursymbol#1\else\!\!\mskip4.5mu plus 0.5mu\left(\mskip0.5mu plus0.5mu #1\mskip1.5mu plus0.5mu \right)\fi}
+
+\providecommand{\elrk}[1]{\ifx\nursymbol#1\else\!\!\mskip4.5mu plus0.5mu\left[\mskip0.5mu plus0.5mu #1\mskip1.5mu plus0.5mu \right]\fi}
+
+\providecommand{\clrk}[1]{\ifx\nursymbol#1\else\!\!\mskip4.5mu plus0.5mu\left\{\mskip0.5mu plus0.5mu #1\mskip1.5mu plus0.5mu \right\}\fi}
+\fi
+
+\ifpc@algorithmstyle
+	\providecommand{\pcalgostyle}[1]{\ensuremath{\mathsf{#1}}}
+\fi
+
+%%%
+% create command to measure width of align
+%
+\newcommand{\@settowidthofalign}[2]{%
+  \setbox\z@=\vbox{\@pseudocodecodesize
+    \begin{flalign*}
+    #2
+    \ifmeasuring@\else\global\let\got@maxcolwd\maxcolumn@widths\fi
+    \end{flalign*}
+  }%
+  \begingroup
+  \def\or{+}\edef\x{\endgroup#1=\dimexpr\got@maxcolwd\relax}\x}
+
+\newcommand{\@settowidthofaligned}[2]{%
+\settowidth{#1}{\@pseudocodesubcodesize$\begin{aligned}#2\end{aligned}$}}
+
+% check for draft mode
+\def\@pc@ifdraft{\ifdim\overfullrule>\z@
+  \expandafter\@firstoftwo\else\expandafter\@secondoftwo\fi}
+
+% run stuff in an empty box
+\newcommand{\@pcexecuteblindly}[1]{%
+ \setbox\z@=\vbox{#1 }}
+
+% copy label command
+\AtBeginDocument{
+	\let\pc@original@label\ltx@label
+}
+
+
+%%%%%%
+\newcommand*{\@pc@globaladdtolength}[2]{%
+\addtolength{#1}{#2}%
+\global#1=#1\relax}
+
+\newcommand*{\@pc@globalsetlength}[2]{%
+\setlength{#1}{#2}%
+\global#1=#1\relax}
+
+
+
+%%%%%
+% spaces before and after pseudo codes (left and right)
+\providecommand{\beforepcskip}{2pt}
+\providecommand{\afterpcskip}{0pt}
+
+%%%
+% a global counter of the number of times the pseudocode command was triggered
+\newcounter{@pc@global@pc@cnt}
+\newcounter{@pc@global@pc@nestcnt}
+
+%%%
+% Fix hyperref package.. gnarl http://tex.stackexchange.com/questions/130319/incompatibility-between-etoolbox-and-hyperref
+\providecommand{\pcfixhyperref}{
+\global\let\textlabel\label
+\global\let\pc@original@label\textlabel
+%\global\let\pc@original@label\relax
+%\global\let\label\relax
+}
+
+\newcounter{@spacecounter}
+\providecommand{\spacetoindent}{1}
+\newenvironment{@withspaces}
+ {\obeyspaces\begingroup\lccode`~=` \lowercase{\endgroup\let~}\ }
+ {}
+
+%%%%%%%%%%%%%%
+% a latex3 string substitution.
+\ExplSyntaxOn
+\tl_new:N \l_pc_strsub_input_tl
+\tl_new:N \l_pc_strsub_search_tl
+\tl_new:N \l_pc_strsub_replace_tl
+
+\NewDocumentCommand{\@pc@stringsubstitution}{mmm}
+ {
+  \tl_set:Nn \l_pc_strsub_input_tl { #1 }
+  \tl_set:Nn \l_pc_strsub_search_tl { #2 }
+  \tl_set:Nn \l_pc_strsub_replace_tl { #3 }
+%  \tl_show_analysis:N  \l_pc_strsub_input_tl % uncomment for debugging
+%  \tl_show_analysis:N  \l_pc_strsub_search_tl % uncomment for debugging
+%  \tl_show_analysis:N  \l_pc_strsub_replace_tl % uncomment for debugging
+   \regex_replace_all:nnN
+      { (\W)\u{l_pc_strsub_search_tl} } %only match if keyword does not have a word character preceding
+      { \1\u{l_pc_strsub_replace_tl} }
+      \l_pc_strsub_input_tl
+      %  \tl_show_analysis:N \l_tmpa_tl % uncomment for debugging
+      \tl_use:N \l_pc_strsub_input_tl    
+ }
+ 
+ % same as \@pc@stringsubstitution but without requiring the extra non word character
+ \NewDocumentCommand{\@pc@spacesubstitution}{mmm}
+ {
+  \tl_set:Nn \l_pc_strsub_input_tl { #1 }
+  \tl_set:Nn \l_pc_strsub_search_tl { #2 }
+  \tl_set:Nn \l_pc_strsub_replace_tl { #3 }
+%  \tl_show_analysis:N  \l_pc_strsub_input_tl % uncomment for debugging
+%  \tl_show_analysis:N  \l_pc_strsub_search_tl % uncomment for debugging
+%  \tl_show_analysis:N  \l_pc_strsub_replace_tl % uncomment for debugging
+   \regex_replace_all:nnN
+      { \u{l_pc_strsub_search_tl} } 
+      { \u{l_pc_strsub_replace_tl} }
+      \l_pc_strsub_input_tl
+      %  \tl_show_analysis:N \l_tmpa_tl % uncomment for debugging
+      \tl_use:N \l_pc_strsub_input_tl    
+ }
+ 
+\NewDocumentCommand{\@pc@centercolifnec}{m}%
+{%
+#1%
+}
+ 
+ 
+ 
+\ExplSyntaxOff
+
+%%%%%%%%
+% line numbers
+%%%%%%%%
+% The following commands handle line numbering within the pseudocode command. The
+% pseudocode command itself does need to do some counter magic
+\newcounter{pclinenumber}
+\newcounter{Hpclinenumber} % make hyperref happy
+\newcounter{@pclinenumber}
+\newcounter{H@pclinenumber} % make hyperref happy
+\newcounter{@pclinenumbertmp}
+\newcounter{pcgamecounter}
+\newcounter{Hpcgamecounter}
+\newcounter{pcrlinenumber}
+\newcounter{Hpcrlinenumber}
+\newcounter{@pcrlinenumbertmp}
+
+% separators
+\providecommand{\pclnseparator}{:}
+\providecommand{\pcrlnseparator}{\hspace{1pt}}
+
+% spacing for linenumbers
+\providecommand{\pclnspace}{0pt}
+\providecommand{\pclnrspace}{5pt}
+
+\renewcommand{\the@pclinenumber}{\thepclinenumber}
+\providecommand{\@pcln}{%
+\refstepcounter{@pclinenumber}%
+\stepcounter{H@pclinenumber}%
+}
+
+% left align line numbers
+\providecommand{\pcln}[1][]{%
+\refstepcounter{pclinenumber}%
+\stepcounter{Hpclinenumber}%
+\ifthenelse{\equal{#1}{}}{}{%
+%keep hyperref happy
+\ifmeasuring@\else\pc@original@label{#1}\fi%
+}%
+\ifthenelse{\value{pclinenumber}<10}{\hspace{1ex}}{}%
+\hspace{\pclnspace}\text{\scriptsize\arabic{pclinenumber}}\pclnseparator\quad}%
+
+% allow to skip numbering single lines if linenumbering=on 
+\providecommand{\pcnoln}{%
+}
+
+% right align line numbers (same counter)
+\providecommand{\pclnr}{%
+\refstepcounter{pclinenumber}%
+\quad\text{\scriptsize\pcrlnseparator\arabic{pclinenumber}}\hspace{5pt}}
+
+% right align line numbers different counter
+\providecommand{\pcrln}{
+\refstepcounter{pcrlinenumber}%
+\stepcounter{Hpcrlinenumber}%
+\text{\scriptsize\pcrlnseparator\arabic{pcrlinenumber}}\hspace{\pclnrspace}}
+
+
+%%%
+% indentation
+\newlength{\@pcindentwidth}
+\providecommand{\pcind}[1][1]{%
+\setlength{\@pcindentwidth}{\widthof{\ensuremath{\quad}}*#1}%
+\ensuremath{\mathmakebox[\@pcindentwidth]{}}}
+
+
+% create length
+\newlength{\@pc@minipage@length}
+\newlength{\@pc@alt@minipage@length}
+
+% backward games
+\newcommand{\@withingame}{false}
+\newcommand{\@withinbxgame}{false}
+\newcommand{\@bxgameheader}{}
+\newcommand{\@withingamedescription}{false}
+
+
+%%%%%%%%%%%%
+% The pseudocode Command
+%%%%%
+\newlength{\@pc@length@tmp@width@vstack}
+
+
+\newcommand{\@pc@beginnewline}{%
+\@pseudocodecodeatbeginline\@pseudocodelinenumber\@pc@and\@pcln%
+%checkspace
+\ifthenelse{\equal{\@pseudocodespace}{auto}}%
+{\expandafter\pcind\expandafter[\value{@pc@indentationlevel}]}%
+{}%
+%reset column counter
+\setcounter{pccolumncounter}{2}%
+%beginmode
+\@pc@modebegin}
+\newcommand{\@pc@and}{&}
+\newcommand{\@pc@and@wrap@end}{\@pc@modeend&\@pseudocodecodeatendline}
+\newcommand{\@pc@and@wrap@start}{\@pc@beginnewline}
+\newcommand{\pctabname}{>}
+\newcommand{\pcdbltabname}{<}
+\newcommand{\pcindentname}{t}
+
+
+
+\newcommand*\@pseudocodehead{}
+\newcommand*\@pseudocodewidth{}
+\newcommand*\@pseudocodexshift{0pt}
+\newcommand*\@pseudocodeyshift{0pt}
+\newcommand*\@pseudocodelinenumber{}
+\newcommand*\@pseudocodebeforeskip{0ex}
+\newcommand*\@pseudocodeafterskip{0ex}
+\newcommand*\@pseudocodelnstart{0}
+\newcommand*\@pseudocodelnstartright{0}
+\newcommand*\@pseudocodesyntaxhighlighting{}
+\newcommand*\@pseudocodenodraft{false}
+\newcommand*\@pseudocodecolspace{} % empty per default, use length,
+
+\newcommand*\@pseudocodeheadlinesep{0em}
+\newcommand*\@pseudocodebodylinesep{-0.5\baselineskip}
+
+\newcommand*\@pseudocodecolsep{0em}
+\newcommand*\@pseudocodeaddtolength{2pt}
+
+\newcommand*\@pseudocodecodeatbeginline{}
+\newcommand*\@pseudocodecodeatendline{}
+\newcommand*\@pseudocodecodejot{0em}
+\newcommand*\@pseudocodecodesize{\small}
+\newcommand*\@pseudocodesubcodesize{\footnotesize}
+
+\newcommand*\@pseudocodeminipagealign{t}
+
+%%%%%%%%%%%%%%
+% Define keywords for the automatic syntax highlighting
+% the accompanying add provides additional keywords.
+% The space version for automatic spacing
+\newcommand*\@pseudocodekeywordsindent{for ,foreach ,if ,repeat ,while }
+\newcommand*\@pseudocodekeywordsunindent{endfor,endforeach,fi,endif,until ,endwhile}
+\newcommand*\@pseudocodekeywordsuninindent{else if,elseif, else}
+\newcommand*\@pseudocodekeywords{return ,{ do }, in ,new ,null ,null,true ,true,{ to },false ,false,{ then },done ,done}
+\newcommand*\@pseudocodeaddkeywords{}
+\newcommand*\@pseudocodealtkeywords{}
+\begin{@withspaces}
+\global\def\@pseudocodekeywordsspace{for,endfor,foreach,endforeach,return,do,in,new,if,null,true,until,to,false,then,repeat,else if,elseif,while,endwhile,else,done,fi,endif}
+\end{@withspaces}
+
+
+\define@key{pseudocode}{beginline}[]{\renewcommand*\@pseudocodecodeatbeginline{#1}}
+\define@key{pseudocode}{endline}[]{\renewcommand*\@pseudocodecodeatendline{#1}}
+\define@key{pseudocode}{jot}[0em]{\renewcommand*\@pseudocodecodejot{#1}}
+\define@key{pseudocode}{codesize}[\small]{\renewcommand*\@pseudocodecodesize{#1}}
+\define@key{pseudocode}{subcodesize}[\small]{\renewcommand*\@pseudocodesubcodesize{#1}}
+\define@key{pseudocode}{head}[]{\renewcommand*\@pseudocodehead{#1}}
+\define@key{pseudocode}{width}[]{\renewcommand*\@pseudocodewidth{#1}}
+\define@key{pseudocode}{valign}[t]{\renewcommand*\@pseudocodeminipagealign{#1}}
+\define@key{pseudocode}{xshift}[]{\renewcommand*\@pseudocodexshift{#1}}
+\define@key{pseudocode}{yshift}[]{\renewcommand*\@pseudocodeyshift{#1}}
+\define@key{pseudocode}{colspace}[]{\renewcommand*\@pseudocodecolspace{#1}}
+\define@key{pseudocode}{linenumbering}[on]{\ifthenelse{\equal{#1}{on}}{\renewcommand*\@pseudocodelinenumber{\pcln}}{\renewcommand*\@pseudocodelinenumber{}}}
+\define@key{pseudocode}{beforeskip}[]{\renewcommand*\@pseudocodebeforeskip{#1}}
+\define@key{pseudocode}{afterskip}[]{\renewcommand*\@pseudocodeafterskip{#1}}
+\define@key{pseudocode}{lnstart}[0]{\renewcommand*\@pseudocodelnstart{#1}}
+\define@key{pseudocode}{lnstartright}[0]{\renewcommand*\@pseudocodelnstartright{#1}}
+\define@key{pseudocode}{colsep}[0em]{\renewcommand*\@pseudocodecolsep{#1}}
+\define@key{pseudocode}{headlinesep}[0em]{\renewcommand*\@pseudocodeheadlinesep{#1}}
+\define@key{pseudocode}{bodylinesep}[0em]{\renewcommand*\@pseudocodebodylinesep{#1}}
+\define@key{pseudocode}{addtolength}[2pt]{\renewcommand*\@pseudocodeaddtolength{#1}}
+\define@key{pseudocode}{mode}[math]{%
+\ifthenelse{\equal{#1}{text}}{%
+\renewcommand*\@pc@modebegin{\begin{varwidth}{\textwidth}%
+%introduce line magic for text mode
+\let\@pc@lb\\%
+\renewcommandx*{\\}[2][1=,2=]{\@pc@modeend\@pc@and \@pseudocodecodeatendline\ifthenelse{\equal{####1}{}}{\@pc@lb}{\@pc@lb[####1]}####2 \@pc@beginnewline}%
+\def\pclb{\let\\\@pc@lb\relax\@pc@modeend\\}%
+\def\pcolb{\let\\\@pc@lb\relax\@pc@modeend\\}%
+}%
+\renewcommand*\@pc@modeend{\end{varwidth}}
+}{}%
+}
+\define@key{pseudocode}{nodraft}[true]{\renewcommand*\@pseudocodenodraft{#1}}
+\define@key{pseudocode}{keywords}[]{\renewcommand*\@pseudocodekeywords{#1}}
+\define@key{pseudocode}{keywordsindent}[]{\renewcommand*\@pseudocodekeywordsindent{#1}}
+\define@key{pseudocode}{keywordsunindent}[]{\renewcommand*\@pseudocodekeywordsunindent{#1}}
+\define@key{pseudocode}{keywordsuninindent}[]{\renewcommand*\@pseudocodekeywordsuninindent{#1}}
+\define@key{pseudocode}{addkeywords}[]{\renewcommand*\@pseudocodeaddkeywords{#1}}
+\define@key{pseudocode}{altkeywords}[]{\renewcommand*\@pseudocodealtkeywords{#1}}
+\define@key{pseudocode}{syntaxhighlight}[]{\renewcommand*\@pseudocodesyntaxhighlighting{#1}}
+
+\newcommand{\@pc@modebegin}{}
+\newcommand{\@pc@modeend}{}
+\newcommand{\@pc@thecontent}{}
+
+\newcommand{\@pc@syntaxhighlight}[1]{%
+\ifthenelse{\equal{\@pseudocodesyntaxhighlighting}{auto}}{%
+\def\@shtmp{#1}% first step
+\ifthenelse{\equal{\@pseudocodespace}{keep}}
+   {\edef\@tmpkeywords{\@pseudocodekeywordsspace,\@pseudocodeaddkeywords}}
+   {\ifthenelse{\equal{\@pseudocodespace}{auto}}
+      {\edef\@tmpkeywords{\@pseudocodekeywords,\@pseudocodeaddkeywords}}
+      {\edef\@tmpkeywords{\@pseudocodekeywords,\@pseudocodekeywordsindent,\@pseudocodekeywordsunindent,\@pseudocodekeywordsuninindent,\@pseudocodeaddkeywords}}}
+\foreach \@pckw in \@tmpkeywords{%
+\ifthenelse{\equal{\@pckw}{}}{}{%
+% we are doing a simple strsub and storing the result (globally) in @shtmp
+\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter
+                 \gdef\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter
+                 \@shtmp\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter
+                {\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter
+                \@pc@stringsubstitution\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter
+                {\expandafter\expandafter\expandafter\@shtmp\expandafter\expandafter\expandafter
+                 }\expandafter\expandafter\expandafter{\expandafter\@pckw\expandafter}\expandafter{\expandafter\@pc@highlight\expandafter{\@pckw}}}%
+}% alt keywords
+}%
+\foreach \@pckw in \@pseudocodealtkeywords{%
+\ifthenelse{\equal{\@pckw}{}}{}{%
+% we are doing a simple strsub and storing the result (globally) in @shtmp
+\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter
+                 \gdef\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter
+                 \@shtmp\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter
+                {\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter
+                \@pc@stringsubstitution\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter
+                {\expandafter\expandafter\expandafter\@shtmp\expandafter\expandafter\expandafter
+                 }\expandafter\expandafter\expandafter{\expandafter\@pckw\expandafter}\expandafter{\expandafter\@pc@althighlight\expandafter{\@pckw}}}%
+}%
+}%
+%%%%
+% if automatic spacing
+\ifthenelse{\equal{\@pseudocodespace}{auto}}
+{%
+\foreach \@pckw in \@pseudocodekeywordsindent{% indentation keywords
+\ifthenelse{\equal{\@pckw}{}}{}{%
+% we are doing a simple strsub and storing the result (globally) in @shtmp
+\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter
+                 \gdef\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter
+                 \@shtmp\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter
+                {\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter
+                \@pc@stringsubstitution\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter
+                {\expandafter\expandafter\expandafter\@shtmp\expandafter\expandafter\expandafter
+                 }\expandafter\expandafter\expandafter{\expandafter\@pckw\expandafter}\expandafter{\expandafter\@pc@highlightindent\expandafter{\@pckw}}}%
+}}%
+\foreach \@pckw in \@pseudocodekeywordsunindent{% unindentation keywords
+\ifthenelse{\equal{\@pckw}{}}{}{%
+% we are doing a simple strsub and storing the result (globally) in @shtmp
+\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter
+                 \gdef\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter
+                 \@shtmp\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter
+                {\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter
+                \@pc@stringsubstitution\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter
+                {\expandafter\expandafter\expandafter\@shtmp\expandafter\expandafter\expandafter
+                 }\expandafter\expandafter\expandafter{\expandafter\@pckw\expandafter}\expandafter{\expandafter\@pc@highlightunindent\expandafter{\@pckw}}}%
+}}%
+\foreach \@pckw in \@pseudocodekeywordsuninindent{% uninindentation keywords
+\ifthenelse{\equal{\@pckw}{}}{}{%
+% we are doing a simple strsub and storing the result (globally) in @shtmp
+\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter
+                 \gdef\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter
+                 \@shtmp\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter
+                {\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter
+                \@pc@stringsubstitution\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter
+                {\expandafter\expandafter\expandafter\@shtmp\expandafter\expandafter\expandafter
+                 }\expandafter\expandafter\expandafter{\expandafter\@pckw\expandafter}\expandafter{\expandafter\@pc@highlightuninindent\expandafter{\@pckw}}}%
+}}%
+}{}%
+% return result
+\@shtmp%
+}{#1}% nothing to highlight
+}
+
+\newcommand{\@pc@highlight}[1]{%
+\ifthenelse{\equal{\@pseudocodespace}{keep}}
+    {\highlightkeyword[]{#1}}%
+    {\highlightkeyword[]{\@pc@spacesubstitution{#1}{ }{~}}}%
+}
+
+\newcommand{\@pc@highlightindent}[1]{%
+\@pc@increaseindent\@pc@highlight{#1}%
+}
+
+\newcommand{\@pc@highlightunindent}[1]{%
+\@pc@decreaseindent\@pc@highlight{#1}%
+}
+
+\newcommand{\@pc@highlightuninindent}[1]{%
+\@pc@tmpdecreaseindent\@pc@highlight{#1}%
+}
+
+\newcommand{\@pc@althighlight}[1]{%
+\ifthenelse{\equal{\@pseudocodespace}{keep}}
+    {\highlightaltkeyword{#1}}%
+    {\highlightaltkeyword{\@pc@spacesubstitution{#1}{ }{~}}}%
+}
+
+\newcommand{\@pc@colspace}{}
+
+%%%%%%%%%%%%%%%%%
+% Allow for spacing
+\newcommand{\@withinspaces}{false}%
+\newcommand{\@keepspaces}{%
+\renewcommand{\@withinspaces}{true}\@withspaces%
+}
+\newcommand{\@pc@endgroupafterpc}{}
+
+\newcommand*\@pseudocodespace{}
+\define@key{pcspace}{space}[]{\ifthenelse{\equal{#1}{keep}}{\@keepspaces}{}\renewcommand*\@pseudocodespace{#1}}
+
+%%% automatic indentation
+\newcounter{@pc@indentationlevel}
+\newcommand{\@pc@increaseindent}{\addtocounter{@pc@indentationlevel}{1}}
+\newcommand{\@pc@decreaseindent}{\ifthenelse{\equal{\@pseudocodespace}{auto}}{\pcind[-1]}{}\addtocounter{@pc@indentationlevel}{-1}}
+\newcommand{\@pc@tmpdecreaseindent}{\ifthenelse{\equal{\@pseudocodespace}{auto}}{\pcind[-1]}{}}
+
+\newcounter{pccolumncounter}
+\setcounter{pccolumncounter}{2}
+
+% store original halign
+\let\@pc@halign\halign%
+
+%% Check if the pseudocode command is called with an optional argument
+\providecommand{\pseudocode}{%
+\begingroup%
+\renewcommand{\@withinspaces}{false}%
+\@ifnextchar[%]
+  {\@pseudocodeA}%
+  {\@pseudocode[]}%
+}
+
+\def\@pseudocodeA[#1]{%
+\setkeys*{pcspace}{#1}%test if there is a space assignment within the keys .. make the necessary arrangements and call the actual method
+\@pseudocode[#1]%
+}
+
+\def\@pseudocode[#1]#2{%
+\begingroup%
+\setkeys{pseudocode}[space]{#1}%ignore the space key.
+% check draft mode and disable syntax highlighting
+\@pc@ifdraft{\ifthenelse{\equal{\@pseudocodenodraft}{true}}{}{\renewcommand\@pseudocodesyntaxhighlighting{}}}{}%
+%
+%
+\addtocounter{@pc@global@pc@nestcnt}{1}%
+% allow for tikz usage
+\@pc@ensureremember%
+%
+% create tabbing command
+\ifcsname \pctabname\endcsname%
+\expandafter\renewcommand\csname \pctabname\endcsname{\@pc@modeend&\@pc@colspace\@pc@modebegin}%
+\else%
+\expandafter\newcommand\csname \pctabname\endcsname{\@pc@modeend&\@pc@colspace\@pc@modebegin}%
+\fi%
+\ifcsname \pcdbltabname\endcsname%
+\expandafter\renewcommand\csname \pcdbltabname\endcsname{\@pc@modeend&&\@pc@colspace\@pc@modebegin}%
+\else%
+\expandafter\newcommand\csname \pcdbltabname\endcsname{\@pc@modeend&&\@pc@colspace\@pc@modebegin}%
+\fi%
+% create colspace command if necessary (must be empty for multicolumns
+\ifthenelse{\equal{\@pseudocodecolspace}{}}
+ {}
+ {\renewcommand{\@pc@colspace}{\hspace{\@pseudocodecolspace}}}%
+%
+%adjust row width
+\addtolength{\jot}{\@pseudocodecodejot}%
+% create indent command
+\expandafter\let\csname \pcindentname\endcsname\pcind%
+%
+%store and wrap (do syntax highlighting) argument 
+\renewcommand{\@pc@thecontent}{\@pc@and@wrap@start\@pc@syntaxhighlight{#2}\@pc@and@wrap@end}%
+%
+%take care of counters
+\stepcounter{@pc@global@pc@cnt}%
+\setcounter{pclinenumber}{\@pseudocodelnstart}%
+\setcounter{pcrlinenumber}{\@pseudocodelnstartright}%
+\setlength{\@pc@minipage@length}{0pt}%
+\setlength{\@pc@alt@minipage@length}{0pt}%
+\setcounter{@pclinenumbertmp}{\value{pclinenumber}}%
+\setcounter{@pcrlinenumbertmp}{\value{pcrlinenumber}}%
+%reset column counter
+\setcounter{pccolumncounter}{2}%
+%
+% vertical space
+\vspace{\@pseudocodeyshift}%
+%\setlength{\abovedisplayskip}{0pt}%
+%\setlength{\belowdisplayskip}{0pt}%
+%\setlength{\abovedisplayshortskip}{0pt}%
+%\setlength{\belowdisplayshortskip}{0pt}%
+%
+%
+% line magic
+\ifthenelse{\value{@pc@global@pc@nestcnt}=1}{%
+\let\@pc@halign\halign%
+\newenvironment{pcmbox}{\let\halign\@pc@halign}{}%
+\def\halign{%
+\renewcommand{\label}[1]{\ifmeasuring@\else\pc@original@label{####1}\fi}%
+\let\@pc@lb\\%
+\renewcommandx*{\\}[2][1=,2=]{\@pc@modeend\@pc@and\@pseudocodecodeatendline \ifthenelse{\equal{####1}{}}{\@pc@lb}{\@pc@lb[####1]}####2 \@pc@beginnewline}%
+\def\pclb{\let\\\@pc@lb\relax\@pc@modeend\\}%
+\@pc@halign}%
+}{}%
+%
+%align column separation
+\renewcommand*{\minalignsep}{\@pseudocodecolsep}%
+%
+% if no width is set compute width and store in circuitlength
+\ifthenelse{\equal{\@pseudocodewidth}{}}{%
+% compute length of pseudocode
+\ifthenelse{\value{@pcsubprogstep}=0}{%
+\@settowidthofalign{\@pc@minipage@length}{\@pc@thecontent}%
+}{%
+\@settowidthofaligned{\@pc@minipage@length}{\@pc@thecontent}%	
+}%
+%compute length of header
+\addtolength{\@pc@alt@minipage@length}{\widthof{\@pseudocodehead}}%
+% use header length if longer and add some points for good measure
+\ifdim\@pc@alt@minipage@length>\@pc@minipage@length%
+\setlength{\@pc@minipage@length}{\@pc@alt@minipage@length}%
+\fi%
+\addtolength{\@pc@minipage@length}{\@pseudocodeaddtolength}%
+}{\addtolength{\@pc@minipage@length}{\@pseudocodewidth}}%
+% reset counter
+\setcounter{pclinenumber}{\value{@pclinenumbertmp}}%
+\setcounter{pcrlinenumber}{\value{@pcrlinenumbertmp}}%
+\setcounter{@pc@indentationlevel}{0}%
+% begin actual output
+%
+%
+%do the actual mini page
+\hspace{\@pseudocodexshift}%
+\begin{minipage}[\@pseudocodeminipagealign]{\@pc@minipage@length}%
+\ifthenelse{\value{@pcsubprogstep}=0}{%
+\pc@display@pseudocode{\@pseudocodehead}{\@pc@thecontent}%
+}{% if sub procedure
+\pc@display@subcode{\@pseudocodehead}{\@pc@thecontent}%
+}%
+\end{minipage}%
+\hspace{\afterpcskip}%
+% tikz usage
+\@pc@releaseremember%
+\addtocounter{@pc@global@pc@nestcnt}{-1}%
+\endgroup%
+% close spacing and potentially a single group generated by the space tester
+\ifthenelse{\equal{\@withinspaces}{true}}{\end@withspaces}{}%
+\endgroup%
+}
+
+\newcommand{\@pc@gameheader}[2]{%
+\tikz{\gdef\i{\thepcgamecounter}%
+\node[anchor=base,#2,inner sep=0.05em,outer sep=0] (gamenode\i) {#1\vphantom{$\sum^A_{A_b}$}}; 
+\ifthenelse{\equal{\@withinbxgame}{true}}
+  {\node[draw,anchor=base, above=0.1cm of gamenode\i] (bgamenode\i) {\@bxgameheader\vphantom{$\sum^A_{A_b}$}};}
+  {}%
+}%
+}
+
+\let\pclb\relax
+%
+\newcommand{\pc@display@pseudocode}[2]{%
+\ifthenelse{\equal{#1}{}}{\vspace{-1\baselineskip}\@pseudocodecodesize}{%
+\ifthenelse{\equal{\@withingame}{true}}{%
+\@pc@gameheader{#1}{}\ifthenelse{\equal{\@pc@secondheader}{true}}{\addtocounter{pcgamecounter}{1}\@pc@gameheader{#1}{draw}}{}%
+\vspace{0.2em}%
+}{#1\vphantom{$\sum^A_{A_b}$}}%
+\vspace{\@pseudocodeheadlinesep}\hrule\vspace{\@pseudocodebodylinesep}\@pseudocodecodesize}%
+\begin{flalign*}#2\end{flalign*}%
+}
+
+
+\newcommand{\pc@display@subcode}[2]{%
+\begingroup%
+\ifthenelse{\equal{#1}{}}{}{#1\vphantom{$\sum^A_{A_b}$} %
+\vspace{\@pseudocodeheadlinesep}\hrule \vspace{\baselineskip}\vspace{\@pseudocodebodylinesep}}%
+\@pseudocodesubcodesize%
+$\begin{aligned}#2\end{aligned}$%
+\endgroup%
+}
+
+
+\newcommand{\@pc@gettikzwidth}[2]{ % #1 = width, #2 = height
+ \pgfextractx{\@tempdima}{\pgfpointdiff{\pgfpointanchor{current bounding box}{south west}}
+ {\pgfpointanchor{current bounding box}{north east}}}
+ \global#1=\@tempdima
+ \pgfextracty{\@tempdima}{\pgfpointdiff{\pgfpointanchor{current bounding box}{south west}}
+ {\pgfpointanchor{current bounding box}{north east}}}
+ \global#2=\@tempdima
+}
+
+
+%%%%%%%%%%%%%%%%%%%
+% remember pictues
+\newcounter{@pc@remember}
+
+\newcommand{\@pc@ensureremember}{%
+\ifthenelse{\value{@pc@remember}=0}{\tikzstyle{every picture}+=[remember picture]}{}%
+\addtocounter{@pc@remember}{1}}
+
+\newcommand{\@pc@releaseremember}{%
+\addtocounter{@pc@remember}{-1}%
+\ifthenelse{\value{@pc@remember}=0}{\tikzstyle{every picture}-=[remember picture]}{}%
+}
+
+
+%%%%%%%%%%%%%%%%%%%
+% pcimage
+\newenvironment{pcimage}{%
+\begingroup\@pc@ensureremember%
+}{%
+\@pc@releaseremember\endgroup%
+}
+
+\newcommand*\@pcnodecontent{}
+\newcommand*\@pcnodestyle{}
+\newcommand*\@pcnodedraw{}
+\define@key{pcnode}{content}[]{\renewcommand*\@pcnodecontent{#1}}
+\define@key{pcnode}{style}[]{\renewcommand*\@pcnodestyle{#1}}
+\define@key{pcnode}{draw}[]{\renewcommand*\@pcnodedraw{#1}}
+
+\newcommandx*{\pcnode}[2][2=]{%
+\begingroup\setkeys{pcnode}{#2}%
+\tikzset{PCNODE-STYLE/.style/.expand once=\@pcnodestyle}%
+\begin{tikzpicture}[inner sep=0ex,baseline=0pt]%
+\node[PCNODE-STYLE] (#1) {\@pcnodecontent}; %
+\end{tikzpicture}%
+\ifdefempty{\@pcnodedraw}{}{%
+\begin{tikzpicture}[overlay,inner sep=0ex,baseline=0pt]\@pcnodedraw\end{tikzpicture}
+}%
+\endgroup}
+
+\newcommandx*{\pcdraw}[2][2=]{%
+\begin{tikzpicture}[overlay,inner sep=0ex,baseline=0pt,#2]
+#1
+\end{tikzpicture}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+% Reductions
+\newcommand{\@bb@lastbox}{}
+\newcommand{\@bb@lastoracle}{}
+\newcommand{\@bb@lastchallenger}{}
+
+
+\newlength{\@bb@message@hoffset}
+\newlength{\@bb@query@hoffset}
+\newlength{\@bb@oraclequery@hoffset}
+\newlength{\@bb@challengerquery@hoffset}
+
+\newcounter{@bb@oracle@cnt}
+\newcounter{@bb@oracle@nestcnt}
+\newcounter{@bb@challenger@cnt}
+\newcounter{@bb@challenger@nestcnt}
+
+\newcounter{@bb@env@nestcnt}
+
+\newcommand{\bbroraclenodenameprefix}{ora-}
+\newcommand{\bbrchallengernodenameprefix}{challenger-}
+\newcommand{\bbrenvnodenameprefix}{env-}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Black Box Reduction Environment
+\newenvironmentx{bbrenv}[3][1=0pt,3=0pt]{%
+\addtocounter{@bb@env@nestcnt}{1}%
+\renewcommand{\@bb@lastbox}{#2}%
+%
+% reset lengths
+\@pc@globalsetlength{\@bb@message@hoffset}{0pt}%
+\@pc@globalsetlength{\@bb@query@hoffset}{0pt}%
+\@pc@globalsetlength{\@bb@oraclequery@hoffset}{0pt}%
+\@pc@globalsetlength{\@bb@challengerquery@hoffset}{0pt}%
+%
+%reset oracle counter and oracle query offset
+\ifthenelse{\value{@bb@oracle@nestcnt}=0}
+ {\setcounter{@bb@oracle@cnt}{0}}{}%
+\ifthenelse{\value{@bb@challenger@nestcnt}=0}
+  {\setcounter{@bb@challenger@cnt}{0}}{}%
+%
+\def\@bbendskip{#3}%
+\vspace{#1}%
+\ifthenelse{\value{@bb@env@nestcnt}=1}
+ {\@pc@ensureremember%
+\begin{tikzpicture}
+}{\tikz\bgroup}
+}{%
+\ifthenelse{\value{@bb@env@nestcnt}=1}
+{\end{tikzpicture}%
+\@pc@releaseremember%
+}{\egroup}%
+\vspace{\@bbendskip}%
+\addtocounter{@bb@env@nestcnt}{-1}%
+% reset lengths
+\@pc@globalsetlength{\@bb@message@hoffset}{0pt}%
+\@pc@globalsetlength{\@bb@query@hoffset}{0pt}%
+\@pc@globalsetlength{\@bb@oraclequery@hoffset}{0pt}%
+\@pc@globalsetlength{\@bb@challengerquery@hoffset}{0pt}%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% black box reduction box
+% option keys
+\newcommand*\bbrboxname{}
+\newcommand*\bbrboxnamepos{right}
+\newcommand*\bbrboxnamestyle{}
+\newcommand*\@bbrboxnamepos{below right=0.5ex and -0.5ex of \@bb@lastbox.north east,anchor=north east}
+\newcommand*\bbrboxabovesep{\baselineskip}
+\newcommand*\@bbrboxnameposoffset{below left=\bbrboxabovesep of phantomname.south west}
+\newcommand*\bbrboxstyle{draw}
+\newcommand*\bbrboxafterskip{}
+\newcommand*\bbrboxminheight{0cm}
+\newcommand*\bbrboxminwidth{2cm}
+\newcommand*\bbrboxxshift{0cm}
+\newcommand*\bbrboxyshift{0cm}
+\define@key{bbrbox}{abovesep}[]{\renewcommand*\bbrboxabovesep{#1}}
+\define@key{bbrbox}{name}[]{\renewcommand*\bbrboxname{#1}}
+\define@key{bbrbox}{namestyle}[]{\renewcommand*\bbrboxnamestyle{#1}}
+\define@key{bbrbox}{namepos}[]{\renewcommand*\bbrboxnamepos{#1}}
+\define@key{bbrbox}{style}[draw]{\renewcommand*\bbrboxstyle{#1}}
+\define@key{bbrbox}{minwidth}[]{\renewcommand*\bbrboxminwidth{#1}}
+\define@key{bbrbox}{addheight}[]{\renewcommand*\bbrboxafterskip{#1}}
+\define@key{bbrbox}{minheight}[]{\renewcommand*\bbrboxminheight{#1}}
+\define@key{bbrbox}{xshift}[]{\renewcommand*\bbrboxxshift{#1}}
+\define@key{bbrbox}{yshift}[]{\renewcommand*\bbrboxyshift{#1}}
+
+
+\NewEnviron{bbrbox}[1][]{%
+\setkeys{bbrbox}{#1}%
+
+\ifthenelse{\equal{\bbrboxnamepos}{center}}
+ {\renewcommand{\@bbrboxnamepos}{below=0.5ex of \@bb@lastbox.north,anchor=north}}{} 
+\ifthenelse{\equal{\bbrboxnamepos}{left}}
+ {\renewcommand{\@bbrboxnamepos}{below=0.5ex of \@bb@lastbox.north west,anchor=north west}}{} 
+\ifthenelse{\equal{\bbrboxnamepos}{top right}}
+ {\renewcommand{\@bbrboxnamepos}{above=0cm of \@bb@lastbox.north east,anchor=south east}\renewcommand{\@bbrboxnameposoffset}{below left=0cm of phantomname.north west}}{}
+\ifthenelse{\equal{\bbrboxnamepos}{top center}}
+ {\renewcommand{\@bbrboxnamepos}{above=0cm of \@bb@lastbox.north,anchor=south}\renewcommand{\@bbrboxnameposoffset}{below left=0cm of phantomname.north west}}{} 
+\ifthenelse{\equal{\bbrboxnamepos}{top left}}
+ {\renewcommand{\@bbrboxnamepos}{above=0cm of \@bb@lastbox.north west,anchor=south west}\renewcommand{\@bbrboxnameposoffset}{below left=0cm of phantomname.north west}}{} 
+\ifthenelse{\equal{\bbrboxnamepos}{middle}}
+ {\renewcommand{\@bbrboxnamepos}{above=0.5ex of \@bb@lastbox.base,anchor=south}}{} 
+\ifthenelse{\equal{\bbrboxnamepos}{bottom}}
+ {\renewcommand{\@bbrboxnamepos}{above=0.5ex of \@bb@lastbox.base,anchor=north}}{} 
+
+
+\tikzset{BBRBOXSTYLE/.style/.expand once=\bbrboxstyle}%
+\tikzset{BBRBOXNAMEPOS/.style/.expand once=\@bbrboxnamepos}%
+\tikzset{BBRBOXNAMESTYLE/.style/.expand once=\bbrboxnamestyle}%
+\tikzset{BBRBOXNAMEPOSOFFSET/.style/.expand once=\@bbrboxnameposoffset}%
+
+\node[inner sep=0pt,outer sep=0pt] (\@bb@lastbox-tmpouter) {};
+\node[inner sep=.3333em,anchor=north,BBRBOXSTYLE,minimum height=\bbrboxminheight,below right=\bbrboxyshift and \bbrboxxshift of \@bb@lastbox-tmpouter] (\@bb@lastbox)  \bgroup
+	\tikz{
+		\node[inner sep=0pt,outer sep=0pt,minimum height=0cm] (phantomname) {}; %minimum width
+		\node[BBRBOXNAMEPOSOFFSET,minimum height=0cm] (\@bb@lastbox-inner) {\begin{varwidth}{2\linewidth}\BODY\end{varwidth}};
+		\ifthenelse{\equal{\bbrboxafterskip}{}}{}{
+			\node[below=0cm of \@bb@lastbox-inner,minimum height=\bbrboxafterskip] {};
+		}
+		\node[inner sep=0pt,outer sep=0pt,at=(\@bb@lastbox-inner.south west),minimum height=0cm] () {\phantom{\hspace{\bbrboxminwidth}}}; %minimum width
+	}
+\egroup;
+\ifthenelse{\equal{\bbrboxnamepos}{none}}
+{}{\node[BBRBOXNAMEPOS,BBRBOXNAMESTYLE, inner sep=0.2ex, outer sep=0pt, overlay] () {\bbrboxname};}
+}
+
+
+\newcommand*\bbroraclevdistance{\baselineskip}
+\newcommand*\bbroraclehdistance{1.5cm}
+\define@key{bbroracle}{distance}[]{\renewcommand*\bbroraclehdistance{#1}}
+\define@key{bbroracle}{hdistance}[]{\renewcommand*\bbroraclehdistance{#1}}
+\define@key{bbroracle}{vdistance}[]{\renewcommand*\bbroraclevdistance{#1}}
+
+
+% ORACLES
+\newenvironmentx{bbroracle}[2][2=]{%
+	\begingroup
+	\setkeys{bbroracle}{#2}
+	%add to nesting cout
+	\addtocounter{@bb@oracle@nestcnt}{1}
+	%if first oracle, then put it to the right, else stack them vertically
+	\addtocounter{@bb@oracle@cnt}{1}
+	\ifthenelse{\value{@bb@oracle@cnt}=1}{
+	\setlength{\@bb@tmplength@b}{\bbroraclevdistance-\baselineskip}
+	\node[inner sep=0pt,below right=\@bb@tmplength@b and \bbroraclehdistance of \@bb@lastbox.north east,anchor=north west] (\bbroraclenodenameprefix#1) \bgroup
+	}{
+% compute distance of top of last box to bottom of last oracle
+	\coordinate (@bbtmpcoord) at (\@bb@lastbox.north east);
+	\path (@bbtmpcoord);
+	\pgfgetlastxy{\XCoord}{\YCoordA}
+	\coordinate (@bbtmpcoord) at (\bbroraclenodenameprefix \@bb@lastoracle.south west);
+	\path (@bbtmpcoord);
+	\pgfgetlastxy{\XCoord}{\YCoordB}
+	\setlength{\@bb@tmplength@b}{\YCoordA-\YCoordB+\bbroraclevdistance}
+	\node[inner sep=0pt,below right=\@bb@tmplength@b and \bbroraclehdistance of \@bb@lastbox.north east,anchor=north west] (\bbroraclenodenameprefix#1) \bgroup
+	}
+	\global\def\@bb@lastoracle{#1}
+	\begin{bbrenv}{#1}
+}{
+	\end{bbrenv}
+	\egroup;
+
+	\addtocounter{@bb@oracle@nestcnt}{-1}
+	\endgroup
+}
+
+
+\newcommand*\bbrchallengerhdistance{1.5cm}
+\newcommand*\bbrchallengervdistance{\baselineskip}
+\define@key{bbrchallenger}{distance}[]{\renewcommand*\bbrchallengerhdistance{#1}}
+\define@key{bbrchallenger}{hdistance}[]{\renewcommand*\bbrchallengerhdistance{#1}}
+\define@key{bbrchallenger}{vdistance}[]{\renewcommand*\bbrchallengervdistance{#1}}
+
+
+% Challenger
+\newenvironmentx{bbrchallenger}[2][2=]{%
+\begingroup%
+\setkeys{bbrchallenger}{#2}%
+%add to nesting cout
+\addtocounter{@bb@challenger@nestcnt}{1}%
+%if first oracle, then put it to the right, else stack them vertically
+\addtocounter{@bb@challenger@cnt}{1}%
+\ifthenelse{\value{@bb@challenger@cnt}=1}{%
+\setlength{\@bb@tmplength@b}{\bbrchallengervdistance-\baselineskip}%
+\node[inner sep=0pt,below left=\@bb@tmplength@b and \bbrchallengerhdistance of \@bb@lastbox.north west,anchor=north east] (\bbrchallengernodenameprefix#1) \bgroup%
+}{%
+\coordinate (@bbtmpcoord) at (\@bb@lastbox.north west);%
+\path (@bbtmpcoord);%
+\pgfgetlastxy{\XCoord}{\YCoordA}%
+\coordinate (@bbtmpcoord) at (\bbrchallengernodenameprefix \@bb@lastchallenger.south east);%
+\path (@bbtmpcoord);%
+\pgfgetlastxy{\XCoord}{\YCoordB}%
+\setlength{\@bb@tmplength@b}{\YCoordA-\YCoordB+\bbrchallengervdistance}%
+\node[inner sep=0pt,below left=\@bb@tmplength@b and \bbrchallengerhdistance of \@bb@lastbox.north west,anchor=north east] (\bbrchallengernodenameprefix#1) \bgroup%
+}%
+\global\def\@bb@lastchallenger{#1}
+\begin{bbrenv}{#1}%
+}{
+\end{bbrenv}%
+\egroup;%
+\addtocounter{@bb@challenger@nestcnt}{-1}%
+\endgroup%
+\let\msgfrom\bbrchallengerqueryto%
+}
+
+
+\newcommand*\bbrinputlength{0.5cm}
+\newcommand*\bbrinputhoffset{0.5cm}
+\newcommand*\bbrinputbottom{}
+\newcommand*\bbrinputtop{}
+\newcommand*\bbrinputedgestyle{}
+\newcommand*\bbrinputtopstyle{}
+\newcommand*\bbrinputbottomstyle{}
+\newcommand*\bbrinputnodestyle{}
+\newcommand*\bbrinputnodename{}
+\define@key{bbrinput}{length}[]{\renewcommand*\bbrinputlength{#1}}
+\define@key{bbrinput}{hoffset}[]{\renewcommand*\bbrinputhoffset{#1}}
+\define@key{bbrinput}{name}[]{\renewcommand*\bbrinputnodename{#1}}
+\define@key{bbrinput}{top}[]{\renewcommand*\bbrinputtop{#1}}
+\define@key{bbrinput}{bottom}[]{\renewcommand*\bbrinputbottom{#1}}
+
+
+\newcommand{\@bb@inputsetup}[1]{
+	%load keys	
+	\begingroup % for local keys
+
+	\setkeys{bbrinput}{#1}%
+
+	\tikzset{BBRINPUT-NODESTYLE/.style/.expand once=\bbrinputedgestyle}%	
+	\tikzset{BBRINPUT-TOPSTYLE/.style/.expand once=\bbrinputtopstyle}%	
+	\tikzset{BBRINPUT-BOTTOMSTYLE/.style/.expand once=\bbrinputbottomstyle}%			
+	\tikzset{BBRINPUT-EDGESTYLE/.style/.expand once=\bbrinputedgestyle}%
+
+}
+
+\newcommand{\@bb@inputfinalize}{
+	\endgroup
+}
+
+\newcommandx*{\bbrinput}[2][2=]{%
+\@bb@inputsetup{#2}
+\ifthenelse{\equal{\bbrinputnodename}{}}
+  {\renewcommand{\bbrinputnodename}{\@bb@lastbox-input}}{} 
+  
+\node[overlay,above right={\bbrinputlength} and {\bbrinputhoffset} of \@bb@lastbox.north west, anchor=south,BBRINPUT-NODESTYLE] (\bbrinputnodename) {#1};
+\path[->] (\bbrinputnodename.south)  edge[BBRINPUT-EDGESTYLE] node[above,anchor=east,BBRINPUT-TOPSTYLE] () {\bbrinputtop} node[below,anchor=west,BBRINPUT-BOTTOMSTYLE] () {\bbrinputbottom} (\bbrinputnodename.south|-\@bb@lastbox.north);
+\@bb@inputfinalize
+}
+
+\newcommandx*{\bbroutput}[2][2=]{%
+\@bb@inputsetup{#2}
+\ifthenelse{\equal{\bbrinputnodename}{}}
+  {\renewcommand{\bbrinputnodename}{\@bb@lastbox-output}}{} 
+  
+\node[overlay,below right={\bbrinputlength} and {\bbrinputhoffset} of \@bb@lastbox.south west, anchor=north] (\bbrinputnodename) {#1};
+\draw[->] (\bbrinputnodename.north|-\@bb@lastbox.south)  -- (\bbrinputnodename.north|-\bbrinputnodename.north);
+\@bb@inputfinalize
+}
+
+\newenvironment{bbrpic}[1][]{%
+\begin{tikzpicture}[overlay,inner sep=0ex,baseline=0pt,#1]%
+}{%
+\end{tikzpicture}}
+
+%%%%%%%%%%%
+% communication
+%temporary lengths
+\newlength{\@bb@com@tmpoffset}
+\newlength{\@bb@tmplength@b}
+\newcommand{\@bb@firstmessageheight}{0.25\baselineskip}
+\newcommand{\@bb@msglength}{1.25cm}
+\newcommand{\@bb@qrylength}{1.5cm}
+
+%keys
+\newcommand*\bbrcomnsidestyle{}
+\newcommand*\bbrcomtopstyle{}
+\newcommand*\bbrcombottomstyle{}
+\newcommand*\bbrcomside{}
+\newcommand*\bbrcomoside{}
+\newcommand*\bbrcomtop{}
+\newcommand*\bbrcombottom{}
+\newcommand*\bbrcomedgestyle{}
+\newcommand*\bbrcomlength{1.25cm}
+\newcommand*\bbrcomtopname{bbrcomtop}
+\newcommand*\bbrcombottomname{bbrcombottom}
+\newcommand*\bbrcomsidename{bbrcomside}
+\newcommand*\bbrcomosidename{bbrcomoside}
+\newcommand*\bbrcombeforeskip{0pt}
+\newcommand*\bbrcomafterskip{0pt}
+\define@key{bbrcom}{sidestyle}[]{\renewcommand*\bbrcomnsidestyle{#1}}
+\define@key{bbrcom}{topstyle}[]{\renewcommand*\bbrcomtopstyle{#1}}
+\define@key{bbrcom}{bottomstyle}[]{\renewcommand*\bbrcombottomstyle{#1}}
+\define@key{bbrcom}{side}[]{\renewcommand*\bbrcomside{#1}}
+\define@key{bbrcom}{oside}[]{\renewcommand*\bbrcomoside{#1}}
+\define@key{bbrcom}{top}[]{\renewcommand*\bbrcomtop{#1}}
+\define@key{bbrcom}{bottom}[]{\renewcommand*\bbrcombottom{#1}}
+\define@key{bbrcom}{edgestyle}[]{\renewcommand*\bbrcomedgestyle{#1}}
+\define@key{bbrcom}{length}[]{\renewcommand*\bbrcomlength{#1}}
+\define@key{bbrcom}{topname}[]{\renewcommand*\bbrcomtopname{#1}}
+\define@key{bbrcom}{bottomname}[]{\renewcommand*\bbrcombottomname{#1}}
+\define@key{bbrcom}{sidename}[]{\renewcommand*\bbrcomsidename{#1}}
+\define@key{bbrcom}{osidename}[]{\renewcommand*\bbrcomosidename{#1}}
+\define@key{bbrcom}{beforeskip}[]{\renewcommand*\bbrcombeforeskip{#1}}
+\define@key{bbrcom}{afterskip}[]{\renewcommand*\bbrcomafterskip{#1}}
+
+\newcommand*\bbrbasenodestyle{}
+\newcommand*\bbrbasenodename{bbrtmpname}
+\define@key{bbrabase}{nodestyle}[]{\renewcommand*\bbrbasenodestyle{#1}}
+\define@key{bbrabase}{nodename}[]{\renewcommand*\bbrbasenodename{#1}}
+
+
+\newcommand{\@bb@comsetup}[3]{
+	%load keys	
+	\begingroup % for local keys
+
+	\setkeys{bbrcom}{#1}%
+
+	%set styles
+	\tikzset{BBRCOM-SIDESTYLE/.style/.expand once=\bbrcomnsidestyle}%
+	\tikzset{BBRCOM-TOPSTYLE/.style/.expand once=\bbrcomtopstyle}%
+	\tikzset{BBRCOM-BOTTOMSTYLE/.style/.expand once=\bbrcombottomstyle}%
+	\tikzset{BBRCOM-EDGESTYLE/.style/.expand once=\bbrcomedgestyle}%
+
+	% increase space
+	\ifthenelse{\lengthtest{#2<\@bb@firstmessageheight}}
+ 	{#3{\@bb@firstmessageheight}}
+	{
+	  #3{1.25\baselineskip}
+	  \ifthenelse{\equal{\bbrcomtop}{}}{}{#3{0.5\baselineskip}}	
+           }
+
+	#3{\bbrcombeforeskip}
+
+	\setlength{\@bb@com@tmpoffset}{#2}%
+}
+
+\newcommand{\@bb@comfinalize}[1]{
+	\ifthenelse{\equal{\bbrcombottom}{}}{}{#1{\baselineskip}}	
+	#1{\bbrcomafterskip}
+	\endgroup
+}
+
+\newcommand{\@bbrmsg}[8]{
+	\@bb@comsetup{#1}{#7}{#8}
+	%
+	\node[#3=\@bb@com@tmpoffset and \bbrcomlength of \@bb@lastbox.#4,anchor=#6,BBRCOM-SIDESTYLE] (\bbrcomsidename) {\bbrcomside};
+	\path[#2] (\bbrcomsidename.#6)  edge[BBRCOM-EDGESTYLE] node[above,BBRCOM-TOPSTYLE] (\bbrcomtopname) {\bbrcomtop} node[below,BBRCOM-BOTTOMSTYLE] (\bbrcombottomname) {\bbrcombottom} (\@bb@lastbox.#5|-\bbrcomsidename) node[inner sep=0pt,outer sep=0pt] (\bbrcomosidename) {};
+	%
+	\@bb@comfinalize{#8}
+}
+
+\newcommandx{\bbrmsgto}[1]{%
+\@bbrmsg{#1}{->}{below left}{north west}{west}{east}{\@bb@message@hoffset}{\bbrmsgspace}
+}
+\newcommandx{\bbrmsgfrom}[1]{%
+\@bbrmsg{#1}{<-}{below left}{north west}{west}{east}{\@bb@message@hoffset}{\bbrmsgspace}
+}
+\newcommandx{\bbrmsgvdots}{%
+	\bbrmsgtxt[xshift=\bbrcomlength/2,beforeskip=-0.5\baselineskip,afterskip=-0.5\baselineskip]{$\vdots$}
+}
+
+
+\newcommandx{\bbrqryto}[1]{%
+\@bbrmsg{#1}{<-}{below right}{north east}{east}{west}{\@bb@query@hoffset}{\bbrqryspace}
+}
+\newcommandx{\bbrqryfrom}[1]{%
+\@bbrmsg{#1}{->}{below right}{north east}{east}{west}{\@bb@query@hoffset}{\bbrqryspace}
+}
+
+\newcommand{\@bbroracleqry}[4]{
+	\@bb@comsetup{#1}{#3}{#4}
+	%
+
+	\path[#2] (\@bb@lastoracle.north west) -- ++ (0,-\@bb@com@tmpoffset) node[inner sep=0pt,outer sep=0pt] (\bbrcomsidename){\bbrcomside} edge[BBRCOM-EDGESTYLE] node[above,BBRCOM-TOPSTYLE] (\bbrcomtopname) {\bbrcomtop} node[below,BBRCOM-BOTTOMSTYLE] (\bbrcombottomname) {\bbrcombottom} (\@bb@lastbox.east|-\bbrcomsidename) node[inner sep=0pt,outer sep=0pt] (\bbrcomosidename) {\bbrcomoside};
+	%
+	\@bb@comfinalize{#4}
+}
+
+\newcommand{\bbroracleqryfrom}[1]{
+	\@bbroracleqry{#1}{->}{\@bb@oraclequery@hoffset}{\bbroracleqryspace}
+}
+
+\newcommand{\bbroracleqryto}[1]{
+	\@bbroracleqry{#1}{<-}{\@bb@oraclequery@hoffset}{\bbroracleqryspace}
+}
+
+\newcommand{\@bbrchallengerqry}[4]{
+	\@bb@comsetup{#1}{#3}{#4}
+	%
+
+	\path[#2] (\@bb@lastchallenger.north east) -- ++ (0,-\@bb@com@tmpoffset) node[inner sep=0pt,outer sep=0pt] (\bbrcomsidename){\bbrcomside} edge[BBRCOM-EDGESTYLE] node[above,BBRCOM-TOPSTYLE] (\bbrcomtopname) {\bbrcomtop} node[below,BBRCOM-BOTTOMSTYLE] (\bbrcombottomname) {\bbrcombottom} (\@bb@lastbox.west|-\bbrcomsidename) node[inner sep=0pt,outer sep=0pt] (\bbrcomosidename) {\bbrcomoside};
+	%
+	\@bb@comfinalize{#4}
+}
+
+\newcommand{\bbrchallengerqryfrom}[1]{
+	\@bbrchallengerqry{#1}{<-}{\@bb@challengerquery@hoffset}{\bbrchallengerqryspace}
+}
+
+\newcommand{\bbrchallengerqryto}[1]{
+	\@bbrchallengerqry{#1}{->}{\@bb@challengerquery@hoffset}{\bbrchallengerqryspace}
+}
+
+
+
+\newcommand*\bbrcomloopleft{}
+\newcommand*\bbrcomloopright{}
+\newcommand*\bbrcomloopcenter{}
+\newcommand*\bbrcomloopangle{50}
+\define@key{bbrcomloop}{left}[]{\renewcommand*\bbrcomloopleft{#1}}
+\define@key{bbrcomloop}{right}[]{\renewcommand*\bbrcomloopright{#1}}
+\define@key{bbrcomloop}{center}[]{\renewcommand*\bbrcomloopcenter{#1}}
+\define@key{bbrcomloop}{angle}[]{\renewcommand*\bbrcomloopangle{#1}}
+
+\newcommand{\bbrloop}[3]{
+	\begingroup % for local keys
+	\setkeys{bbrcomloop}{#3}%
+
+	\path[->] (#1) edge[bend right=\bbrcomloopangle] node[midway,left] (bbrleft) {\bbrcomloopleft} (#2);
+	\path[->] (#2) edge[bend right=\bbrcomloopangle] node[midway,right] (bbrright) {\bbrcomloopright} (#1);
+	\node[at=($(bbrleft.north west)!0.5!(bbrright.north east)$),anchor=north]() {\bbrcomloopcenter};
+
+	\endgroup
+}
+
+\newcommand*\bbrintertexthoffset{1.5cm}
+\define@key{bbrintertext}{xshift}[]{\renewcommand*\bbrintertexthoffset{#1}}
+
+\newcommand{\@bb@intertextsetup}[1]{
+	%load keys	
+	\begingroup % for local keys
+
+	\setkeys{bbrcom,bbrabase,bbrintertext}{#1}%
+
+	\tikzset{BBRBASE-NODESTYLE/.style/.expand once=\bbrbasenodestyle}%
+}
+
+\newcommand{\@bb@intertextfinalize}[1]{
+	#1{\bbrcomafterskip}
+	\endgroup
+}
+
+\newcommand{\@bbrintertext}[6]{
+	\@bb@intertextsetup{#1}
+
+	% increase space
+	\ifthenelse{\lengthtest{#4<\@bb@firstmessageheight}}
+ 	{#5{\@bb@firstmessageheight}}
+	{#5{1\baselineskip}}
+
+	\setlength{\@bb@com@tmpoffset}{#4+\bbrcombeforeskip}%
+
+	%
+	\node[#2=\@bb@com@tmpoffset and \bbrintertexthoffset of \@bb@lastbox.#3,BBRBASE-NODESTYLE] (\bbrbasenodename) {#6};
+	%
+	% compute height of node
+	\coordinate (@bbtmpcoord) at (\bbrbasenodename.north);
+	\path (@bbtmpcoord);
+	\pgfgetlastxy{\XCoord}{\YCoordA}
+	\coordinate (@bbtmpcoord) at (\bbrbasenodename.south);
+	\path (@bbtmpcoord);
+	\pgfgetlastxy{\XCoord}{\YCoordB}
+
+	% update hoffset
+	\setlength{\@bb@tmplength@b}{\YCoordA-\YCoordB}
+	#5{\the\@bb@tmplength@b}
+
+	\@bb@intertextfinalize{#5}
+}
+
+\newcommand{\bbrmsgtxt}[2][]{
+	\@bbrintertext{#1}{below left}{north west}{\@bb@message@hoffset}{\bbrmsgspace}{#2}
+}
+
+\newcommand{\bbrqrytxt}[2][]{
+	\@bbrintertext{#1}{below right}{north east}{\@bb@query@hoffset}{\bbrqryspace}{#2}
+}
+
+\newcommand{\bbrchallengertxt}[2][]{
+\begingroup
+\setlength{\@bb@tmplength@b}{\bbrchallengerhdistance/2}%
+\renewcommand{\bbrintertexthoffset}{\the\@bb@tmplength@b}%
+	\@bbrintertext{#1}{below left}{north west}{\@bb@challengerquery@hoffset}{\bbrchallengerqryspace}{#2}
+\endgroup
+}
+
+\newcommand{\bbroracletxt}[2][]{
+\begingroup
+\setlength{\@bb@tmplength@b}{\bbroraclehdistance/2}%
+\renewcommand{\bbrintertexthoffset}{\the\@bb@tmplength@b}%
+	\@bbrintertext{#1}{below left}{north west}{\@bb@oraclequery@hoffset}{\bbroracleqryspace}{#2}
+\endgroup
+}
+
+\newcommand{\bbrmsgspace}[1]{
+\@pc@globaladdtolength{\@bb@message@hoffset}{#1}
+}
+
+\newcommand{\bbrqryspace}[1]{
+\@pc@globaladdtolength{\@bb@query@hoffset}{#1}
+}
+
+\newcommand{\bbroracleqryspace}[1]{
+\@pc@globaladdtolength{\@bb@oraclequery@hoffset}{#1}
+}
+
+\newcommand{\bbrchallengerqryspace}[1]{
+\@pc@globaladdtolength{\@bb@challengerquery@hoffset}{#1}
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% stacking
+\providecommand{\pccenteraboveskip}{0.5\baselineskip plus 0.25\baselineskip minus 0.25\baselineskip}
+\providecommand{\pccenterbelowskip}{0.5\baselineskip plus 0.25\baselineskip minus 0.25\baselineskip}
+\newenvironment{pccenter}{%
+\setlength\topsep{0pt}\setlength\parskip{0pt}%
+\begin{center}\vspace{\pccenteraboveskip}%
+}{%
+\vspace{\pccenteraboveskip}%
+\end{center}}
+
+
+%%%%%%%%%%%%%%%%%%%%%
+% horizontal stacking
+% space before hstacks
+\newlength{\pcbeforehstackskip}
+
+\NewEnviron{pchstack}[1][]{%
+% write out content
+\ifthenelse{\equal{#1}{center}}{%
+\begin{pccenter}\mbox{\hspace{\pcbeforehstackskip}\BODY}\end{pccenter}}{%
+\mbox{\hspace{\pcbeforehstackskip}\BODY}}%
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%
+\NewEnviron{pcvstack}[1][]{%
+% display minipage
+\ifthenelse{\equal{#1}{center}}{\begin{pccenter}}{}%
+\begin{varwidth}[t]{2\linewidth}\hspace{0pt}\BODY\end{varwidth}% hspace needed for proper vertical positioning .. strange as it is.
+\ifthenelse{\equal{#1}{center}}{\end{pccenter}}{}%
+}
+
+
+% spacing for stacking
+\newcommand{\pchspace}[1][1em]{\hspace{#1}}
+\newcommand{\pcvspace}[1][\baselineskip]{\par\vspace{#1}}
+
+
+
+
+
+%%%%
+% subprocedures
+\newcounter{@pcsubprogcnt1}
+\newcounter{@pcrsubprogcnt1}
+\newcounter{@pcsubprogcnt2}
+\newcounter{@pcrsubprogcnt2}
+\newcounter{@pcsubprogcnt3}
+\newcounter{@pcrsubprogcnt3}
+\newcounter{@pcsubprogcnt4}
+\newcounter{@pcrsubprogcnt4}
+\newcounter{@pcsubprogcnt5}
+\newcounter{@pcrsubprogcnt5}
+\newcounter{@pcsubprogcnt6}
+\newcounter{@pcrsubprogcnt6}
+\newcounter{@pcsubprogcnt7}
+\newcounter{@pcrsubprogcnt7}
+\newcounter{@pcsubprogcnt8}
+\newcounter{@pcrsubprogcnt8}
+\newcounter{@pcsubprogcnt9}
+\newcounter{@pcrsubprogcnt9}
+\newcounter{@pcsubprogstep}
+
+\newenvironment{subprocedure}{%
+\addtocounter{@pcsubprogstep}{1}%
+% store old counter values
+\setcounter{@pcsubprogcnt\the@pcsubprogstep}{\value{pclinenumber}}%
+\setcounter{@pcrsubprogcnt\the@pcsubprogstep}{\value{pcrlinenumber}}%
+}{%
+\setcounter{pclinenumber}{\value{@pcsubprogcnt\the@pcsubprogstep}}%
+\setcounter{pcrlinenumber}{\value{@pcrsubprogcnt\the@pcsubprogstep}}%
+\addtocounter{@pcsubprogstep}{-1}}
+
+
+%%%%%
+% parameter reordering
+\def\@pseudocodeB#1#2[#3]#4{\setkeys*{pcspace}{#2,#3}\@pseudocode[head={#1#4},#2,#3]}
+\def\@pseudocodeC#1#2#3{\setkeys*{pcspace}{#2}\@pseudocode[head={#1#3},#2]}
+%for no headers
+\def\@pseudocodeE#1#2[#3]{\setkeys*{pcspace}{#2,#3}\@pseudocode[head={#1},#2,#3]}
+\def\@pseudocodeF#1#2{\setkeys*{pcspace}{#2}\@pseudocode[head={#1},#2]}
+
+%%%%%%%%%
+% Define pseudocode command: 
+% #1 name
+% #2 code to execute after begingroup
+% #3 head prefix
+% #4 other config
+\newcommand{\createprocedurecommand}[4]{
+	\expandafter\gdef\csname #1\endcsname{%
+\begingroup%
+\renewcommand{\@withinspaces}{false}%
+#2%
+\@ifnextchar[%]
+  {\@pseudocodeB{#3}{#4}}
+  {\@pseudocodeC{#3}{#4}}%
+}%
+}
+
+\newcommand{\createpseudocodecommand}[4]{
+	\expandafter\gdef\csname #1\endcsname{%
+\begingroup%
+\renewcommand{\@withinspaces}{false}%
+#2%
+\@ifnextchar[%]
+  {\@pseudocodeE{#3}{#4}}
+  {\@pseudocodeF{#3}{#4}}%
+}%
+}
+
+
+%%%%%%
+% create procedure
+\createprocedurecommand{procedure}{}{}{}
+
+
+
+
+%%%
+% send message
+\newcommand{\pcshortmessageoffset}{0.5cm}
+\newcommand{\pcdefaultmessagelength}{3.5cm}
+\newcommand{\pcdefaultlongmessagelength}{6cm}
+\newcommand{\pcbeforemessageskip}{0pt}
+\newcommand{\pcaftermessageskip}{10pt}
+\newlength{\pcmessagearrow}
+
+\newcommand*\@pcsendmessagelength{\pcdefaultmessagelength}
+\newcommand*\@pcsendmessagecol{}
+\newcommand*\@pcsendmessagewidth{}
+\newcommand*\@pcsendmessagestyle{}
+\newcommand*\@pcsendmessagetop{}
+\newcommand*\@pcsendmessagebottom{}
+\newcommand*\@pcsendmessageright{}
+\newcommand*\@pcsendmessageleft{}
+\newcommand*\@pcsendmessagetopname{t}
+\newcommand*\@pcsendmessagebottomname{b}
+\newcommand*\@pcsendmessagerightname{r}
+\newcommand*\@pcsendmessageleftname{l}
+\newcommand*\@pcsendmessagetopstyle{}
+\newcommand*\@pcsendmessagebottomstyle{}
+\newcommand*\@pcsendmessagerightstyle{}
+\newcommand*\@pcsendmessageleftstyle{}
+\newcommand*\@pcsendmessagebeforeskip{\pcbeforemessageskip}
+\newcommand*\@pcsendmessageafterskip{\pcaftermessageskip}
+\define@key{pcsendmessage}{centercol}[]{\renewcommand*\@pcsendmessagecol{#1}}
+\define@key{pcsendmessage}{width}[]{\renewcommand*\@pcsendmessagewidth{#1}}
+\define@key{pcsendmessage}{style}[]{\renewcommand*\@pcsendmessagestyle{#1}}
+\define@key{pcsendmessage}{length}[]{\renewcommand*\@pcsendmessagelength{#1}}
+\define@key{pcsendmessage}{top}[]{\renewcommand*\@pcsendmessagetop{#1}}
+\define@key{pcsendmessage}{bottom}[]{\renewcommand*\@pcsendmessagebottom{#1}}
+\define@key{pcsendmessage}{right}[]{\renewcommand*\@pcsendmessageright{#1}}
+\define@key{pcsendmessage}{left}[]{\renewcommand*\@pcsendmessageleft{#1}}
+\define@key{pcsendmessage}{topname}[]{\renewcommand*\@pcsendmessagetopname{#1}}
+\define@key{pcsendmessage}{bottomname}[]{\renewcommand*\@pcsendmessagebottomname{#1}}
+\define@key{pcsendmessage}{rightname}[]{\renewcommand*\@pcsendmessagerightname{#1}}
+\define@key{pcsendmessage}{leftname}[]{\renewcommand*\@pcsendmessageleftname{#1}}
+\define@key{pcsendmessage}{topstyle}[]{\renewcommand*\@pcsendmessagetopstyle{#1}}
+\define@key{pcsendmessage}{bottomstyle}[]{\renewcommand*\@pcsendmessagebottomstyle{#1}}
+\define@key{pcsendmessage}{rightstyle}[]{\renewcommand*\@pcsendmessagerightstyle{#1}}
+\define@key{pcsendmessage}{leftstyle}[]{\renewcommand*\@pcsendmessageleftstyle{#1}}
+\define@key{pcsendmessage}{beforeskip}[]{\renewcommand*\@pcsendmessagebeforeskip{#1}}
+\define@key{pcsendmessage}{afterskip}[]{\renewcommand*\@pcsendmessageafterskip{#1}}
+
+
+\newcommand{\@pc@centerincol}[2]{%
+\ifmeasuring@%
+#2%
+\else%
+\makebox[\ifcase\expandafter #1\maxcolumn@widths\fi]{$\displaystyle#2$}%
+\fi%
+}
+
+\newcommand{\centerincol}[1]{\@pc@centerincol{\thepccolumncounter}{#1}}
+
+\newcommand{\@do@sendmessage}[1]{%
+\ifthenelse{\equal{\@pcsendmessagecol}{}}{%
+\ifthenelse{\equal{\@pcsendmessagewidth}{}}{#1}{% we have some width
+\makebox[\@pcsendmessagewidth]{$\displaystyle#1$}%
+}}{%we know the column to center on
+\@pc@centerincol{\@pcsendmessagecol}{#1}%
+}%
+}
+
+\newcommandx*{\sendmessage}[2]{%
+\begingroup\setkeys{pcsendmessage}{#2}%
+\tikzset{PCSENDMSG-PATH-STYLE/.style/.expand once=\@pcsendmessagestyle}%
+\tikzset{PCSENDMSG-TOP-STYLE/.style/.expand once=\@pcsendmessagetopstyle}%
+\tikzset{PCSENDMSG-BOTTOM-STYLE/.style/.expand once=\@pcsendmessagebottomstyle}%
+\tikzset{PCSENDMSG-LEFT-STYLE/.style/.expand once=\@pcsendmessageleftstyle}%
+\tikzset{PCSENDMSG-RIGHT-STYLE/.style/.expand once=\@pcsendmessagerightstyle}%
+%restore halign
+%
+\hspace{\@pcsendmessagebeforeskip}%
+\begin{varwidth}{\linewidth}
+\@do@sendmessage{
+	\begin{tikzpicture}%
+	 \node[PCSENDMSG-LEFT-STYLE] (\@pcsendmessageleftname) {\@pcsendmessageleft};
+	 \node[right=\@pcsendmessagelength of \@pcsendmessageleftname,PCSENDMSG-RIGHT-STYLE] (\@pcsendmessagerightname) {\@pcsendmessageright};
+	 \path[#1,PCSENDMSG-PATH-STYLE] (\@pcsendmessageleftname) edge[] node[above,PCSENDMSG-TOP-STYLE] (\@pcsendmessagetopname) {\@pcsendmessagetop} node[below,PCSENDMSG-BOTTOM-STYLE] (\@pcsendmessagebottomname) {\@pcsendmessagebottom} (\@pcsendmessagerightname); 
+	\end{tikzpicture}%
+}%
+\end{varwidth}
+\hspace{\@pcsendmessageafterskip}%
+\endgroup%
+}
+
+\newcommandx*{\sendmessageright}[2][1=->]{%
+\sendmessage{#1}{#2}%
+}
+
+\newcommandx*{\sendmessageleft}[2][1=<-]{%
+\sendmessage{#1}{#2}%
+}
+
+\WithSuffix\newcommand\sendmessageleft*[2][\pcdefaultmessagelength]{%
+\begingroup%
+\renewcommand{\@pcsendmessagetop}{\let\halign\@pc@halign$\begin{aligned}#2\end{aligned}$}%
+\sendmessage{<-}{length=#1}%
+\endgroup%
+}
+
+
+\WithSuffix\newcommand\sendmessageright*[2][\pcdefaultmessagelength]{%
+\begingroup%
+\renewcommand{\@pcsendmessagetop}{\let\halign\@pc@halign$\begin{aligned}#2\end{aligned}$}%
+\sendmessage{->}{length=#1}%
+\endgroup%
+}
+
+
+
+\DeclareExpandableDocumentCommand{\sendmessagerightx}{O{\pcdefaultlongmessagelength}mO{}m}{%
+\multicolumn{#2}{c}{\ensuremath{\hspace{\pcbeforemessageskip}\xrightarrow[\begin{aligned}#3\end{aligned}]{\mathmakebox[#1]{\begin{aligned}#4\end{aligned}}}\hspace{\pcaftermessageskip}}}
+}
+
+\DeclareExpandableDocumentCommand{\sendmessageleftx}{O{\pcdefaultlongmessagelength}mO{}m}{%
+\multicolumn{#2}{c}{\ensuremath{\hspace{\pcbeforemessageskip}\xleftarrow[\begin{aligned}#3\end{aligned}]{\mathmakebox[#1]{\begin{aligned}#4\end{aligned}}}\hspace{\pcaftermessageskip}}}
+}
+
+%%%
+% Division
+\DeclareExpandableDocumentCommand{\pcintertext}{O{}m}{\intertext{%
+\ifthenelse{\equal{#1}{center}}{\makebox[\linewidth][c]{#2}}{}%
+\ifthenelse{\equal{#1}{dotted}}{\dotfill#2\dotfill}{}%
+\ifthenelse{\equal{#1}{}}{#2}{}%
+}\@pc@beginnewline}
+
+
+
+%%%
+% Games
+%
+\newcounter{pcstartgamecounter}
+
+
+\newcommand*{\pcgameprocedurestyle}{} % define pseudocode arguments for game procedures
+
+\newcommand*{\pcgamename}{\ensuremath{\mathsf{Game}}}
+\newcommand*{\gameprocedurearg}{\ensuremath{(\secpar)}}
+\newcommand*\@pcgameproofgamenr{0}
+\define@key{pcgameproof}{nr}[]{\renewcommand*\@pcgameproofgamenr{#1}}
+\define@key{pcgameproof}{name}[]{\renewcommand*\pcgamename{\ensuremath{#1}}}
+\define@key{pcgameproof}{arg}[]{\renewcommand*\gameprocedurearg{\ensuremath{#1}}}
+
+\newenvironment{gameproof}[1][]{%
+\begingroup%
+\setkeys{pcgameproof}{#1}%
+\@pc@ensureremember%
+\setcounter{pcgamecounter}{\@pcgameproofgamenr}%
+\setcounter{pcstartgamecounter}{\@pcgameproofgamenr}\stepcounter{pcstartgamecounter}%
+}{\@pc@releaseremember\endgroup}
+
+\newcommand{\setgameproceduredefaultstyle}[1]{%
+\createpseudocodecommand{gameprocedure}
+  {\addtocounter{pcgamecounter}{1}\renewcommand{\@withingame}{true}}
+  {\ensuremath{\pcgamename_{\thepcgamecounter}\gameprocedurearg}}
+  {#1}
+}
+\setgameproceduredefaultstyle{}
+
+\def\@bxgame@pseudocodeA[#1]#2#3{\setkeys*{pcspace}{#1}\renewcommand{\@bxgameheader}{$\pcgamename_{#2}$\gameprocedurearg}%
+\@pseudocode[head=\ensuremath{\pcgamename_{\thepcgamecounter}\gameprocedurearg},#1]{#3}}
+\def\@bxgame@pseudocodeB#1#2{\renewcommand{\@bxgameheader}{$\pcgamename_{#1}$\gameprocedurearg}%
+\@pseudocode[head=\ensuremath{\pcgamename_{\thepcgamecounter}\gameprocedurearg}]{#2}}
+
+\newcommand{\bxgameprocedure}{
+\begingroup%
+\renewcommand{\@withinspaces}{false}%
+\renewcommand{\@withingame}{true}%
+\renewcommand{\@withinbxgame}{true}%
+\stepcounter{pcgamecounter}%
+\@ifnextchar[%]
+  {\@bxgame@pseudocodeA}
+  {\@bxgame@pseudocodeB}%
+}
+
+\newcommand{\@pc@secondheader}{}
+
+%tbx top boxed
+\createpseudocodecommand{tbxgameprocedure}
+  {\addtocounter{pcgamecounter}{1}\renewcommand{\@withingame}{true}%%
+\renewcommand{\@pc@secondheader}{true}}
+  {\ensuremath{\pcgamename_{\thepcgamecounter}\gameprocedurearg}}
+{}
+
+
+\newcommand*\@pcgamehopnodestyle{}
+\newcommand*\@pcgamehopedgestyle{bend left}
+\newcommand*\@pcgamehoppathestyle{}
+\newcommand*\@pcgamehophint{}
+\newcommand*\@pcgamehophintbelow{}
+\newcommand*\@pcgamehopinhint{}
+\newcommand*\@pcgamehoplength{1.5cm}
+\define@key{pcgamehop}{nodestyle}[]{\renewcommand*\@pcgamehopnodestyle{#1}}
+\define@key{pcgamehop}{edgestyle}[]{\renewcommand*\@pcgamehopedgestyle{#1}}
+\define@key{pcgamehop}{pathstyle}[]{\renewcommand*\@pcgamehoppathestyle{#1}}
+\define@key{pcgamehop}{hint}[]{\renewcommand*\@pcgamehophint{#1}}
+\define@key{pcgamehop}{belowhint}[]{\renewcommand*\@pcgamehophintbelow{#1}}
+\define@key{pcgamehop}{inhint}[]{\renewcommand*\@pcgamehopinhint{#1}}
+\define@key{pcgamehop}{length}[]{\renewcommand*\@pcgamehoplength{#1}}
+
+
+\newcommand{\@pc@setupgamehop}[1]{
+\begingroup\setkeys{pcgamehop}{#1}%
+\tikzset{GAMEHOP-PATH-STYLE/.style/.expand once=\@pcgamehoppathestyle}%
+\tikzset{GAMEHOP-NODE-STYLE/.style/.expand once=\@pcgamehopnodestyle}%
+\tikzset{GAMEHOP-EDGE-STYLE/.style/.expand once=\@pcgamehopedgestyle}%
+}
+
+\newcommand{\@pc@finalizegamehop}{
+\endgroup
+}
+
+\newcommandx*{\addgamehop}[3]{%
+\begingroup%
+\ifthenelse{#1<#2}%
+  {\ifthenelse{\equal{\@withingamedescription}{true}}%
+   {\renewcommand*\@pcgamehopedgestyle{bend right=20}\renewcommand*\@pcgamehopnodestyle{rotate=90}}{}%
+  }%
+  {\renewcommand*\@pcgamehopedgestyle{bend right}}%
+\@pc@setupgamehop{#3}%
+\begin{tikzpicture}[overlay]%
+\ifthenelse{#1<#2}{%
+       \path[->,GAMEHOP-PATH-STYLE] (gamenode#1) edge[GAMEHOP-EDGE-STYLE] node[above,GAMEHOP-NODE-STYLE] {\@pcgamehophint} 
+       node[below,GAMEHOP-NODE-STYLE] {\@pcgamehophintbelow} (gamenode#2);
+}{%
+ 	 \path[->,GAMEHOP-PATH-STYLE] (bgamenode#1) edge[GAMEHOP-EDGE-STYLE] node[above,GAMEHOP-NODE-STYLE] {\@pcgamehophint} 
+	 node[above,GAMEHOP-NODE-STYLE] {\@pcgamehophintbelow} (bgamenode#2);
+}%
+\end{tikzpicture}%
+\@pc@finalizegamehop%
+\endgroup%
+}
+\newcommandx*{\addstartgamehop}[2][1=\thepcstartgamecounter]{%
+\@pc@setupgamehop{#2}
+\begin{tikzpicture}[overlay]
+       \node[left=\@pcgamehoplength of gamenode#1] (tmpgamenode0) {};
+       \path[->,GAMEHOP-PATH-STYLE] (tmpgamenode0) edge[GAMEHOP-EDGE-STYLE] node[above,GAMEHOP-NODE-STYLE] {\@pcgamehophint} 
+       node[below,GAMEHOP-NODE-STYLE] {\@pcgamehophintbelow} (gamenode#1);
+\end{tikzpicture}
+\@pc@finalizegamehop
+}
+\newcommandx*{\addendgamehop}[2][1=\thepcgamecounter]{%
+\@pc@setupgamehop{#2}
+\begin{tikzpicture}[overlay]
+       \node[right=\@pcgamehoplength of gamenode#1] (tmpgamenode#1) {};
+       \path[->,GAMEHOP-PATH-STYLE] (gamenode#1) edge[GAMEHOP-EDGE-STYLE] node[above,GAMEHOP-NODE-STYLE] {\@pcgamehophint} 
+       node[below,GAMEHOP-NODE-STYLE] {\@pcgamehophintbelow} (tmpgamenode#1);
+\end{tikzpicture}
+\@pc@finalizegamehop
+}
+\newcommandx*{\addbxgamehop}[3]{%
+\@pc@setupgamehop{#3}
+\begin{tikzpicture}[overlay]
+       \path[->,GAMEHOP-PATH-STYLE] (bgamenode#1) edge[GAMEHOP-EDGE-STYLE] node[above,GAMEHOP-NODE-STYLE]] {\@pcgamehophint} 
+       node[below,GAMEHOP-NODE-STYLE] {\@pcgamehophintbelow} (bgamenode#2);
+\end{tikzpicture}
+\@pc@finalizegamehop
+}
+\newcommandx*{\addloopgamehop}[2][1=\thepcgamecounter]{%
+\@pc@setupgamehop{#2}
+\begin{tikzpicture}[overlay]
+       \node (looptemp1)  [right=0.5cm of gamenode#1] {};
+       \draw[->,GAMEHOP-PATH-STYLE] (gamenode#1) -- (looptemp1|-gamenode#1) -- node[right,GAMEHOP-NODE-STYLE] {\@pcgamehophint} 
+       node[left,GAMEHOP-NODE-STYLE] {\@pcgamehophintbelow} (looptemp1|-bgamenode#1)-- (bgamenode#1);
+\end{tikzpicture}
+\@pc@finalizegamehop
+}
+
+
+%%%%%%%% 
+% game description
+\newenvironment{gamedescription}[1][]{%
+\begingroup%
+\setkeys{pcgameproof}{#1}
+\renewcommand{\@withingamedescription}{true}%
+\@pc@ensureremember%
+\setcounter{pcgamecounter}{\@pcgameproofgamenr}%
+\setcounter{pcstartgamecounter}{\@pcgameproofgamenr}\stepcounter{pcstartgamecounter}%
+\begin{description}%
+}{\end{description}\@pc@releaseremember\endgroup}
+
+\newcommandx*{\describegame}[1][1=]{%
+\addtocounter{pcgamecounter}{1}%
+\item[%
+\pcdraw{
+\gdef\i{\thepcgamecounter}%
+\node[inner sep=0.0em,outer sep=0, xshift=-1ex, yshift=0.5ex] (gamenode\i) {}; 
+}%
+\ensuremath{\pcgamename_{\thepcgamecounter}\gameprocedurearg}:]%
+\begingroup\setkeys{pcgamehop}{#1}%
+\ifthenelse{\equal{}{\@pcgamehophint}}
+  {}
+  {\hspace{-0.7ex}\pcdraw{%the -0.7ex is a horrible hack to fix a whitespace issue with tikz (see http://tex.stackexchange.com/questions/22873/tikzpicture-with-overlay-takes-up-space
+\tikzset{GAMEHOP-PATH-STYLE/.style/.expand once=\@pcgamehoppathestyle}%
+\tikzset{GAMEHOP-NODE-STYLE/.style/.expand once=\@pcgamehopnodestyle}%
+\draw[->,GAMEHOP-PATH-STYLE] (gamenode\thepcgamecounter) --++ (0,-\@pcgamehoplength) node[midway,above,xshift=-1mm,rotate=90,GAMEHOP-NODE-STYLE]  {\@pcgamehophint};
+}}%
+\ifthenelse{\equal{}{\@pcgamehopinhint}}
+  {}
+  {\hspace{-0.7ex}\pcdraw{%the -0.7ex is a horrible hack to fix a whitespace issue with tikz (see http://tex.stackexchange.com/questions/22873/tikzpicture-with-overlay-takes-up-space
+\tikzset{GAMEHOP-PATH-STYLE/.style/.expand once=\@pcgamehoppathestyle}%
+\tikzset{GAMEHOP-NODE-STYLE/.style/.expand once=\@pcgamehopnodestyle}%
+\draw[<-,GAMEHOP-PATH-STYLE] (gamenode\thepcgamecounter) --++ (0,\@pcgamehoplength) node[midway,above,xshift=-1mm,rotate=90,GAMEHOP-NODE-STYLE]  {\@pcgamehopinhint};
+}%
+}%
+\endgroup%
+}
+
+
+
+
+
+
+%%%%%%%% 
+% basic pseudocode constants
+
+\newcommand{\highlightkeyword}[2][\ ]{\ensuremath{\mathbf{#2}}#1}
+\newcommand{\highlightaltkeyword}[1]{\ensuremath{\mathsf{#1}}}
+
+\newcommand{\pcglobvar}{\highlightkeyword{gbl}}
+\newcommand{\pcnew}{\highlightkeyword{new}}
+\newcommand{\pcwhile}{\@pc@increaseindent\highlightkeyword{while}}
+\newcommand{\pcendwhile}{\@pc@decreaseindent\highlightkeyword{endwhile}}
+\newcommandx*{\pcdo}[2][1=\ ,2=]{#1\highlightkeyword[#2]{do}}
+\newcommandx*{\pcif}[1][1=\ ]{\@pc@increaseindent\highlightkeyword[#1]{if}}
+\newcommandx*{\pcunless}[1][1=\ ]{\@pc@increaseindent\highlightkeyword[#1]{unless}}
+\newcommandx*{\pcelse}[1][1=\ ]{\@pc@tmpdecreaseindent\highlightkeyword[#1]{else}}
+\newcommandx*{\pcelseif}[1][1=\ ]{\@pc@tmpdecreaseindent\highlightkeyword[#1]{else if}}
+\newcommand{\pcfi}{\@pc@decreaseindent\highlightkeyword{fi}}
+\newcommand{\pcendif}{\@pc@decreaseindent\highlightkeyword{endif}}
+\newcommand{\pcendfor}{\@pc@decreaseindent\highlightkeyword{endfor}}
+\newcommandx*{\pcthen}[2][1=\ ,2=\ ]{#1\highlightkeyword[#2]{then}}
+\newcommand{\pcreturn}{\highlightkeyword{return}}
+\newcommandx*{\pcin}[2][1=\ ,2=]{#1\highlightkeyword[#2]{in}}
+\newcommand{\pcfor}{\@pc@increaseindent\highlightkeyword{for}}
+\newcommand{\pcrepeat}[1]{\@pc@increaseindent\ensuremath{\highlightkeyword{repeat} #1\ \highlightkeyword{times}}}
+\newcommand{\pcrepeatuntil}[2]{\ensuremath{\highlightkeyword{repeat}\ #1\ \highlightkeyword{until}\ #2}}
+\newcommand{\pcforeach}{\@pc@increaseindent\highlightkeyword{foreach}}
+\newcommand{\pcendforeach}{\@pc@decreaseindent\highlightkeyword{endforeach}}
+\newcommand{\pcuntil}{\@pc@decreaseindent\highlightkeyword{until}}
+\newcommand{\pccontinue}{\highlightkeyword{continue}}
+\newcommandx*{\pcfalse}[2][1=\ ,2=]{\highlightkeyword[#2]{false}}
+\newcommandx*{\pctrue}[2][1=\ ,2=]{\highlightkeyword[#2]{true}}
+\newcommandx*{\pcnull}[2][1=\ ,2=]{\highlightkeyword[#2]{null}}
+\newcommand{\pccomment}[1]{{\mbox{/\!\!/ } \text{\scriptsize#1}}}
+\newcommand{\pcdone}{\highlightkeyword{done}}
+\newcommand{\pcparse}{\highlightkeyword{parse}}
+\newcommand{\pcfail}{\highlightkeyword{fail}}
+\newcommand{\pcabort}{\highlightkeyword{abort}}
+
+%%%
+% highlighting 
+\definecolor{gamechangecolor}{gray}{0.90}
+\newcommand{\gamechange}[2][gamechangecolor]{%
+{\setlength{\fboxsep}{0pt}\colorbox{#1}{\ifmmode$\displaystyle#2$\else#2\fi}}%
+}
+
+%%%
+% boxing
+\newcommand{\pcbox}[1]{%
+{\setlength{\fboxsep}{3pt}\fbox{$\displaystyle#1$}}
+}
+
+\endinput
