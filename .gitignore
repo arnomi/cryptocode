@@ -7,4 +7,7 @@
 *.log
 *.out
 *.toc
+*.glo
+*.gls
+*.hd
 *.DS_Store
