@@ -20,3 +20,7 @@ Create the documentation via
 # Contribution
 
 Contributions to *cryptocode* are very welcome. 
+
+# Attribution
+
+If you use cryptocode in your work, consider starring the repository on GitHub and/or rating it on CTAN.
