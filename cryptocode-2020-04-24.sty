@@ -51,6 +51,20 @@
   % 2018/11/11
   % replace obsolete l3regex
   %
+  % 2018/11/26 TODO: document
+  % added tprob (variants for prob and co for in-text)
+  %
+  % 2018/12/21 
+  % added \prp
+  %
+  % 2020/01/11
+  % - allow to control spacing with \pcfor
+  % - allow overwriting rule command in pseudocode via headlinecmd (defaults to \hrule)
+  %
+  % 2020/04/24
+  % - fix spacing of pchstack[center]. Can be controlled via \pccenterbelowskip and \pccenteraboveskip
+  %
+  %
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{cryptocode}
   [2018/11/11 v0.3.0 Cryptocode LaTeX package for typesetting pseudocode, algorithms and protocols as well as cryptographic proofs.]
@@ -117,14 +131,28 @@
 	\providecommand{\expectationname}{\ensuremath{\mathbb{E}}}
 	\providecommand{\supportname}{Supp}
 
+	\providecommand{\tprob}[1]{\ensuremath{\operatorname{\probname}\telrk{#1}}}
 	\providecommand{\prob}[1]{\ensuremath{\operatorname{\probname}\elrk{#1}}}
+	
+	\providecommand{\tprobsub}[2]{\ensuremath{\operatorname{\probname}_{#1}\telrk{#2}}}
 	\providecommand{\probsub}[2]{\ensuremath{\operatorname{\probname}_{#1}\elrk{#2}}}
+	
+	\providecommand{\tcondprob}[2]{\ensuremath{\tprob{#1\,\left|\,#2\vphantom{#1}\right.}}}
 	\providecommand{\condprob}[2]{\ensuremath{\prob{#1\,\left|\,#2\vphantom{#1}\right.}}}
-	\providecommand{\condprobsub}[3]{\ensuremath{\probsub{#1}{#2\,\left|\,#3\vphantom{#1}\right.}}}
+	
+	\providecommand{\tcondprobsub}[3]{\ensuremath{\tprobsub{#1}{#2\,\left|\,#3\vphantom{#1}\right.}}}
+    \providecommand{\condprobsub}[3]{\ensuremath{\probsub{#1}{#2\,\left|\,#3\vphantom{#1}\right.}}}
    
+	\providecommand{\texpect}[1]{\ensuremath{\operatorname{\expectationname}\telrk{#1}}}
 	\providecommand{\expect}[1]{\ensuremath{\operatorname{\expectationname}\elrk{#1}}}
+	
+	\providecommand{\texpsub}[2]{\ensuremath{\operatorname{\expectationname}_{#1}\telrk{#2}}}
 	\providecommand{\expsub}[2]{\ensuremath{\operatorname{\expectationname}_{#1}\elrk{#2}}}
+	
+	\providecommand{\tcondexp}[2]{\ensuremath{\texpect{#1\,\left|\,#2\vphantom{#1}\right.}}}
 	\providecommand{\condexp}[2]{\ensuremath{\expect{#1\,\left|\,#2\vphantom{#1}\right.}}}
+	
+	\providecommand{\tcondexpsub}[3]{\ensuremath{\texpsub{#1}{#2\,\left|\,#3\vphantom{#1}\right.}}}
 	\providecommand{\condexpsub}[3]{\ensuremath{\expsub{#1}{#2\,\left|\,#3\vphantom{#1}\right.}}}
 
 	\providecommand{\supp}[1]{  \ensuremath{\operatorname{Supp}\olrk{#1}}}
@@ -360,8 +388,9 @@
 	\providecommand{\iO}{\pcalgostyle{iO}}
 	\providecommand{\diO}{\pcalgostyle{diO}}
 	
-	% PRF, PRG
+	% PRF, PRP, PRG
 	\providecommand{\prf}{\pcalgostyle{PRF}}
+	\providecommand{\prp}{\pcalgostyle{PRP}}
 	\providecommand{\prg}{\pcalgostyle{PRG}}
 	
 	% Mac
@@ -388,10 +417,13 @@
 %%%
 % order of growth helper
 \ifpc@orderofgrowth
+\providecommand{\tolrk}[1]{\ifx\nursymbol#1\else\!\!\mskip6.5mu plus 0.5mu (\mskip0.5mu plus0.5mu #1\mskip1.5mu plus0.5mu )\fi}
 \providecommand{\olrk}[1]{\ifx\nursymbol#1\else\!\!\mskip4.5mu plus 0.5mu\left(\mskip0.5mu plus0.5mu #1\mskip1.5mu plus0.5mu \right)\fi}
 
+\providecommand{\telrk}[1]{\ifx\nursymbol#1\else\!\!\mskip6.5mu plus0.5mu [\mskip0.5mu plus0.5mu #1\mskip1.5mu plus0.5mu ]\fi}
 \providecommand{\elrk}[1]{\ifx\nursymbol#1\else\!\!\mskip4.5mu plus0.5mu\left[\mskip0.5mu plus0.5mu #1\mskip1.5mu plus0.5mu \right]\fi}
 
+\providecommand{\tclrk}[1]{\ifx\nursymbol#1\else\!\!\mskip6.5mu plus0.5mu \{\mskip0.5mu plus0.5mu #1\mskip1.5mu plus0.5mu \}\fi}
 \providecommand{\clrk}[1]{\ifx\nursymbol#1\else\!\!\mskip4.5mu plus0.5mu\left\{\mskip0.5mu plus0.5mu #1\mskip1.5mu plus0.5mu \right\}\fi}
 \fi
 
@@ -628,6 +660,7 @@
 \newcommand*\@pseudocodenodraft{false}
 \newcommand*\@pseudocodecolspace{} % empty per default, use length,
 
+\newcommand*\@pseudocodeheadlinecmd{\hrule}
 \newcommand*\@pseudocodeheadlinesep{0em}
 \newcommand*\@pseudocodebodylinesep{-0.5\baselineskip}
 
@@ -674,6 +707,7 @@
 \define@key{pseudocode}{lnstart}[0]{\renewcommand*\@pseudocodelnstart{#1}}
 \define@key{pseudocode}{lnstartright}[0]{\renewcommand*\@pseudocodelnstartright{#1}}
 \define@key{pseudocode}{colsep}[0em]{\renewcommand*\@pseudocodecolsep{#1}}
+\define@key{pseudocode}{headlinecmd}[\hrule]{\renewcommand*\@pseudocodeheadlinecmd{#1}}
 \define@key{pseudocode}{headlinesep}[0em]{\renewcommand*\@pseudocodeheadlinesep{#1}}
 \define@key{pseudocode}{bodylinesep}[0em]{\renewcommand*\@pseudocodebodylinesep{#1}}
 \define@key{pseudocode}{addtolength}[2pt]{\renewcommand*\@pseudocodeaddtolength{#1}}
@@ -968,7 +1002,7 @@
 \@pc@gameheader{#1}{}\ifthenelse{\equal{\@pc@secondheader}{true}}{\addtocounter{pcgamecounter}{1}\@pc@gameheader{#1}{draw}}{}%
 \vspace{0.2em}%
 }{#1\vphantom{$\sum^A_{A_b}$}}%
-\vspace{\@pseudocodeheadlinesep}\hrule\vspace{\@pseudocodebodylinesep}\@pseudocodecodesize}%
+\vspace{\@pseudocodeheadlinesep}\@pseudocodeheadlinecmd\vspace{\@pseudocodebodylinesep}\@pseudocodecodesize}%
 \begin{flalign*}#2\end{flalign*}%
 }
 
@@ -976,7 +1010,7 @@
 \newcommand{\pc@display@subcode}[2]{%
 \begingroup%
 \ifthenelse{\equal{#1}{}}{}{#1\vphantom{$\sum^A_{A_b}$} %
-\vspace{\@pseudocodeheadlinesep}\hrule \vspace{\baselineskip}\vspace{\@pseudocodebodylinesep}}%
+\vspace{\@pseudocodeheadlinesep}\@pseudocodeheadlinecmd \vspace{\baselineskip}\vspace{\@pseudocodebodylinesep}}%
 \@pseudocodesubcodesize%
 $\begin{aligned}#2\end{aligned}$%
 \endgroup%
@@ -1559,7 +1593,7 @@ $\begin{aligned}#2\end{aligned}$%
 \setlength\topsep{0pt}\setlength\parskip{0pt}%
 \begin{center}\vspace{\pccenteraboveskip}%
 }{%
-\vspace{\pccenteraboveskip}%
+\vspace{\pccenterbelowskip}%
 \end{center}}
 
 
@@ -2008,7 +2042,7 @@ $\begin{aligned}#2\end{aligned}$%
 \newcommandx*{\pcthen}[2][1=\ ,2=\ ]{#1\highlightkeyword[#2]{then}}
 \newcommand{\pcreturn}{\highlightkeyword{return}}
 \newcommandx*{\pcin}[2][1=\ ,2=]{#1\highlightkeyword[#2]{in}}
-\newcommand{\pcfor}{\@pc@increaseindent\highlightkeyword{for}}
+\newcommandx*{\pcfor}[1][1=\ ]{\@pc@increaseindent\highlightkeyword[#1]{for}}
 \newcommand{\pcrepeat}[1]{\@pc@increaseindent\ensuremath{\highlightkeyword{repeat} #1\ \highlightkeyword{times}}}
 \newcommand{\pcrepeatuntil}[2]{\ensuremath{\highlightkeyword{repeat}\ #1\ \highlightkeyword{until}\ #2}}
 \newcommand{\pcforeach}{\@pc@increaseindent\highlightkeyword{foreach}}

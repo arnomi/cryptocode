@@ -17,6 +17,20 @@ Create the documentation via
     makeindex -s gglo.ist -o cryptocode.gls cryptocode.glo
     pdflatex cryptocode.dtx
 
+A prebuilt version of the documentation is available in the repository.
+
+# Versioning
+
+Cryptocode supports LaTeX' rollback mechanism. To load a particular version of cryptocode use
+
+    \usepackage[options]{cryptocode}[=2018-11-11]
+
+Besides the current version 0.40, the following deprecated versions are available via
+the rollback mechanism.
+
+- v0.32 (2020-04-01)
+- v0.30 (2018-11-11)
+
 # Contribution
 
 Contributions to *cryptocode* are very welcome. 
@@ -24,3 +38,8 @@ Contributions to *cryptocode* are very welcome.
 # Attribution
 
 If you use cryptocode in your work, consider starring the repository on GitHub and/or rating it on CTAN.
+
+# License
+
+[LaTeX Project Public License](http://www.latex-project.org/lppl.txt)
+
