@@ -28,7 +28,7 @@ Cryptocode supports LaTeX' rollback mechanism. To load a particular version of c
 Besides the current version 0.40, the following deprecated versions are available via
 the rollback mechanism.
 
-- v0.32 (2020-04-01)
+- v0.32 (2020-04-24)
 - v0.30 (2018-11-11)
 
 # Contribution
