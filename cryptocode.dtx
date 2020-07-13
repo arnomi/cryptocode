@@ -3567,6 +3567,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % Spacings after the left separator and in front of the right separator can be controlled by 
 % |\pclnspace| and |\pclnrspace| which are set to 1em and 0.5em, respectively.
 %
+% \amipagebreak
+%
 % \subsection{Sub Protocols}
 %
 % Use the |subprocedure| environemnt to also create sub protocols. 
@@ -3594,6 +3596,59 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \fi
  \begin{lstlisting}
 \procedureblock{My Protocol}{
+	\textbf{Alice} \< \< \textbf{Bob}  \\
+	b \sample \bin \< \< \\
+	\< \sendmessageright*{\text{send over } b} \<  \\
+	\< \< \text{do something}    \\
+	\<\< \dbox{\begin{subprocedure}\procedure{Subprotocol}{
+	\< \< \textbf{Charlie}  \\
+	\text{something more} \< \<  \\
+	\< \sendmessageright*[1.5cm]{\text{message}} \<  \\
+	\< \< \text{some processing}  \\
+	\< \< \text{more processing}  \\ 
+	\< \sendmessageleft*[1.5cm]{\text{message}} \<  \\
+	\< \sendmessageright*[1.5cm]{\text{message}} \<  \\
+	\< \sendmessageleft*[1.5cm]{\text{message}} \<  \\
+	}\end{subprocedure}}  \\
+	\< \sendmessageleft*{\text{send over sth. else}} \<   \\
+	\text{finalize} \< \< }
+\end{lstlisting}
+% \iffalse
+%</example>
+% \fi
+%
+% \subsection{Compact Presentation of Protocols}
+%
+% In order to present protocols more compactly you can use the |colspace| option
+% which adds space inbetween two columns. When set to a negative space, this has
+% the effect that columns overlap. The following example is once more our above
+% example using a sub protocol but this time with |colspace=-1cm|. Note that
+% the sub protocol inherits the option which is why both the outer and the inner
+% protocol now have overlapping columns.
+%
+% \procb[colspace=-1cm]{My Protocol}{
+%  \textbf{Alice} \< \< \textbf{Bob}  \\
+%  b \sample \bin \< \< \\
+%  \< \sendmessageright*{\text{send over } b} \<  \\
+%  \< \< \text{do something}    \\
+%  \<\< \dbox{\begin{subprocedure}\procedure{Subprotocol}{
+%  \< \< \textbf{Charlie}  \\
+% \text{something more} \< \<  \\
+%  \< \sendmessageright*[1.5cm]{\text{message}} \<  \\
+%  \< \< \text{some processing}  \\
+%  \< \< \text{more processing}  \\ 
+%  \< \sendmessageleft*[1.5cm]{\text{message}} \<  \\
+%  \< \sendmessageright*[1.5cm]{\text{message}} \<  \\
+%  \< \sendmessageleft*[1.5cm]{\text{message}} \<  \\
+% }\end{subprocedure}}  \\
+%  \< \sendmessageleft*{\text{send over sth. else}} \<   \\
+%  \text{finalize} \< \< }
+%
+% \iffalse
+%<*example>
+% \fi
+ \begin{lstlisting}
+\procedureblock[colspace=-1cm]{My Protocol}{
 	\textbf{Alice} \< \< \textbf{Bob}  \\
 	b \sample \bin \< \< \\
 	\< \sendmessageright*{\text{send over } b} \<  \\
