@@ -3228,6 +3228,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %</example>
 % \fi
+% Similarly you can redefine the double tabbing character |\<| by overwriting |\pcdbltabname| (also see Section~\ref{chap:protocols}).
 %
 % \subsubsection{Custom Line Spacing and Horizontal Rules}
 % \index{\textbackslash pclb}
@@ -5576,6 +5577,19 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % The hyperref package (\url{https://www.ctan.org/pkg/hyperref}) should be loaded before cryptocode. If this is not possible
 % call the |\pcfixhyperref| after |\begin{document}|. 
 %
+% \subsection{Babel - Spanish}
+% The spanish version of the babel package uses < and > as shorthands which are used by cryptocode as tabbing characters.
+% The easisest workaround is to tell cryptocode to use different tabbing characters, for example:
+% \iffalse
+%<*example>
+% \fi
+\begin{lstlisting}
+\renewcommand{\pctabname}{ctab}
+\renewcommand{\pcdbltabname}{cdtab}
+\end{lstlisting}
+% \iffalse
+%</example>
+% \fi
 %
 %\StopEventually{%
 %  \PrintChanges
