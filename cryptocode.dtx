@@ -167,6 +167,10 @@
 % \changes{v0.40}{2020/07/10}{Added clockwise, leftstyle, centerstyle, rightstyle for bbrloop. Adjusted placing of center.}
 % \changes{v0.40}{2020/07/10}{Added fixedoffset, fixedboffset, islast for reduction messages.}
 %
+% \changes{v0.41}{2020/07/13}{Fixed horizontal spacing in bbrenv environment.}
+%
+% \changes{v0.42}{2020/10/15}{Added command \textbackslash{}pcassert.}
+% \changes{v0.42}{2020/10/15}{More robust \textbackslash{}sample command that also works in subscripts.}
 %
 % \def\cryptocodeversion{v0.41}
 %
@@ -2046,6 +2050,7 @@
 % \label{sec:syntaxhighlight}
 %
 % \index{\textbackslash pcabort}
+% \index{\textbackslash pcassert}
 % \index{\textbackslash pcfail}
 % \index{\textbackslash pccontinue}
 % \index{\textbackslash pccomment}
@@ -2080,6 +2085,7 @@
 % \begin{tabular}{lll}
 %  \textbf{command}  & \textbf{outcome} \\ 
 %   |\pcabort| & \pcabort\\
+%   |\pcassert| & \pcassert\\
 %   |\pccontinue| & \pccontinue \\
 %   |\pccomment{comment}| & \pccomment{comment} \\
 %   |\pccomment[2em]{comment}| & \pccomment[2em]{comment} \\
@@ -5670,7 +5676,18 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 %
 %    \begin{macrocode}
 \DeclareOption{operators}{
-\providecommand{\sample}{\hskip2.3pt{\gets\!\!\mbox{\scriptsize${\$}$\normalsize}}\,}
+%    \end{macrocode}
+%
+% Robust sample operator that also works in subscripts. Is based on
+% egreg's solution given in \url{https://tex.stackexchange.com/questions/418740/how-to-write-left-arrow-with-a-dollar-sign}.
+%    \begin{macrocode}
+\providecommand\sample{\leftarrow\mathrel{\mkern-2.0mu}\pc@smalldollar}
+\newcommand{\pc@smalldollar}{\mathrel{\mathpalette\pc@small@dollar\relax}}
+\newcommand{\pc@small@dollar}[2]{%
+  \vcenter{\hbox{%
+    $#1\textnormal{\fontsize{0.7\dimexpr\f@size pt}{0}\selectfont\$\hskip-0.05em plus 0.5em}$%
+  }}%
+}
 
 \DeclarePairedDelimiter\pc@floor{\lfloor}{\rfloor}
 \providecommand{\floor}[1]{\pc@floor*{#1}}
@@ -6759,6 +6776,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 %\begin{macro}{\pcparse}
 %\begin{macro}{\pcfail}
 %\begin{macro}{\pcabort}
+%\begin{macro}{\pcassert}	
 % All predefined (highlightable) keywords.
 %    \begin{macrocode}
 \newcommand{\pcglobvar}{\highlightkeyword{gbl}}
@@ -6794,7 +6812,9 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 \newcommand{\pcparse}{\highlightkeyword{parse}}
 \newcommand{\pcfail}{\highlightkeyword{fail}}
 \newcommand{\pcabort}{\highlightkeyword{abort}}
+\newcommand{\pcassert}{\highlightkeyword{assert}}
 %    \end{macrocode}
+%\end{macro}
 %\end{macro}
 %\end{macro}
 %\end{macro}

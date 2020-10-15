@@ -27,9 +27,9 @@
 \NeedsTeXFormat{LaTeX2e}
 \DeclareRelease{v0.30}{2018-11-11}{cryptocode-2018-11-11.sty}
 \DeclareRelease{v0.32}{2020-04-24}{cryptocode-2020-04-24.sty}
-\DeclareCurrentRelease{v0.40}{2020-07-10}
+\DeclareCurrentRelease{v0.41}{2020-07-13}
 \ProvidesPackage{cryptocode}
-  [2020/07/10 v0.40 Cryptocode LaTeX package for typesetting pseudocode, algorithms and protocols as well as cryptographic proofs.]
+  [2020/07/13 v0.41 Cryptocode LaTeX package for typesetting pseudocode, algorithms and protocols as well as cryptographic proofs.]
 
 \RequirePackage{amsmath}
 \RequirePackage{mathtools}
@@ -37,7 +37,13 @@
 \newif\if@pc@opt@advantage
 \newif\if@pc@opt@centernot
 \DeclareOption{operators}{
-\providecommand{\sample}{\hskip2.3pt{\gets\!\!\mbox{\scriptsize${\$}$\normalsize}}\,}
+\providecommand\sample{\leftarrow\mathrel{\mkern-2.0mu}\pc@smalldollar}
+\newcommand{\pc@smalldollar}{\mathrel{\mathpalette\pc@small@dollar\relax}}
+\newcommand{\pc@small@dollar}[2]{%
+  \vcenter{\hbox{%
+    $#1\textnormal{\fontsize{0.7\dimexpr\f@size pt}{0}\selectfont\$\hskip-0.05em plus 0.5em}$%
+  }}%
+}
 
 \DeclarePairedDelimiter\pc@floor{\lfloor}{\rfloor}
 \providecommand{\floor}[1]{\pc@floor*{#1}}
@@ -443,6 +449,7 @@
 \newcommand{\pcparse}{\highlightkeyword{parse}}
 \newcommand{\pcfail}{\highlightkeyword{fail}}
 \newcommand{\pcabort}{\highlightkeyword{abort}}
+\newcommand{\pcassert}{\highlightkeyword{assert}}
 \mathchardef\pcmathhyphen ="2D
 \newcommand{\pccomment}[2][1em]{\hspace{#1}{\mbox{/\!\!/ } \text{\scriptsize#2}}}
 \newcommand{\pclinecomment}[2][0em]{\hspace{#1}{\mbox{/\!\!/ } \text{\scriptsize#2}}}
