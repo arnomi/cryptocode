@@ -3,9 +3,9 @@
 \NeedsTeXFormat{LaTeX2e}
 \DeclareRelease{v0.30}{2018-11-11}{cryptocode-2018-11-11.sty}
 \DeclareRelease{v0.32}{2020-04-24}{cryptocode-2020-04-24.sty}
-\DeclareCurrentRelease{v0.43}{2021-01-17}
+\DeclareCurrentRelease{v0.44}{2021-08-15}
 \ProvidesPackage{cryptocode}
-  [2020/07/13 v0.43 Cryptocode LaTeX package for typesetting pseudocode, algorithms and protocols as well as cryptographic proofs.]
+  [2020/07/13 v0.44 Cryptocode LaTeX package for typesetting pseudocode, algorithms and protocols as well as cryptographic proofs.]
 %</package>
 %\fi
 % \iffalse
@@ -174,7 +174,9 @@
 %
 % \changes{v0.43}{2021/01/17}{Added support for cleveref via \textbackslash{}pcfixcleveref command.}
 %
-% \def\cryptocodeversion{v0.43}
+% \changes{v0.44}{2021/08/15}{Removed dependency on deprecated etex package.}
+%
+% \def\cryptocodeversion{v0.44}
 %
 %
 %
@@ -6601,7 +6603,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 %
 % Note that amsmath and mathtools have been loaded already earlier.
 %    \begin{macrocode}
-\RequirePackage{etex}
+
 \if@pc@opt@amsfonts
 	\RequirePackage{amsfonts}
 \fi
