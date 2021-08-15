@@ -3,14 +3,14 @@
 \NeedsTeXFormat{LaTeX2e}
 \DeclareRelease{v0.30}{2018-11-11}{cryptocode-2018-11-11.sty}
 \DeclareRelease{v0.32}{2020-04-24}{cryptocode-2020-04-24.sty}
-\DeclareCurrentRelease{v0.40}{2020-07-10}
+\DeclareCurrentRelease{v0.44}{2021-08-15}
 \ProvidesPackage{cryptocode}
-  [2020/07/10 v0.40 Cryptocode LaTeX package for typesetting pseudocode, algorithms and protocols as well as cryptographic proofs.]
+  [2021/08/15 v0.44 Cryptocode LaTeX package for typesetting pseudocode, algorithms and protocols as well as cryptographic proofs.]
 %</package>
 %\fi
 % \iffalse
 % Doc-Source file to use with LaTeX2e
-% Copyright (C) 2020 Arno Mittelbach, all rights reserved.
+% Copyright (C) 2021 Arno Mittelbach, all rights reserved.
 % \fi
 % \iffalse
 %<*driver>
@@ -96,7 +96,7 @@
  tabsize=2,                       % sets default tabsize to 2 spaces
  title=\lstname        }  
 
- \CodelineIndex
+\EnableCrossrefs
 \CodelineIndex
 \RecordChanges
 \begin{document}
@@ -141,40 +141,49 @@
 % \changes{v0.32}{2020/01/11}{allow to control spacing with \textbackslash{}pcfor}
 % \changes{v0.32}{2020/01/11}{allow overwriting rule command in pseudocode via headlinecmd (defaults to \textbackslash{}hrule)}
 %
-% \changes{v0.40}{2020/06/20}{Bigger refactoring. Not completely backwards compatible. In particular, optimized spacing of pseudocode blocks and black box reductions.}
-% \changes{v0.40}{2020/06/20}{Switched to mathtools \emph{DeclarePairedDelimiter} for paired operators.
+% \changes{v0.40}{2020/07/10}{Bigger refactoring. Not completely backwards compatible. In particular, optimized spacing of pseudocode blocks and black box reductions.}
+% \changes{v0.40}{2020/07/10}{Switched to mathtools \emph{DeclarePairedDelimiter} for paired operators.
 % Each paired operator comes in two forms, e.g, \emph{abs} and \emph{tabs} the latter to be used in flowtext
 % which does not scale the outer delimiters.} 
-% \changes{v0.40}{2020/06/20}{Adjusted spacing via \textbackslash{}pcaboveskip and \textbackslash{}pcbelowskip which are
+% \changes{v0.40}{2020/07/10}{Adjusted spacing via \textbackslash{}pcaboveskip and \textbackslash{}pcbelowskip which are
 % added to \textbackslash{}pseudocode blocks and \emph{pchstack} environments}
-% \changes{v0.40}{2020/06/20}{Added block forms for pseudocode and procedure commands (\textbackslash{}pseudocodeblock and \textbackslash{}procedureblock).}
-% \changes{v0.40}{2020/06/20}{Added minlineheight option to \textbackslash{}pseudocode.}
-% \changes{v0.40}{2020/06/20}{Added headheight option to \textbackslash{}pseudocode.}
-% \changes{v0.40}{2020/06/20}{Added \textbackslash{}argmax and \textbackslash{}argmin to operators.}
-% \changes{v0.40}{2020/06/20}{Added \textbackslash{}pindist, \textbackslash{}sindist, and \textbackslash{}cindist to operators.}
-% \changes{v0.40}{2020/06/20}{Added aboveskip and belowskip option to \textbackslash{}pchstack and \textbackslash{}pcvstack.}
-% \changes{v0.40}{2020/06/20}{Added boxed, inline, noindent options to \textbackslash{}pchstack and \textbackslash{}pcvstack.}
-% \changes{v0.40}{2020/06/20}{Added space option to \textbackslash{}pchstack and \textbackslash{}pcvstack.}
-% \changes{v0.40}{2020/06/20}{Renamed horizontal spacing commands \textbackslash{}beforepcskip and \textbackslash{}afterpcskip to \textbackslash{}pcbeforeskip and \textbackslash{}pcafterskip.}
-% \changes{v0.40}{2020/06/20}{Added command \textbackslash{}pcsetargs to define default arguments for pseudocode blocks.}
-% \changes{v0.40}{2020/06/20}{Added command \textbackslash{}pcsethstackargs and \textbackslash{}pcsetvstackargs to define default arguments for hstack and vstack environments.}
-% \changes{v0.40}{2020/06/20}{Adapted bbrenv environment to take key value option list. Old format is still supported but deprecated.}
-% \changes{v0.40}{2020/06/20}{Added additional polynomials.}
-% \changes{v0.40}{2020/06/20}{Added additional adversaries.}
-% \changes{v0.40}{2020/06/20}{Added additional complexity classes.}
-% \changes{v0.40}{2020/06/20}{Added oracles package option.}
-% \changes{v0.40}{2020/06/20}{Fixed spacing issues with black box reduction messages.}
-% \changes{v0.40}{2017/10/02}{Added clockwise, leftstyle, centerstyle, rightstyle for bbrloop. Adjusted placing of center.}
-% \changes{v0.40}{2017/10/02}{Added fixedoffset, fixedboffset, islast for reduction messages.}
+% \changes{v0.40}{2020/07/10}{Added block forms for pseudocode and procedure commands (\textbackslash{}pseudocodeblock and \textbackslash{}procedureblock).}
+% \changes{v0.40}{2020/07/10}{Added minlineheight option to \textbackslash{}pseudocode.}
+% \changes{v0.40}{2020/07/10}{Added headheight option to \textbackslash{}pseudocode.}
+% \changes{v0.40}{2020/07/10}{Added \textbackslash{}argmax and \textbackslash{}argmin to operators.}
+% \changes{v0.40}{2020/07/10}{Added \textbackslash{}pindist, \textbackslash{}sindist, and \textbackslash{}cindist to operators.}
+% \changes{v0.40}{2020/07/10}{Added aboveskip and belowskip option to \textbackslash{}pchstack and \textbackslash{}pcvstack.}
+% \changes{v0.40}{2020/07/10}{Added boxed, inline, noindent options to \textbackslash{}pchstack and \textbackslash{}pcvstack.}
+% \changes{v0.40}{2020/07/10}{Added space option to \textbackslash{}pchstack and \textbackslash{}pcvstack.}
+% \changes{v0.40}{2020/07/10}{Renamed horizontal spacing commands \textbackslash{}beforepcskip and \textbackslash{}afterpcskip to \textbackslash{}pcbeforeskip and \textbackslash{}pcafterskip.}
+% \changes{v0.40}{2020/07/10}{Added command \textbackslash{}pcsetargs to define default arguments for pseudocode blocks.}
+% \changes{v0.40}{2020/07/10}{Added command \textbackslash{}pcsethstackargs and \textbackslash{}pcsetvstackargs to define default arguments for hstack and vstack environments.}
+% \changes{v0.40}{2020/07/10}{Adapted bbrenv environment to take key value option list. Old format is still supported but deprecated.}
+% \changes{v0.40}{2020/07/10}{Added additional polynomials.}
+% \changes{v0.40}{2020/07/10}{Added additional adversaries.}
+% \changes{v0.40}{2020/07/10}{Added additional complexity classes.}
+% \changes{v0.40}{2020/07/10}{Added oracles package option.}
+% \changes{v0.40}{2020/07/10}{Fixed spacing issues with black box reduction messages.}
+% \changes{v0.40}{2020/07/10}{Added clockwise, leftstyle, centerstyle, rightstyle for bbrloop. Adjusted placing of center.}
+% \changes{v0.40}{2020/07/10}{Added fixedoffset, fixedboffset, islast for reduction messages.}
 %
+% \changes{v0.41}{2020/07/13}{Fixed horizontal spacing in bbrenv environment.}
 %
+% \changes{v0.42}{2020/10/15}{Added command \textbackslash{}pcassert.}
+% \changes{v0.42}{2020/10/15}{More robust \textbackslash{}sample command that also works in subscripts.}
+%
+% \changes{v0.43}{2021/01/17}{Added support for cleveref via \textbackslash{}pcfixcleveref command.}
+%
+% \changes{v0.44}{2021/08/15}{Removed dependency on deprecated etex package.}
+%
+% \def\cryptocodeversion{v0.44}
 %
 %
 %
 % \author{Arno Mittelbach\\
 % \texttt{mail@arno-mittelbach.de}\\
 % \url{https://github.com/arnomi/cryptocode}\thanks{If you use cryptocode in your work, consider starring the repository on GitHub and/or rating it on CTAN.}}
-% \title{\Huge Cryptocode \\ \large\textsc{Typesetting Cryptography}}
+% \title{\Huge Cryptocode \\ \large\textsc{Typesetting Cryptography} \\ \small{Version \cryptocodeversion}}
 %
 %
 % \maketitle
@@ -1290,7 +1299,7 @@
 % \textbf{Command} & \textbf{Description} & \textbf{Result} \\\hline
 % |\prover| & Proover & $\prover$  \\
 % |\verifier| & Verifier & $\verifier$  \\
-% |\nizk| & Non interactie zero knowledge & $\nizk$  \\
+% |\nizk| & Non interactive zero knowledge & $\nizk$  \\
 % |\hash| & A hash function & $\hash$  \\
 % |\gash| & A hash function& $\gash$  \\
 % |\fash| & A hash function & $\fash$  \\
@@ -2045,6 +2054,7 @@
 % \label{sec:syntaxhighlight}
 %
 % \index{\textbackslash pcabort}
+% \index{\textbackslash pcassert}
 % \index{\textbackslash pcfail}
 % \index{\textbackslash pccontinue}
 % \index{\textbackslash pccomment}
@@ -2079,6 +2089,7 @@
 % \begin{tabular}{lll}
 %  \textbf{command}  & \textbf{outcome} \\ 
 %   |\pcabort| & \pcabort\\
+%   |\pcassert| & \pcassert\\
 %   |\pccontinue| & \pccontinue \\
 %   |\pccomment{comment}| & \pccomment{comment} \\
 %   |\pccomment[2em]{comment}| & \pccomment[2em]{comment} \\
@@ -3227,6 +3238,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %</example>
 % \fi
+% Similarly you can redefine the double tabbing character |\<| by overwriting |\pcdbltabname| (also see Section~\ref{chap:protocols}).
 %
 % \subsubsection{Custom Line Spacing and Horizontal Rules}
 % \index{\textbackslash pclb}
@@ -3566,6 +3578,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % Spacings after the left separator and in front of the right separator can be controlled by 
 % |\pclnspace| and |\pclnrspace| which are set to 1em and 0.5em, respectively.
 %
+% \amipagebreak
+%
 % \subsection{Sub Protocols}
 %
 % Use the |subprocedure| environemnt to also create sub protocols. 
@@ -3593,6 +3607,59 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \fi
  \begin{lstlisting}
 \procedureblock{My Protocol}{
+	\textbf{Alice} \< \< \textbf{Bob}  \\
+	b \sample \bin \< \< \\
+	\< \sendmessageright*{\text{send over } b} \<  \\
+	\< \< \text{do something}    \\
+	\<\< \dbox{\begin{subprocedure}\procedure{Subprotocol}{
+	\< \< \textbf{Charlie}  \\
+	\text{something more} \< \<  \\
+	\< \sendmessageright*[1.5cm]{\text{message}} \<  \\
+	\< \< \text{some processing}  \\
+	\< \< \text{more processing}  \\ 
+	\< \sendmessageleft*[1.5cm]{\text{message}} \<  \\
+	\< \sendmessageright*[1.5cm]{\text{message}} \<  \\
+	\< \sendmessageleft*[1.5cm]{\text{message}} \<  \\
+	}\end{subprocedure}}  \\
+	\< \sendmessageleft*{\text{send over sth. else}} \<   \\
+	\text{finalize} \< \< }
+\end{lstlisting}
+% \iffalse
+%</example>
+% \fi
+%
+% \subsection{Compact Presentation of Protocols}
+%
+% In order to present protocols more compactly you can use the |colspace| option
+% which adds space inbetween two columns. When set to a negative space, this has
+% the effect that columns overlap. The following example is once more our above
+% example using a sub protocol but this time with |colspace=-1cm|. Note that
+% the sub protocol inherits the option which is why both the outer and the inner
+% protocol now have overlapping columns.
+%
+% \procb[colspace=-1cm]{My Protocol}{
+%  \textbf{Alice} \< \< \textbf{Bob}  \\
+%  b \sample \bin \< \< \\
+%  \< \sendmessageright*{\text{send over } b} \<  \\
+%  \< \< \text{do something}    \\
+%  \<\< \dbox{\begin{subprocedure}\procedure{Subprotocol}{
+%  \< \< \textbf{Charlie}  \\
+% \text{something more} \< \<  \\
+%  \< \sendmessageright*[1.5cm]{\text{message}} \<  \\
+%  \< \< \text{some processing}  \\
+%  \< \< \text{more processing}  \\ 
+%  \< \sendmessageleft*[1.5cm]{\text{message}} \<  \\
+%  \< \sendmessageright*[1.5cm]{\text{message}} \<  \\
+%  \< \sendmessageleft*[1.5cm]{\text{message}} \<  \\
+% }\end{subprocedure}}  \\
+%  \< \sendmessageleft*{\text{send over sth. else}} \<   \\
+%  \text{finalize} \< \< }
+%
+% \iffalse
+%<*example>
+% \fi
+ \begin{lstlisting}
+\procedureblock[colspace=-1cm]{My Protocol}{
 	\textbf{Alice} \< \< \textbf{Bob}  \\
 	b \sample \bin \< \< \\
 	\< \sendmessageright*{\text{send over } b} \<  \\
@@ -4149,6 +4216,19 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % may become necessary when using inputs and outputs). For this provide |aboveskip| and |belowskip| keys.
 % (Note that in an earlier version of cryptocode you could write |\begin{bbrenv}[1cm]{A}[1cm]|. While this format
 % is still supported it should be regarded deprecated.)
+%
+% \medskip
+% The |bbrenv| environment takes the following options as optional first parameter:
+% \begin{description}
+% \item[aboveskip]
+% Space above.
+% \item[belowskip]
+% Space below.
+% \item[tikzargs]
+% Underneath |bbrenv| is a |tikzpicture| and via |tikzargs| you can pass in arguments.
+% \end{description}
+%
+% \medskip
 % The single mandatory argument to the bbrenv environment needs to specify a unique identifier
 % (unique for the current reduction). This id is used as an internal TIKZ node name (\url{https://www.ctan.org/pkg/pgf}).
 % \iffalse
@@ -4539,15 +4619,55 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \fi
 %
 %
-% \subsubsection{First Message}
+% \subsubsection*{First Message}
 % \index{\textbackslash bbrfirstmessageoffset}
 % The first message is offset by |\bbrfirstmessageoffset| which defaults to 1ex.
+%
+% \subsubsection{Vdots}
+% \index{\textbackslash bbrmsgvdots}
+% \index{\textbackslash bbrqryvdots}
+%
+% You can use |\bbrmsgvdots| and |\bbrqryvdots| to add |\vdots| in between messages or queries.
+%
+% \begin{bbrenv}{A}
+%    \begin{bbrbox}[name=A,minheight=14mm]
+%      \pseudocode{a}
+%    \end{bbrbox}
+%    \bbrmsgfrom{top={$a$}}
+%    \bbrmsgvdots
+%    \bbrmsgfrom{islast=true,bottom={$a$}}    
+%    \bbrqryto{top=a}
+%    \bbrqryvdots
+%    \bbrqryto{bottom=a,islast=true}
+%  \end{bbrenv}
+%	
+%
+% \iffalse
+%<*example>
+% \fi
+ \begin{lstlisting}
+\begin{bbrenv}{A}
+	\begin{bbrbox}[name=A,minheight=14mm]
+		\pseudocode{a}
+	\end{bbrbox}
+	\bbrmsgfrom{top={$a$}}
+	\bbrmsgvdots
+	\bbrmsgfrom{islast=true,bottom={$a$}}    
+	\bbrqryto{top=a}
+	\bbrqryvdots%
+	\bbrqryto{bottom=a,islast=true}
+\end{bbrenv}
+\end{lstlisting}
+% \iffalse
+%</example>
+% \fi
 %
 % \subsubsection{Add Space}
 % \index{\textbackslash bbrmsgspace}
 % \index{\textbackslash bbrqryspace}
 % If the spacing between messages is not sufficient you can use the |bbrmsgspace| and
-% |bbrqryspace| commands to add additional space.
+% |bbrqryspace| commands to add additional space. Alternatively, you can use the options
+% |aboveskip| and |belowskip| on the individual message or query commands.
 %
 % \begin{bbrenv}[aboveskip=1cm,belowskip=0.5cm]{A}
 % 	\begin{bbrbox}[name=Reduction]
@@ -5197,6 +5317,68 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 %</example>
 % \fi
 %
+%
+% \subsection{Horizontal Stacking}
+%
+% |bbrenv| environments can be stacked horizontally.
+%
+%\begin{figure}[h]
+%  \centering
+%  \begin{bbrenv}{A}
+%    \begin{bbrbox}[name=A,minheight=15mm]
+%      \pseudocode{a}
+%    \end{bbrbox}
+%    \bbrmsgfrom{islast=true,top={$a$}}
+%    \bbrqryto{aboveskip=6mm,top={$2a$}}
+%  \end{bbrenv}\begin{bbrenv}{B}
+%    \begin{bbrbox}[name=B,minheight=15mm]%
+%    \end{bbrbox}%
+%    \bbrqryto{edgestyle={<->}}%
+%    \bbrqryvdots[aboveskip=1mm]%
+%    \bbrqryto{islast=true,edgestyle={<->}}%
+%  \end{bbrenv}\begin{bbrenv}{C}
+%    \begin{bbrbox}[name=C,minheight=15mm]%
+%    \end{bbrbox}%
+%    \bbrqryto{top={$3a$}}%
+%  \end{bbrenv}%
+%\end{figure}
+%
+% Note that in order to not have horizontal space inbetween the boxes, that you
+% need to not leave any space. In the following code this is handled via comments.
+%
+% \iffalse
+%<*example>
+% \fi
+ \begin{lstlisting}
+\begin{figure}[h]
+	\centering
+	\begin{bbrenv}{A}
+		\begin{bbrbox}[name=A,minheight=15mm]
+		\pseudocode{a}
+		\end{bbrbox}
+		\bbrmsgfrom{islast=true,top={$a$}}
+		\bbrqryto{aboveskip=6mm,top={$2a$}}
+	\end{bbrenv}%
+\begin{bbrenv}{B}
+		\begin{bbrbox}[name=B,minheight=15mm]
+		\end{bbrbox}
+		\bbrqryto{edgestyle={<->}}
+		\bbrqryvdots[aboveskip=1mm]
+		\bbrqryto{islast=true,edgestyle={<->}}
+	\end{bbrenv}%
+\begin{bbrenv}{C}
+		\begin{bbrbox}[name=C,minheight=15mm]
+		\end{bbrbox}
+		\bbrqryto{top={$3a$}}
+	\end{bbrenv}%
+\end{figure}
+\end{lstlisting}
+% \iffalse
+%</example>
+% \fi
+
+% 	
+%
 % \subsection{Examples}
 % A reduction sketch for full domain hash.
 %
@@ -5402,9 +5584,28 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % as this is used by most of the commands in \enquote{sets} and some of the commands in \enquote{probability}.
 %
 % \subsection{Hyperref}
+% \index{hyperref}
 % The hyperref package (\url{https://www.ctan.org/pkg/hyperref}) should be loaded before cryptocode. If this is not possible
 % call the |\pcfixhyperref| after |\begin{document}|. 
 %
+% \subsection{Cleveref}
+% \index{cleveref}
+% In order to support the cleveref package (\url{https://ctan.org/pkg/cleveref}) load cleveref after cryptocode and subsequently
+% (but still in the preamble) call |\pcfixcleveref|.
+%
+% \subsection{Babel - Spanish}
+% The spanish version of the babel package uses < and > as shorthands which are used by cryptocode as tabbing characters.
+% The easisest workaround is to tell cryptocode to use different tabbing characters, for example:
+% \iffalse
+%<*example>
+% \fi
+\begin{lstlisting}
+\renewcommand{\pctabname}{ctab}
+\renewcommand{\pcdbltabname}{cdtab}
+\end{lstlisting}
+% \iffalse
+%</example>
+% \fi
 %
 %\StopEventually{%
 %  \PrintChanges
@@ -5485,7 +5686,18 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 %
 %    \begin{macrocode}
 \DeclareOption{operators}{
-\providecommand{\sample}{\hskip2.3pt{\gets\!\!\mbox{\scriptsize${\$}$\normalsize}}\,}
+%    \end{macrocode}
+%
+% Robust sample operator that also works in subscripts. Is based on
+% egreg's solution given in \url{https://tex.stackexchange.com/questions/418740/how-to-write-left-arrow-with-a-dollar-sign}.
+%    \begin{macrocode}
+\providecommand\sample{\leftarrow\mathrel{\mkern-2.0mu}\pc@smalldollar}
+\newcommand{\pc@smalldollar}{\mathrel{\mathpalette\pc@small@dollar\relax}}
+\newcommand{\pc@small@dollar}[2]{%
+  \vcenter{\hbox{%
+    $#1\textnormal{\fontsize{0.7\dimexpr\f@size pt}{0}\selectfont\$\hskip-0.05em plus 0.5em}$%
+  }}%
+}
 
 \DeclarePairedDelimiter\pc@floor{\lfloor}{\rfloor}
 \providecommand{\floor}[1]{\pc@floor*{#1}}
@@ -6391,7 +6603,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 %
 % Note that amsmath and mathtools have been loaded already earlier.
 %    \begin{macrocode}
-\RequirePackage{etex}
+
 \if@pc@opt@amsfonts
 	\RequirePackage{amsfonts}
 \fi
@@ -6574,6 +6786,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 %\begin{macro}{\pcparse}
 %\begin{macro}{\pcfail}
 %\begin{macro}{\pcabort}
+%\begin{macro}{\pcassert}	
 % All predefined (highlightable) keywords.
 %    \begin{macrocode}
 \newcommand{\pcglobvar}{\highlightkeyword{gbl}}
@@ -6609,7 +6822,9 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 \newcommand{\pcparse}{\highlightkeyword{parse}}
 \newcommand{\pcfail}{\highlightkeyword{fail}}
 \newcommand{\pcabort}{\highlightkeyword{abort}}
+\newcommand{\pcassert}{\highlightkeyword{assert}}
 %    \end{macrocode}
+%\end{macro}
 %\end{macro}
 %\end{macro}
 %\end{macro}
@@ -6784,6 +6999,18 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 %    \end{macrocode}
 %
 %
+% Allow to support cleveref package. It wants to be loaded after amsmath which is why it needs to be loaded after cryptocode.
+% To do the necessary label fixes, we need to run these after its label fixes at begin document.
+%    \begin{macrocode}
+\providecommand{\pcfixcleveref}{
+\AtBeginDocument{%
+\pcfixhyperref%
+\makeatletter%
+\crefformat{@pclinenumber}{line~##2##1##3}%
+\crefrangeformat{@pclinenumber}{lines~##3##1##4 to~##5##2##6}%
+\makeatother%
+}}
+%    \end{macrocode}
 %
 %
 %
@@ -8323,8 +8550,20 @@ $\begin{aligned}#2\end{aligned}$%
 %\end{macro}
 %
 %
+%\begin{macro}{tikzargs}
+%\begin{macro}{\bbrtikzargs}
+% Allow passing in arguments to |tikzpicture|.
+%    \begin{macrocode}
+\newcommand*\bbrtikzargs{}
+\define@key{pcbbrenv}{tikzargs}[]{\renewcommand*\bbrtikzargs{#1}}
+%    \end{macrocode}
+%\end{macro}
+%\end{macro}
+%
 %
 %\begin{environment}{bbrenv}
+% \changes{v0.41}{2020/07/13}{Fixed horizontal spacing behind bbrenv blocks.}
+% \changes{v0.41}{2020/07/13}{Added tikzargs key to pass in arguments to surrounding tikzpicture.}
 % Black Box Reduction Environment
 %    \begin{macrocode}
 \newenvironmentx{bbrenv}[3][1={aboveskip=0pt,belowskip=0pt},3=0pt]{%
@@ -8349,7 +8588,7 @@ $\begin{aligned}#2\end{aligned}$%
 \vspace{\@pc@bbrenvaboveskip}%
 \ifthenelse{\value{@bb@env@nestcnt}=1}
  {\@pc@ensureremember%
-\begin{tikzpicture}
+\begin{tikzpicture}[baseline=0pt,\bbrtikzargs]
 }{\tikz\bgroup}
 }{%
 \ifthenelse{\value{@bb@env@nestcnt}=1}
@@ -8382,10 +8621,10 @@ $\begin{aligned}#2\end{aligned}$%
 \newcommand*\@bbrboxnameposoffset{below left=\bbrboxabovesep of phantomname.south west}
 \newcommand*\bbrboxstyle{draw}
 \newcommand*\bbrboxafterskip{}
-\newcommand*\bbrboxminheight{0cm}
+\newcommand*\bbrboxminheight{0pt}
 \newcommand*\bbrboxminwidth{2cm}
-\newcommand*\bbrboxxshift{0cm}
-\newcommand*\bbrboxyshift{0cm}
+\newcommand*\bbrboxxshift{0pt}
+\newcommand*\bbrboxyshift{0pt}
 \define@key{bbrbox}{abovesep}[]{\renewcommand*\bbrboxabovesep{#1}}
 \define@key{bbrbox}{name}[]{\renewcommand*\bbrboxname{#1}}
 \define@key{bbrbox}{namestyle}[]{\renewcommand*\bbrboxnamestyle{#1}}
@@ -8422,8 +8661,12 @@ $\begin{aligned}#2\end{aligned}$%
 \tikzset{BBRBOXNAMESTYLE/.style/.expand once=\bbrboxnamestyle}%
 \tikzset{BBRBOXNAMEPOSOFFSET/.style/.expand once=\@bbrboxnameposoffset}%
 
+\ifthenelse{\equal{\bbrboxxshift}{} \OR \equal{\bbrboxxshift}{0pt}}{
 \coordinate[inner sep=0pt,outer sep=0pt] (\@bb@lastbox-tmpouter) {};
-\node at (\@bb@lastbox-tmpouter) {}; %this empty node seems needed to get the xyshift right.
+}{
+\node[inner sep=0pt, outer sep=0pt] (\@bb@lastbox-tmpouter) {}; %this empty node seems needed to get the xyshift right.
+}
+
 \node[inner sep=.3333em,anchor=north,BBRBOXSTYLE,minimum height=\bbrboxminheight,below right=\bbrboxyshift and \bbrboxxshift of \@bb@lastbox-tmpouter] (\@bb@lastbox)  \bgroup
 	\tikz{
 		\node[inner sep=0pt,outer sep=0pt,minimum height=0cm] (phantomname) {}; %minimum width
@@ -8766,11 +9009,20 @@ $\begin{aligned}#2\end{aligned}$%
 		% from bottom
 		\ifthenelse{\equal{#4}{north east}}{\def\@bbr@tmp@bottomanchor{south east}}{}
 		\ifthenelse{\equal{#4}{north west}}{\def\@bbr@tmp@bottomanchor{south west}}{}	
-		\node[#3=-\@bb@com@tmpoffset and \@bbrcomlength of \@bb@lastbox.\@bbr@tmp@bottomanchor,anchor=#6,BBRCOM-SIDESTYLE] (\@bbrcomsidename) {\@bbrcomside};
+		
+		\ifdefempty{\@bbrcomside}{
+			\coordinate[#3=-\@bb@com@tmpoffset and \@bbrcomlength of \@bb@lastbox.\@bbr@tmp@bottomanchor] (\@bbrcomsidename);
+		}{
+			\node[#3=-\@bb@com@tmpoffset and \@bbrcomlength of \@bb@lastbox.\@bbr@tmp@bottomanchor,anchor=#6,BBRCOM-SIDESTYLE] (\@bbrcomsidename) {\@bbrcomside};
+		}
 	}
 	{
 		% from top
-		\node[#3=\@bb@com@tmpoffset and \@bbrcomlength of \@bb@lastbox.#4,anchor=#6,BBRCOM-SIDESTYLE] (\@bbrcomsidename) {\@bbrcomside};
+		\ifdefempty{\@bbrcomside}{
+			\coordinate[#3=\@bb@com@tmpoffset and \@bbrcomlength of \@bb@lastbox.#4] (\@bbrcomsidename);
+		}{
+			\node[#3=\@bb@com@tmpoffset and \@bbrcomlength of \@bb@lastbox.#4,anchor=#6,BBRCOM-SIDESTYLE] (\@bbrcomsidename) {\@bbrcomside};
+		}
 	}
 	\path[#2] (\@bbrcomsidename.#6) edge[BBRCOM-EDGESTYLE] node[above,BBRCOM-TOPSTYLE] (\@bbrcomtopname) {\@bbrcomtop} node[below,BBRCOM-BOTTOMSTYLE] (\@bbrcombottomname) {\@bbrcombottom} (\@bb@lastbox.#5|-\@bbrcomsidename) -- (\@bb@lastbox.#5|-\@bbrcomsidename) node[inner sep=0pt,outer sep=0pt,BBRCOM-OSIDESTYLE] (\@bbrcomosidename) {};
 	%
@@ -8816,11 +9068,13 @@ $\begin{aligned}#2\end{aligned}$%
 %
 %\begin{macro}{\bbrmsgvdots}
 %    \begin{macrocode}	
-\newcommandx{\bbrmsgvdots}{%
-	\bbrmsgtxt[xshift=\@bbrcomlength/2,afterskip=\@bbr@intermessage@skip]{$\vdots$}
+\newcommand{\bbrmsgvdots}[1][]{%
+	\bbrmsgtxt[xshift=\@bbrcomlength/2,afterskip=\@bbr@intermessage@shortskip,#1]{$\vdots$}
 }
 %    \end{macrocode}
 %\end{macro}
+%
+%
 %
 %
 %\begin{macro}{\bbrqryto}
@@ -8857,6 +9111,14 @@ $\begin{aligned}#2\end{aligned}$%
 %\end{macro}
 %
 %
+%\begin{macro}{\bbrqryvdots}
+% \changes{v0.41}{2020/07/13}{Added bbrqryvdots.}	
+%    \begin{macrocode}	
+\newcommand{\bbrqryvdots}[1][]{%
+	\bbrqrytxt[xshift=\@bbrcomlength/2,afterskip=\@bbr@intermessage@skip,#1]{$\vdots$}
+}
+%    \end{macrocode}
+%\end{macro}
 %
 %\begin{macro}{\@bbroracleqry}
 %    \begin{macrocode}	
@@ -9385,8 +9647,9 @@ $\begin{aligned}#2\end{aligned}$%
 % \end{macrocode}
 %
 %
-%
+% \iffalse
 %    \begin{macrocode}
+% \fi
 %</cryptocode.sty>
 %    \end{macrocode}
 %\Finale

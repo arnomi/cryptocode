@@ -11,3 +11,4 @@
 *.gls
 *.hd
 *.DS_Store
+tmp.*
