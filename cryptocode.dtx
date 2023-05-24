@@ -3791,8 +3791,6 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 %</example>
 % \fi
 %
-% \textbf{Remark. } Note that |\gamechange| is always in text mode.
-%
 % \subsubsection{Boxed Games}
 % \index{\textbackslash tbxgameprocedure}
 % \index{\textbackslash pcbox}
@@ -9411,7 +9409,17 @@ $\begin{aligned}#2\end{aligned}$%
 %    \begin{macrocode}
 \definecolor{gamechangecolor}{gray}{0.90}
 \newcommand{\gamechange}[2][gamechangecolor]{%
-{\setlength{\fboxsep}{0pt}\colorbox{#1}{\ifmmode$\displaystyle#2$\else#2\fi}}%
+{\setlength{\fboxsep}{0pt}\ifmmode%
+\mathchoice{%
+\colorbox{#1}{$\displaystyle#2$}%
+}{%
+\colorbox{#1}{$#2$}%
+}{%
+\colorbox{#1}{$\scriptstyle#2$}%
+}{%
+\colorbox{#1}{$\scriptscriptstyle#2$}%
+}%
+\else{#2}\fi}%
 }
 %    \end{macrocode}
 %\end{macro}
