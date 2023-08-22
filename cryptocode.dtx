@@ -899,9 +899,9 @@
 %<*example>
 % \fi
  \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
-	\renewcommand{\pcadvantagename}{\mathsf{Adv}} 
-	\renewcommand{\pcadvantagesuperstyle}[1]{\mathrm{\MakeLowercase{#1}}}
- 	\renewcommand{\pcadvantagesubstyle}[1]{#1}
+ \renewcommand{\pcadvantagename}{\mathsf{Adv}} 
+ \renewcommand{\pcadvantagesuperstyle}[1]{\mathrm{\MakeLowercase{#1}}}
+ \renewcommand{\pcadvantagesubstyle}[1]{#1}
 
 \end{minted}
 % \iffalse
@@ -1861,7 +1861,8 @@
 %<*example>
 % \fi
  \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
-\createprocedureblock{expproc}{center,boxed}{}{$\mathrm{Experiment}$\xspace}{linenumbering}
+\createprocedureblock{expproc}{center,boxed}{}
+{$\mathrm{Experiment}$\xspace}{linenumbering}
 
 \end{minted}
 % \iffalse
@@ -2281,7 +2282,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 %<*example>
 % \fi
  \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
- \procedureblock[syntaxhighlight=auto,addkeywords={swap,length}]{Bubblesort(A : list of items)}{
+ \procedureblock[syntaxhighlight=auto,addkeywords={swap,length}]
+ {Bubblesort(A : list of items)}{
     n \gets \mathsf{length}(A) \\
     repeat \\
     \t s \gets false \\
@@ -2317,7 +2319,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 %<*example>
 % \fi
  \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
- \procedureblock[space=auto,syntaxhighlight=auto,addkeywords={swap,length}]{Bubblesort(A : list of items)}{
+ \procedureblock[space=auto,syntaxhighlight=auto,
+ addkeywords={swap,length}]{Bubblesort(A : list of items)}{
  n \gets length(A) \\
  repeat \\
      s \gets false \\
@@ -2369,7 +2372,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 %<*example>
 % \fi
  \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
- \procedureblock[space=auto,syntaxhighlight=auto,addkeywords={swap,length}]{Bubblesort(A : list of items)}{
+ \procedureblock[space=auto,syntaxhighlight=auto,
+ addkeywords={swap,length}]{Bubblesort(A : list of items)}{
  n \gets length(A) \\
  repeat \\
      s \gets false \\
@@ -2757,23 +2761,23 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 \begin{pcvstack}[boxed,center,space=1em]
 	\begin{pchstack}[center,space=2em]
 	
-		\procedure[linenumbering]{$\indcpa_\enc^\adv(\secparam)$}{
-			b \sample \bin  \\
-			(\pk,\sk) \sample \kgen(\secparam)  \\
-			(m_0,m_1) \sample \adv^O(\secparam, \pk)  \\
-			c \sample \enc(\pk,m_b)  \\
-			b' \sample \adv(\secparam, \pk, c)  \\
-			\pcreturn b = b' }
+	\procedure[linenumbering]{$\indcpa_\enc^\adv(\secparam)$}{
+		b \sample \bin  \\
+		(\pk,\sk) \sample \kgen(\secparam)  \\
+		(m_0,m_1) \sample \adv^O(\secparam, \pk)  \\
+		c \sample \enc(\pk,m_b)  \\
+		b' \sample \adv(\secparam, \pk, c)  \\
+		\pcreturn b = b' }
 
-		% alternatively use \pchspace for spacing
-	
-		\procedure[linenumbering]{$\indcpa_\enc^\adv(\secparam)$}{%
-			b \sample \bin  \\
-			(\pk,\sk) \sample \kgen(\secparam)  \\
-			(m_0,m_1) \sample \adv^O(\secparam, \pk)  \\
-			c \sample \enc(\pk,m_b)  \\
-			b' \sample \adv(\secparam, \pk, c)  \\
-			\pcreturn b = b' }
+	% alternatively use \pchspace for spacing
+
+	\procedure[linenumbering]{$\indcpa_\enc^\adv(\secparam)$}{%
+		b \sample \bin  \\
+		(\pk,\sk) \sample \kgen(\secparam)  \\
+		(m_0,m_1) \sample \adv^O(\secparam, \pk)  \\
+		c \sample \enc(\pk,m_b)  \\
+		b' \sample \adv(\secparam, \pk, c)  \\
+		\pcreturn b = b' }
 	
 	\end{pchstack}
 	
@@ -2874,7 +2878,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 	\renewcommand\pclnstyle[1]{#1}
 
 	% set default arguments for all pseudocode blocks in this hstack
-	\pcsetargs{linenumbering,mode=text,minlineheight=1cm,codesize=\Large{}}
+	\pcsetargs{linenumbering,mode=text,minlineheight=1cm,
+	codesize=\Large{}}
 
 	\procedure{Some Procedue A}{
 		Step 1\\
@@ -3443,7 +3448,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 	\> \> \text{do something}    \\
 	\> \sendmessage{<-}{length=8cm,top=send over sth. else} \>   \\
 	\> \sendmessage*{<->}{length=8cm,top={{a,b, c\\c,d, e}},bottom={foo}} \>   \\
-	\> \sendmessage{<->}{length=8cm,top=\pseudocode[linenumbering]{\text{you can also}\\\text{use pseudocode}},bottom={foo}} \>   \\  
+	\> \sendmessage{<->}{length=8cm,top=\pseudocode[linenumbering]
+	{\text{you can also}\\\text{use pseudocode}},bottom={foo}} \>   \\  
 	\text{finalize} \> \> }
 
 \end{minted}
@@ -4905,9 +4911,9 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 
 		\begin{bbrenv}{B}
 
-			\begin{bbrbox}[name=Adversary,minheight=15ex,xshift=4cm]
+		\begin{bbrbox}[name=Adversary,minheight=15ex,xshift=4cm]
 
-			\end{bbrbox}
+		\end{bbrbox}
 
 			\bbrmsgto{top=$m$}
 			\bbrmsgfrom{top=$\sigma$,islast}
@@ -4966,9 +4972,9 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 
  	\begin{bbrenv}{B}
 
- 		\begin{bbrbox}[name=Adversary,minheight=10ex,xshift=4cm]
+	\begin{bbrbox}[name=Adversary,minheight=10ex,xshift=4cm]
 
- 		\end{bbrbox}
+	\end{bbrbox}
 
  		\bbrmsgto{top=$m$}
  		\bbrmsgfrom{top=$\sigma$}
@@ -5037,9 +5043,9 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 
  	\begin{bbrenv}{B}
 
- 		\begin{bbrbox}[name=Adversary,minheight=10ex,xshift=4cm]
+	\begin{bbrbox}[name=Adversary,minheight=10ex,xshift=4cm]
 
- 		\end{bbrbox}
+	\end{bbrbox}
 
  		\bbrmsgto{top=$m$,sidename=BeginLoop}
  		\bbrmsgspace{0.5cm}
@@ -5143,9 +5149,9 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 
  	\begin{bbrenv}{B}
 
- 		\begin{bbrbox}[name=Adversary,minheight=12ex,xshift=4cm]
+	\begin{bbrbox}[name=Adversary,minheight=12ex,xshift=4cm]
 
- 		\end{bbrbox}
+	\end{bbrbox}
 
  		\bbrmsgto{top=$m$}
  		\bbrmsgtxt{\pseudocode{
@@ -5156,7 +5162,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
  		\bbrmsgfrom{top=$\sigma$}
 
  		\bbrqryto{top=$m$}
- 		\bbrqrytxt[nodestyle={draw,dashed},xshift=2cm]{\pseudocode{
+\bbrqrytxt[nodestyle={draw,dashed},xshift=2cm]{\pseudocode{
  			do \\
  			some \\
  			work
@@ -5601,7 +5607,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
+ \begin{minted}[frame=single, breaklines, breaksymbol=]{latex}
 \begin{bbrenv}{Red}
 
 	\begin{bbrbox}[name=\textsc{Reduction }$\bdv$]
@@ -5613,41 +5619,41 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 		\vspace{2ex}
 		\emph{/* begin simulation */}
 
-		\begin{bbrenv}[aboveskip=2em]{Adv}
-			\begin{bbrbox}[name=$\adv$,minheight=8.5cm,style={fill=black},namestyle={color=white},xshift=3cm]
-			\end{bbrbox}
+\begin{bbrenv}[aboveskip=2em]{Adv}
+	\begin{bbrbox}[name=$\adv$,minheight=8.5cm,style={fill=black},namestyle={color=white},xshift=3cm]
+	\end{bbrbox}
 
-			\bbrinput{$\fk$}
-			\bbroutput{$\sigma$}			
+	\bbrinput{$\fk$}
+	\bbroutput{$\sigma$}			
 
-			\bbrmsgfrom{top=$m_1$,afterskip=-0.5\baselineskip}
-			\bbrmsgto{bottom=$\$$,afterskip=0.5\baselineskip}
+	\bbrmsgfrom{top=$m_1$,afterskip=-0.5\baselineskip}
+	\bbrmsgto{bottom=$\$$,afterskip=0.5\baselineskip}
 
-			\bbrmsgvdots
+	\bbrmsgvdots
 
-			\bbrmsgfrom{top=$m_{j-1}$,beforeskip=0.5\baselineskip,afterskip=-0.5\baselineskip}
-			\bbrmsgto{bottom=$\$$,afterskip=1.5\baselineskip}
+	\bbrmsgfrom{top=$m_{j-1}$,beforeskip=0.5\baselineskip,afterskip=-0.5\baselineskip}
+	\bbrmsgto{bottom=$\$$,afterskip=1.5\baselineskip}
 
-			\bbrmsgfrom{top=$m_j$,afterskip=-0.5\baselineskip}
-			\bbrmsgto{bottom=$y$,afterskip=1.5\baselineskip}
+	\bbrmsgfrom{top=$m_j$,afterskip=-0.5\baselineskip}
+	\bbrmsgto{bottom=$y$,afterskip=1.5\baselineskip}
 
-			\bbrmsgfrom{top=$m_{j+1}$,afterskip=-0.5\baselineskip}
-			\bbrmsgto{bottom=$\$$,afterskip=0.5\baselineskip}
+	\bbrmsgfrom{top=$m_{j+1}$,afterskip=-0.5\baselineskip}
+	\bbrmsgto{bottom=$\$$,afterskip=0.5\baselineskip}
 
-			\bbrmsgvdots
+	\bbrmsgvdots
 
-			\bbrmsgfrom{top=$m_q$,beforeskip=0.5\baselineskip,afterskip=-0.5\baselineskip}
-			\bbrmsgto{bottom=$\$$}
+	\bbrmsgfrom{top=$m_q$,beforeskip=0.5\baselineskip,afterskip=-0.5\baselineskip}
+	\bbrmsgto{bottom=$\$$}
 
-			\begin{bbroracle}{Sign}
-				\begin{bbrbox}[name=Sign,namepos=center,style={draw},minheight=1cm]
-				\end{bbrbox}
-			\end{bbroracle}
+	\begin{bbroracle}{Sign}
+		\begin{bbrbox}[name=Sign,namepos=center,style={draw},minheight=1cm]
+		\end{bbrbox}
+	\end{bbroracle}
 
-			\bbroracleqryto{top=$m$}
-			\bbroracleqryfrom{top=$\sigma$}			
+	\bbroracleqryto{top=$m$}
+	\bbroracleqryfrom{top=$\sigma$}			
 
-		\end{bbrenv}
+\end{bbrenv}
 
 		\pcdraw{
 			\node[left=2cm of Adv.north west] (startsim) {};
