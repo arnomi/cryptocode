@@ -19,6 +19,7 @@
 \usepackage{lmodern}
 \usepackage[usenames]{xcolor}
 \usepackage{hypdoc}
+\usepackage{minted}
 \usepackage[
 	n,
 	operators,
@@ -239,7 +240,7 @@
 % \iffalse
 %<*example>
 % \fi
-\begin{lstlisting}
+\begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \usepackage[
 	n, % or lambda
 	advantage,
@@ -258,7 +259,8 @@
 	oracles,
 	asymptotics,
 	keys
-]{cryptocode}\end{lstlisting}
+]{cryptocode}
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -288,7 +290,7 @@
 % \iffalse
 %<*example>
 % \fi
-\begin{lstlisting}
+\begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \pseudocode[linenumbering]{
    b \sample \bin  \\
    (\pk,\sk) \sample \kgen (\secparam)  \\
@@ -296,7 +298,8 @@
    c \sample \enc(\pk,m_b)  \\
    b' \sample \adv(\secparam, \pk, c, \state)  \\
    \pcreturn b = b' }
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -320,7 +323,7 @@
 % \iffalse
 %<*example>
 % \fi
-\begin{lstlisting}
+\begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \begin{pchstack}[center,boxed]
 	\pseudocode[linenumbering]{
 	b \sample \bin  \\
@@ -329,7 +332,8 @@
 	c \sample \enc(\pk,m_b)  \\
 	b' \sample \adv(\secparam, \pk, c, \state)  \\
 	\pcreturn b = b' }
-\end{pchstack}\end{lstlisting}
+\end{pchstack}
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -341,9 +345,10 @@
 % \iffalse
 %<*example>
 % \fi
-\begin{lstlisting}
+\begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \createpseudocodeblock{pcb}{center,boxed}{}{}{}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -351,7 +356,7 @@
 % \iffalse
 %<*example>
 % \fi
-\begin{lstlisting}
+\begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \pcb[linenumbering]{
 	b \sample \bin  \\
 	(\pk,\sk) \sample \kgen (\secparam)  \\
@@ -359,7 +364,8 @@
 	c \sample \enc(\pk,m_b)  \\
 	b' \sample \adv(\secparam, \pk, c, \state)  \\
 	\pcreturn b = b' 
-}\end{lstlisting}
+}
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -385,7 +391,7 @@
 % \iffalse
 %<*example>
 % \fi
-\begin{lstlisting}
+\begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \procedureblock[linenumbering]{$\indcpa_\enc^\adv(\secpar)$}{
 	b \sample \bin  \\
 	(\pk,\sk) \sample \kgen (\secparam)  \\
@@ -393,7 +399,8 @@
 	c \sample \enc(\pk,m_b)  \\
 	b' \sample \adv(\secparam, \pk, c, \state) \\
 	\pcreturn b = b' } 
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -402,9 +409,10 @@
 % \iffalse
 %<*example>
 % \fi
-\begin{lstlisting}
+\begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \createprocedureblock{procb}{center,boxed}{}{}{}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -437,7 +445,7 @@
 % \iffalse
 %<*example>
 % \fi
-\begin{lstlisting}
+\begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \begin{pcimage}
  \procedureblock[linenumbering]{$\indcpa_\enc^\adv(\secpar)$}{%
  	 b \sample \bin  \\
@@ -457,7 +465,8 @@
    };
  }
  \end{pcimage}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -495,7 +504,7 @@
 % \iffalse
 %<*example>
 % \fi
-\begin{lstlisting}
+\begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \begin{pchstack}[center,space=1cm]
 	\procedure{A}{
 	   a \sample A \\
@@ -518,7 +527,8 @@
 	  \pcreturn c
 	}
 \end{pchstack}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -534,11 +544,12 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \pseudocodeblock{%
   \textbf{First} \> \textbf{Second} \> \textbf{Third} \> \textbf{Fourth} \\
    b \sample \bin \> b \sample \bin \> b \sample \bin \> b \sample \bin}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -564,7 +575,7 @@
 % \iffalse
 %<*example>
 % \fi
-\begin{lstlisting}
+\begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \pseudocodeblock{
   \textbf{Alice} \< \< \textbf{Bob} \< \< \textbf{Charlie} \\[][\hline]
   \text{work} \< \< \< \< \\
@@ -574,7 +585,8 @@
   \< \<  \< \< \text{work} \\
   \< \sendmessageleftx{8}{\text{A long message for Alice}} \< \\
   \text{finalize} \< \< \< \< }
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -606,7 +618,7 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \pseudocodeblock{
 	\textbf{ Alice} \< \< \textbf{ Bob}  \\[0.1\baselineskip][\hline]
 	\<\< \\[-0.5\baselineskip]
@@ -617,7 +629,8 @@
 	\<\< Y \gets g^y \\
 	\< \sendmessageleft*{Y} \< \\
 	\key_A \gets Y^x \<\< \key_B \gets X^y }
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -653,7 +666,7 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \begin{gameproof}
 	\begin{pchstack}[center,space=1em]
 		\gameprocedure[linenumbering,minlineheight=1.5em]{%
@@ -676,7 +689,8 @@
 		 
 	\end{pchstack}
 \end{gameproof}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -739,7 +753,7 @@
 % \iffalse
 %<*example>
 % \fi
-\begin{lstlisting}
+\begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \begin{bbrenv}{A}
 	\begin{bbrbox}[name=Reduction]
 	\pseudocode{
@@ -785,7 +799,8 @@
 	\bbroracleqryto{top=$m$}
 	\bbroracleqryfrom{top=$b$}
 \end{bbrenv}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -799,7 +814,7 @@
 % \iffalse
 %<*example>
 % \fi
-\begin{lstlisting}
+\begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \usepackage[
 	n, % or lambda
 	advantage,
@@ -819,7 +834,8 @@
 	asymptotics,
 	keys
 	]{cryptocode}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -838,11 +854,12 @@
 % \iffalse
 %<*example>
 % \fi
-\begin{lstlisting}
+\begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  	\secpar
 	\secparam
 	\SECPAR
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -858,9 +875,10 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  	\advantage{prf}{\adv,\prf} 
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -868,9 +886,10 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  	\advantage{prf}{\adv,\prf}[(arg)]
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -879,11 +898,12 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 	\renewcommand{\pcadvantagename}{\mathsf{Adv}} 
 	\renewcommand{\pcadvantagesuperstyle}[1]{\mathrm{\MakeLowercase{#1}}}
  	\renewcommand{\pcadvantagesubstyle}[1]{#1}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -963,9 +983,10 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \renewcommand{\pcadvstyle}[1]{\ensuremath{\mathcal{#1}}}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -995,12 +1016,13 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \prob{X=x}
  \probsub{x\sample{\bin^n}}{x=5}
  \condprob{X=x}{A=b}
  \condprobsub{x\sample{\bin^n}}{x=5}{A=b}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -1015,9 +1037,10 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \renewcommand{\probname}{Pr}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -1027,9 +1050,10 @@
 % \iffalse
 %<*example>
 % \fi
-\begin{lstlisting}
+\begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
   \probsublong{x,y\sample\set{1,2,3,4,5,6}, z = x + y}{z = 7} 
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -1041,12 +1065,13 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \expect{X}
  \expsub{x,y\sample\set{1,\ldots,6}}{x+y}
  \condexp{X+Y}{Y>3}
  \condexpsub{x,y\sample\set{1,\ldots,6}}{x+y}{y>3}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -1062,9 +1087,10 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \renewcommand{\expectationname}{\ensuremath{\mathbb{E}}}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -1073,9 +1099,10 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \supp{X}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -1083,9 +1110,10 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \renewcommand{\supportname}{Supp}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -1094,13 +1122,14 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \entropy{X}
  \minentropy{X}
  \condentropy{X}{Y=5}
  \condminentropy{X}{Y=5}
  \condavgminentropy(X}{Y=5}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -1121,10 +1150,11 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \set{1, \ldots, 10}
  \sequence{1, \ldots, 10}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -1153,9 +1183,10 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \renewcommand{\pcsetstyle}[1]{\ensuremath{\mathbb{#1}}}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -1192,9 +1223,10 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \renewcommand{\pcnotionstyle}[1]{\ensuremath{\mathrm{#1}}}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -1247,9 +1279,10 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \renewcommand{\pcalgostyle}[1]{\ensuremath{\mathsf{#1}}}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -1279,9 +1312,10 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \renewcommand{\pcmachinemodelstyle}[1]{\ensuremath{\mathsf{#1}}}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -1333,9 +1367,10 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \renewcommand{\pcalgostyle}[1]{\ensuremath{\mathsf{#1}}}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -1360,9 +1395,10 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \renewcommand{\pcoraclestyle}[1]{\ensuremath{\mathsf{#1}}}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -1414,9 +1450,10 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \renewcommand{\pccomplexitystyle}[1]{\ensuremath{\mathsf{#1}}}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -1452,9 +1489,10 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \renewcommand{\pcpolynomialstyle}[1]{\ensuremath{\mathrm{#1}}}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -1486,9 +1524,10 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \renewcommand{\pckeystyle}[1]{\ensuremath{\mathsf{#1}}}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -1517,7 +1556,7 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \begin{pchstack}[center] 
 \pseudocode{
     b \sample \bin  \\
@@ -1527,7 +1566,8 @@
     b' \sample \adv(\secparam, \pk, c)  \\
 	\pcreturn b = b' }
 \end{pchstack}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -1545,7 +1585,7 @@
 % \iffalse
 %<*example>
 % \fi
-\begin{lstlisting}
+\begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \pseudocodeblock{
     b \sample \bin  \\
     (\pk,\sk) \sample \kgen (\secparam)  \\
@@ -1553,7 +1593,8 @@
     c \sample \enc(\pk,m_b)  \\
     b' \sample \adv(\secparam, \pk, c)  \\
 	\pcreturn b = b' }
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -1563,9 +1604,10 @@
 % \iffalse
 %<*example>
 % \fi
-\begin{lstlisting}
+\begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \createpseudocodeblock{pcb}{center,boxed}{}{}{}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -1583,7 +1625,7 @@
 % \iffalse
 %<*example> 
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \pcb{
     b \sample \bin  \\
     (\pk,\sk) \sample \kgen (\secparam)  \\
@@ -1591,7 +1633,8 @@
     c \sample \enc(\pk,m_b)  \\
     b' \sample \adv(\secparam, \pk, c)  \\
     \pcreturn b = b' }
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -1638,9 +1681,10 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \pseudocode[options]{body}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -1732,9 +1776,10 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \pseudocodeblock[linenumbering,syntaxhighlight=auto,head=Header]{ return null }
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -1754,10 +1799,11 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \procedure[options]{Header}{Body}
  \procedureblock[options]{Header}{Body}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -1774,7 +1820,7 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \procedureblock{$\indcpa_\enc^\adv(\secpar)$}{
     b \sample \bin  \\
     (\pk,\sk) \sample \kgen(\secparam)  \\
@@ -1782,7 +1828,8 @@
     c \sample \enc(\pk,m_b)  \\
     b' \sample \adv(\secparam, \pk, c)  \\
     \pcreturn b = b' }
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -1794,12 +1841,13 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \createpseudocodecommand{mypseudocode}{}{}{linenumbering}
 \createprocedurecommand{myprocedure}{}{}{linenumbering}
 \createpseudocodeblock{pcb}{center,boxed}{}{}{linenumbering}
 \createprocedureblock{procb}{center,boxed}{}{}{linenumbering}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -1812,9 +1860,10 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \createprocedureblock{expproc}{center,boxed}{}{$\mathrm{Experiment}$\xspace}{linenumbering}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -1822,7 +1871,7 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \expproc{$\indcpa_\enc^\adv(\secpar)$}{
     b \sample \bin  \\
     (\pk,\sk) \sample \kgen(\secparam)  \\
@@ -1830,7 +1879,8 @@
     c \sample \enc(\pk,m_b)  \\
     b' \sample \adv(\secparam, \pk, c)  \\
     \pcreturn b = b' }
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -1861,13 +1911,14 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \pseudocodeblock{
     \pcfor i = 1..10 \pcdo  \\
     \pcind T[i] \sample \bin^n  \\
     \pcfor i = 1..10 \pcdo  \\
     \t T[i] \sample \bin^n }
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -1875,9 +1926,10 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \t[level] % \pcind[level]
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -1891,7 +1943,7 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \pseudocodeblock{
     \pcfor i = 1..10 \pcdo  \\
     \t T[i] \sample \bin^n  \\
@@ -1899,7 +1951,8 @@
     \t[3] T[i] \sample \bin^n \\
     \t[4] T[i] \sample \bin^n \\
     \t[5] T[i] \sample \bin^n }
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -1909,9 +1962,10 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \renewcommand{\pcindentname}{t}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -1922,9 +1976,10 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \pcif, \pcfor, \pcwhile, \pcrepeat, \pcforeach
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -1932,9 +1987,10 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \pcfi, \pcendif, \pcendfor, \pcendwhile, \pcuntil, \pcendforeach
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -1942,9 +1998,10 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \pcelse, \pcelseif
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -1968,7 +2025,7 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \pseudocodeblock[space=auto]{%
  \pcfor a \in [10] \pcdo \\
  	\pcfor a \in [10] \pcdo \\
@@ -1984,7 +2041,8 @@
  	\pcendfor \\
  \pcendfor \\
  \pcreturn a}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -1998,7 +2056,7 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \begin{center}
  \pseudocode[space=keep]{%
  \pcfor i = 1..10 \pcdo  \\
@@ -2008,7 +2066,8 @@
                  T[i] \sample \bin^n \\
 					 T[i] \sample \bin^n }
  \end{center}					 
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -2041,11 +2100,12 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \pseudocodeblock[mode=text]{%
  This is \\
  \t simply text}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -2129,9 +2189,10 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \pseudocodeblock{\pcfor i \pcin[] \{1,\ldots,10\}}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -2143,9 +2204,10 @@
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \newcommand{\highlightkeyword}[2][\ ]{\ensuremath{\mathbf{#2}}#1}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -2157,9 +2219,10 @@
 % \iffalse
 %<*example>
 % \fi
-\begin{lstlisting}
+\begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, false,{ then},repeat,else if,elseif,while,else,done
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -2181,7 +2244,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \procedureblock[syntaxhighlight=auto]{Bubblesort(A : list of items)}{
     n \gets \mathsf{length}(A) \\
     repeat \\
@@ -2193,7 +2256,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
     \t\t\t     \mathsf{swap}( A[i-1], A[i] ) \\
     \t\t\t       s \gets true \\
     until \neg s }
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -2216,7 +2280,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \procedureblock[syntaxhighlight=auto,addkeywords={swap,length}]{Bubblesort(A : list of items)}{
     n \gets \mathsf{length}(A) \\
     repeat \\
@@ -2228,7 +2292,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
     \t\t\t     \mathsf{swap}( A[i-1], A[i] ) \\
     \t\t\t       s \gets true \\
     until \neg s }
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -2251,7 +2316,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \procedureblock[space=auto,syntaxhighlight=auto,addkeywords={swap,length}]{Bubblesort(A : list of items)}{
  n \gets length(A) \\
  repeat \\
@@ -2265,7 +2330,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
          endif \\
       endfor \\
  until \neg s }
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -2277,10 +2343,11 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \newcommand{\highlightkeyword}[2][\ ]{\ensuremath{\mathbf{#2}}#1}
  \newcommand{\highlightaltkeyword}[1]{\ensuremath{\mathsf{#1}}}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -2301,8 +2368,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
- \procedureblock[space=auto,syntaxhighlight=auto,altkeywords={swap,length}]{Bubblesort(A : list of items)}{
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
+ \procedureblock[space=auto,syntaxhighlight=auto,addkeywords={swap,length}]{Bubblesort(A : list of items)}{
  n \gets length(A) \\
  repeat \\
      s \gets false \\
@@ -2315,7 +2382,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
          endif \\
       endfor \\
  until \neg s }
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -2349,7 +2417,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \procedureblock[linenumbering]{$\indcpa_\enc^\adv(\secparam)$}{%
    b \sample \bin \\
   (\pk,\sk) \sample \kgen(\secparam)  \\
@@ -2357,7 +2425,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
    c \sample \enc(\pk,m_b)  \\
    b' \sample \adv(\secparam, \pk, c)  \\
   \pcreturn b = b' }
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -2379,13 +2448,14 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \pseudocodeblock[linenumbering,skipfirstln,mode=text]{
 	\pclinecomment{Some comment on first line} \\
 	Some code \pcskipln\\
 	\pclinecomment{Some other comment } \\
 	Some code }
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -2404,7 +2474,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \procedure{$\indcpa_\enc^\adv(\secparam)$}{
   \pcln  b \sample \bin \\
   \pcln   (\pk,\sk) \sample \kgen(\secparam)  \\
@@ -2412,7 +2482,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
   \pcln   c \sample \enc(\pk,m_b)  \\
   \pcln   b' \sample \adv(\secparam, \pk, c)  \\
   \pcln   \pcreturn b = b' }
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -2426,9 +2497,10 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \procedure[lnstart=10,linenumbering]{Header}{Body}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -2452,9 +2524,10 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \renewcommand\pclnstyle[1]{\text{\scriptsize#1}}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -2463,10 +2536,11 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \renewcommand{\pclnstyle}[1]{\text{#1}}
 \renewcommand{\pclnseparator}{.}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -2504,7 +2578,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
-  \begin{lstlisting}
+  \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \procedureblock[linenumbering]{$\indcpa_\enc^\adv(\secparam)$}{%
     b \sample \bin  \\
     (\pk,\sk) \sample \kgen(\secparam)  \\
@@ -2517,7 +2591,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
     c \sample \enc(\pk,m_b)  \\
     b' \sample \adv(\secparam, \pk, c)  \\
     \pcreturn b = b' }
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -2537,10 +2612,11 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \begin{pchstack}[options] body \end{pchstack}
  \begin{pcvstack}[options] body \end{pcvstack}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -2566,7 +2642,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
-\begin{lstlisting}
+\begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \begin{pchstack}[boxed,center,space=1em]
 	\procedure[linenumbering]{$\indcpa_\enc^\adv(\secparam)$}{%
 		b \sample \bin  \\
@@ -2583,7 +2659,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
    		Some more code
  	}
  \end{pchstack}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -2611,7 +2688,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \begin{pcvstack}[boxed,center,space=0.5em]]
 	\procedure[linenumbering]{$\indcpa_\enc^\adv(\secparam)$}{%
 		b \sample \bin  \\
@@ -2628,7 +2705,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
    		Some more code
  	}
 \end{pcvstack}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -2675,7 +2753,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \begin{pcvstack}[boxed,center,space=1em]
 	\begin{pchstack}[center,space=2em]
 	
@@ -2718,7 +2796,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 		}
 	\end{pchstack}
 \end{pcvstack}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -2789,7 +2868,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
-\begin{lstlisting}
+\begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \begin{pchstack}[space=1em,center,boxed]
 	% Do not change size to scriptsize for line numbers
 	\renewcommand\pclnstyle[1]{#1}
@@ -2810,7 +2889,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 		Step 1\\
 		 Step 2 }
 \end{pchstack}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -2826,9 +2906,10 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
-% \begin{lstlisting}
+% \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \\[height]
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -2836,9 +2917,10 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \\[][\hline]
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -2854,7 +2936,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \procedureblock[linenumbering]{$\indcpa_\enc^\adv(\secparam)$}{%
      b \sample \bin  \\[2\baselineskip][\hline\hline]
      (\pk,\sk) \sample \kgen(\secparam)  \\
@@ -2862,7 +2944,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
      c \sample \enc(\pk,m_b)  \\
      b' \sample \adv(\secparam, \pk, c)  \\
      \pcreturn b = b' }
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -2913,7 +2996,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \begin{pchstack}[center,space=1ex]
 	\pcsetargs{headheight=5ex,headlinesep=-1ex}
 
@@ -2929,7 +3012,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 		\text{work}
 	}
 \end{pchstack}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -2943,13 +3027,14 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \pseudocodeblock{
  \text{compute } P = \begin{pmatrix}
      A \\ B + C
  \end{pmatrix}
  }
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -2968,13 +3053,14 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \pseudocodeblock{
  \text{compute } P = \begin{pcmbox}\begin{pmatrix}
      A \\ B + C
  \end{pmatrix}\end{pcmbox}
  }
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -3026,7 +3112,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \begin{pcimage}
 	\procedureblock[linenumbering]{$\indcpa_\enc^\adv(\secparam)$}{%
 		b \sample \bin  \\
@@ -3040,7 +3126,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 		\path[->] (start) edge[bend left=50] node[right]{$\state$} (start|-end);
 	}
  \end{pcimage}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -3055,7 +3142,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \procedureblock[linenumbering]{$\indcpa_\enc^\adv(\secparam)$}{%
 	b \sample \bin  \\
 	(\pk,\sk) \sample \kgen (\secparam)  \\
@@ -3065,7 +3152,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
  		\path[->] (start) edge[bend left=50] node[right]{$\state$} (start|-end);
  	}] \\
  	\pcreturn b = b' }
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -3095,7 +3183,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \begin{pcimage}
 \procedureblock[linenumbering]{$\indcpa_\enc^\adv(\secparam)$}{%
  	b \sample \bin  \\
@@ -3114,7 +3202,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 	};
 }
 \end{pcimage}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -3137,11 +3226,12 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \pseudocodeblock{
   \textbf{First} \> \textbf{Second} \> \textbf{Third} \> \textbf{Fourth} \\
    b \sample \bin \> b \sample \bin \> b \sample \bin \> b \sample \bin}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -3154,11 +3244,12 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \pseudocodeblock{
   \textbf{First} \< \textbf{Second} \< \textbf{Third} \< \textbf{Fourth} \\
    b \sample \bin \< b \sample \bin \< b \sample \bin \< b \sample \bin}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -3175,11 +3266,12 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \pseudocodeblock[colsep=1em,addtolength=10em]{%
   \textbf{First} \< \textbf{Second} \< \textbf{Third} \< \textbf{Fourth} \\
    b \sample \bin \< b \sample \bin \< b \sample \bin \< b \sample \bin}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -3208,13 +3300,14 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \pseudocodeblock{
   \textbf{Alice} \> \> \textbf{Bob}  \\
   b \sample \bin \> \> \\
   \> \xrightarrow{\text{send over } b} \>  \\
   \> \> \text{do something}}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -3226,7 +3319,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \renewcommand{\pctabname}{\myTab}
 
 \pseudocode{
@@ -3234,7 +3327,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 	b \sample \bin \myTab \myTab \\
 	\myTab \xrightarrow{\text{send over } b} \myTab  \\
 	\myTab \myTab \text{do something}}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -3264,7 +3358,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
-\begin{lstlisting}
+\begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \procedureblock{My Protocol}{
 	\textbf{Alice} \> \> \textbf{Bob}  \\
 	b \sample \bin \> \> \\
@@ -3272,7 +3366,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 	\> \> \text{do something}    \\
 	\> \xleftarrow{\text{send over sth. else}} \>   \\
 	\text{finalize} \> \>}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -3289,10 +3384,11 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \sendmessageright*[3.5cm]{message}
  \sendmessageleft*[3.5cm]{message}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -3307,7 +3403,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \procedureblock{My Protocol}{%
 	\textbf{Alice} \> \> \textbf{Bob}  \\
 	b \sample \bin \> \> \\
@@ -3315,7 +3411,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 	\> \> \text{do something}    \\
 	\> \sendmessageleft*{\text{send over sth. else}} \>   \\
 	\text{finalize} \> \> }
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -3338,7 +3435,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \procedureblock{My Protocol}{
 	\textbf{Alice} \> \> \textbf{Bob}  \\
 	b \sample \bin \> \> \\
@@ -3348,7 +3445,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 	\> \sendmessage*{<->}{length=8cm,top={{a,b, c\\c,d, e}},bottom={foo}} \>   \\
 	\> \sendmessage{<->}{length=8cm,top=\pseudocode[linenumbering]{\text{you can also}\\\text{use pseudocode}},bottom={foo}} \>   \\  
 	\text{finalize} \> \> }
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -3410,7 +3508,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \procedureblock{My Protocol}{%
 	\textbf{Alice} \< \< \textbf{Bob}  \\
 	b \sample \bin \< \< \\
@@ -3418,7 +3516,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 	\< \< \text{do something}    \\
 	\< \sendmessage*{<-}{top={\>\text{left aligned}\\ \> \text{multiline message}}} \<   \\
 	\text{finalize} \< \<}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -3433,10 +3532,11 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \sendmessagerightx[width]{columnspan}{Text}
  \sendmessageleftx[width]{columnspan}{Text}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -3454,7 +3554,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \procedureblock{Multiparty Protocol}{%
 	\textbf{Alice} \< \< \textbf{Bob} \< \< \textbf{Charlie} \\
 	\text{work} \< \< \< \< \\
@@ -3464,7 +3564,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 	\< \<  \< \< \text{work} \\
 	\< \sendmessageleftx[7cm]{8}{\text{A long message for Alice}} \< \\
 	\text{finalize} \< \< \< \< }
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -3477,9 +3578,10 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \pcintertext[dotted|center]{Division Text}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -3499,7 +3601,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \procedureblock{My Protocol}{%
 	\textbf{Alice} \< \< \textbf{Bob}  \\
 	b \sample \bin \< \<  \pclb
@@ -3509,7 +3611,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 	\pcintertext[dotted]{Another Division} \\
 	\< \sendmessageleft*{\text{message}} \<   \\
 	\text{finalize} \< \< }
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -3531,7 +3634,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \procedureblock{My Protocol}{
 	\pcln  \textbf{Alice} \< \< \textbf{Bob} \< \\
 	\pcln b \sample \bin \< \< \< \\
@@ -3539,7 +3642,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 	\< \< \text{do something} \<  \pclnr \\
 	\< \sendmessageleft*{\text{send over sth. else}} \<\<  \pclnr \\
 	\pcln \text{finalize} \< \< \<}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -3556,7 +3660,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
-\begin{lstlisting}
+\begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \procedureblock{My Protocol}{%
 	\pcln  \textbf{Alice} \< \< \textbf{Bob}  \\
 	\pcln b \sample \bin \< \< \\
@@ -3564,7 +3668,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 	\< \< \text{do something}   \pcrln \\
 	\< \sendmessageleft*{\text{send over sth. else}} \<  \pcrln \\
 	\pcln \text{finalize} \< \< }
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -3605,7 +3710,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \procedureblock{My Protocol}{
 	\textbf{Alice} \< \< \textbf{Bob}  \\
 	b \sample \bin \< \< \\
@@ -3623,7 +3728,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 	}\end{subprocedure}}  \\
 	\< \sendmessageleft*{\text{send over sth. else}} \<   \\
 	\text{finalize} \< \< }
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -3658,7 +3764,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \procedureblock[colspace=-1cm]{My Protocol}{
 	\textbf{Alice} \< \< \textbf{Bob}  \\
 	b \sample \bin \< \< \\
@@ -3676,7 +3782,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 	}\end{subprocedure}}  \\
 	\< \sendmessageleft*{\text{send over sth. else}} \<   \\
 	\text{finalize} \< \< }
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -3695,11 +3802,12 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
-\begin{lstlisting}
+\begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \begin{gameproof}
  	proof goes here
 \end{gameproof}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -3722,7 +3830,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \begin{gameproof}
 \begin{pchstack}[space=1em,center,boxed]
 	\gameprocedure[linenumbering,mode=text]{%
@@ -3735,7 +3843,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 	}
 \end{pchstack}
 \end{gameproof}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -3762,7 +3871,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \begin{gameproof}
 \begin{pchstack}[space=1em,center,boxed]
 	\gameprocedure[linenumbering,mode=text]{%
@@ -3775,7 +3884,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 	}
 \end{pchstack}	
 \end{gameproof}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -3784,9 +3894,10 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 	\definecolor{gamechangecolor}{gray}{0.90}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -3818,7 +3929,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \begin{gameproof}
 \begin{pchstack}[space=1em,boxed,center]
 	\gameprocedure[linenumbering]{
@@ -3835,7 +3946,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 	} 
 \end{pchstack}
 \end{gameproof}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -3849,9 +3961,10 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \addgamehop{startgame}{endgame}{options}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -3885,7 +3998,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \begin{gameproof}
 \begin{pchstack}[center,space=2em]
 	\gameprocedure[linenumbering]{
@@ -3901,7 +4014,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 \addgamehop{1}{2}{hint=\footnotesize some hint,nodestyle=red}
 \addgamehop{2}{3}{hint=\footnotesize some other hint}
 \end{gameproof}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -3910,9 +4024,10 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \addgamehop{1}{2}{hint=\footnotesize some hint,edgestyle=}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -3921,10 +4036,11 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \addstartgamehop[first game]{options}
  \addendgamehop[last game]{options}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -3948,7 +4064,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \begin{gameproof}
 \begin{pchstack}[center,space=2em]
  	\gameprocedure[linenumbering]{
@@ -3965,7 +4081,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 \addgamehop{1}{2}{hint=\footnotesize some hint}
 \addendgamehop{hint=\footnotesize some outgoing hint,edgestyle=}
 \end{gameproof}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -3976,9 +4093,10 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
-% \begin{lstlisting}
+% \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \begin{gameproof}[options]
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -4011,7 +4129,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
-% \begin{lstlisting}
+% \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \begin{gameproof}[nr=5,name=\mathsf{MyGame},arg=(1^n)]
 \begin{pchstack}[center,space=2em]
 	\gameprocedure[linenumbering]{
@@ -4026,7 +4144,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 \addgamehop{6}{7}{hint=\footnotesize some hint}
 \addendgamehop{hint=\footnotesize some outgoing hint,edgestyle=}
 \end{gameproof}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -4069,7 +4188,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \begin{gameproof}
  \bxgameprocedure{4}{%
   \pcln  \text{Step 1}; \pcbox{Alternative} \\
@@ -4084,7 +4203,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
   \addloopgamehop{hint=\footnotesize some loop hint}
   \addgamehop{2}{1}{hint=\footnotesize some hint}
  \end{gameproof}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -4098,9 +4218,10 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \setgameproceduredefaultstyle{beginline=\vphantom{\bin^\prg_\prg}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -4122,7 +4243,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \begin{gamedescription}[name=MyGame,nr=2]
  \describegame
  This is the third game. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis condimentum velit et orci volutpat, sed ultrices lorem lobortis. Nam vehicula, justo eu varius interdum, felis mi consectetur dolor, ac posuere nulla lacus varius diam. Etiam dapibus blandit leo, et porttitor augue lacinia auctor.
@@ -4130,7 +4251,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
  \describegame[inhint=reduction target]
  This is the second game. The arrow at the side indicates the reduction target.
  \end{gamedescription}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -4159,14 +4281,15 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \begin{bbrenv}{A}
  \begin{bbrbox}[name=Box Name]
  % The Box's content
  \end{bbrbox}
  % Commands to display communication, input output etc
  \end{bbrenv}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -4193,7 +4316,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \begin{bbrenv}[aboveskip=1cm,belowskip=1cm]{A}
  	\begin{bbrbox}[name=Box Name]
  	\pseudocode{
@@ -4206,7 +4329,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
  	\bbrinput{input}
  	\bbroutput{output}
  \end{bbrenv}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -4234,11 +4358,12 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \begin{bbrenv}[options]{UNIQUE IDENTIFIER}
 % deprecated version	
 \begin{bbrenv}[vspace before]{UNIQUE IDENTIFIER}[vspace after]
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -4265,7 +4390,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \begin{bbrenv}{A}
  	\begin{bbrbox}[name=Box Name]
  	\pseudocode{
@@ -4283,7 +4408,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
  	\filldraw[fill=blue] (A.east) circle (4pt);
  	\filldraw[fill=blue] (A.south) circle (4pt);
  \end{bbrenv}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -4292,9 +4418,10 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  name=Box Name
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -4355,7 +4482,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \begin{bbrenv}{A}
  	\begin{bbrbox}[name=Box Name]
  	\pseudocode{
@@ -4382,7 +4509,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
  	\bbrinput{input}
  	\bbroutput{output}
  \end{bbrenv}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -4401,7 +4529,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \bbrmsgto{options}
  \bbrmsgfrom{options}
  \bbrmsgtofrom{options}{options} 
@@ -4410,7 +4538,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
  \bbrqryfrom{options}
  \bbrqrytofrom{options}{options}
  \bbrqryfromto{options}{options} 
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -4425,9 +4554,10 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \bbrmsgto{top=Top Label, side=Side Label}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -4435,9 +4565,10 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \bbrmsgto{top=Top Label, side={Side, Label}}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -4480,7 +4611,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \begin{bbrenv}{A}
  	\begin{bbrbox}[name=Box Name]
  	\pseudocode{
@@ -4513,7 +4644,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
  	\bbrinput{input}
  	\bbroutput{output}
  \end{bbrenv}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -4582,7 +4714,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \begin{bbrenv}{A}
  	\begin{bbrbox}[name=Box Name]
  	\pseudocode{
@@ -4613,7 +4745,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
  	\bbrinput{input}
  	\bbroutput{output}
  \end{bbrenv}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -4645,7 +4778,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \begin{bbrenv}{A}
 	\begin{bbrbox}[name=A,minheight=14mm]
 		\pseudocode{a}
@@ -4657,7 +4790,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 	\bbrqryvdots%
 	\bbrqryto{bottom=a,islast=true}
 \end{bbrenv}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -4699,7 +4833,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \begin{bbrenv}{A}
  	\begin{bbrbox}[name=Reduction]
  	\pseudocode{
@@ -4726,7 +4860,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
  	\bbrinput{input}
  	\bbroutput{output}
  \end{bbrenv}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -4761,7 +4896,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
-\begin{lstlisting}
+\begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 	\begin{bbrenv}{A}
 		\begin{bbrbox}[name=Reduction]
 		\pseudocode{
@@ -4786,7 +4921,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 		\bbrinput{input}
 		\bbroutput{output}
 	\end{bbrenv}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -4821,7 +4957,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \begin{bbrenv}{A}
  	\begin{bbrbox}[name=Reduction]
  	\pseudocode{
@@ -4843,7 +4979,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
  	\bbrinput{input}
  	\bbroutput{output}
  \end{bbrenv}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -4854,9 +4991,10 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \bbrloop{BeginLoop}{EndLoop}{center=$q$}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -4890,7 +5028,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \begin{bbrenv}{A}
  	\begin{bbrbox}[name=Reduction]
  	\pseudocode{
@@ -4914,7 +5052,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
  	\bbrinput{input}
  	\bbroutput{output}
  \end{bbrenv}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -4948,10 +5087,11 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \bbrmsgtxt[options]{Text}
  \bbrqrytxt[options]{Text}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -4994,7 +5134,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \begin{bbrenv}{A}
  	\begin{bbrbox}[name=Reduction]
  	\pseudocode{
@@ -5029,7 +5169,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
  	\bbrinput{input}
  	\bbroutput{output}
  \end{bbrenv}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -5072,7 +5213,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \begin{bbrenv}{A}
  	\begin{bbrbox}[name=Reduction]
  	\pseudocode{
@@ -5099,7 +5240,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
  		\end{bbrbox}
  	\end{bbroracle}
  \end{bbrenv}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -5115,12 +5257,13 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \bbroracleqryfrom{options}
  \bbroracleqryto{options}
  \bbroracleqrytofrom{options}{options}
  \bbroracleqryfromto{options}{options}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -5161,7 +5304,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \begin{bbrenv}{A}
  	\begin{bbrbox}[name=Reduction]
  	\pseudocode{
@@ -5191,7 +5334,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
  	\end{bbroracle}
  	\bbroracleqrytofrom{top=$m$}{bottom=$b$}
  \end{bbrenv}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -5225,7 +5369,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \begin{bbrenv}{A}
  	\begin{bbrbox}[name=Adversary,minheight=2cm]
  	\pseudocode{
@@ -5242,7 +5386,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
  		\end{bbrbox}
  	\end{bbrchallenger}
  \end{bbrenv}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -5258,12 +5403,13 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \bbrchallengerqryfrom{options}
  \bbrchallengerqryto{options}
  \bbrchallengerqrytofrom{options}{options}
  \bbrchallengerqryfromto{options}{options}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -5293,7 +5439,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \begin{bbrenv}{A}
  	\begin{bbrbox}[name=Adversary,minheight=2cm]
  	\pseudocode{
@@ -5312,7 +5458,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 
  	\bbrchallengerqryfromto{top=$m$}{bottom=$b$}
  \end{bbrenv}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -5349,7 +5496,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \begin{figure}[h]
 	\centering
 	\begin{bbrenv}{A}
@@ -5372,7 +5519,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 		\bbrqryto{top={$3a$}}
 	\end{bbrenv}%
 \end{figure}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -5453,7 +5601,7 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \begin{bbrenv}{Red}
 
 	\begin{bbrbox}[name=\textsc{Reduction }$\bdv$]
@@ -5521,7 +5669,8 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 	\bbrqryto{beforeskip=11.75cm,side=\pseudocode{y \in \fash^{-1}(\fk, x)}}
 \end{bbrenv}
 
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -5545,9 +5694,10 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \pseudocode[space=keep,mode=text]{        Pseudocode                with         - spaces -}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -5563,13 +5713,14 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
- \begin{lstlisting}
+ \begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
  \newsavebox{\mypcbox}
  \begin{lrbox}{\mypcbox}%
  \pseudocode[space=keep,mode=text]{        Pseudocode                with         - spaces -}%
  \end{lrbox}
  \fbox{\usebox{\mypcbox}}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
@@ -5599,10 +5750,11 @@ for,foreach,{return },return,{ do },{ in },new,if, null, true,{until },{ to }, f
 % \iffalse
 %<*example>
 % \fi
-\begin{lstlisting}
+\begin{minted}[frame=single, samepage, breaklines, breaksymbol=]{latex}
 \renewcommand{\pctabname}{ctab}
 \renewcommand{\pcdbltabname}{cdtab}
-\end{lstlisting}
+
+\end{minted}
 % \iffalse
 %</example>
 % \fi
