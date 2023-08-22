@@ -11,11 +11,11 @@ Extract the *cryptocode.sty* file via
 
 Create the documentation via
 
-    pdflatex cryptocode.dtx
-    pdflatex cryptocode.dtx
+    pdflatex -shell-escape cryptocode.dtx
+    pdflatex -shell-escape cryptocode.dtx
     makeindex -s gind.ist -o cryptocode.idx cryptocode
     makeindex -s gglo.ist -o cryptocode.gls cryptocode.glo
-    pdflatex cryptocode.dtx
+    pdflatex -shell-escape cryptocode.dtx
 
 A prebuilt version of the documentation is available in the repository.
 
