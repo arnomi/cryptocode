@@ -103,14 +103,14 @@
 \DeclareOption{adversary}{
 	\providecommand{\pcadvstyle}[1]{\mathcal{#1}}
 	
-	\providecommand{\adv}{\ensuremath{\pcadvstyle{A}}}
-	\providecommand{\bdv}{\ensuremath{\pcadvstyle{B}}}
-	\providecommand{\cdv}{\ensuremath{\pcadvstyle{C}}}
-	\providecommand{\ddv}{\ensuremath{\pcadvstyle{D}}}
-	\providecommand{\mdv}{\ensuremath{\pcadvstyle{M}}}
-	\providecommand{\pdv}{\ensuremath{\pcadvstyle{P}}}
-	\providecommand{\rdv}{\ensuremath{\pcadvstyle{R}}}
-	\providecommand{\sdv}{\ensuremath{\pcadvstyle{S}}}
+	\providecommand{\adv}{\ensuremath{\pcadvstyle{A}}\xspace}
+	\providecommand{\bdv}{\ensuremath{\pcadvstyle{B}}\xspace}
+	\providecommand{\cdv}{\ensuremath{\pcadvstyle{C}}\xspace}
+	\providecommand{\ddv}{\ensuremath{\pcadvstyle{D}}\xspace}
+	\providecommand{\mdv}{\ensuremath{\pcadvstyle{M}}\xspace}
+	\providecommand{\pdv}{\ensuremath{\pcadvstyle{P}}\xspace}
+	\providecommand{\rdv}{\ensuremath{\pcadvstyle{R}}\xspace}
+	\providecommand{\sdv}{\ensuremath{\pcadvstyle{S}}\xspace}
 }
 
 \DeclareOption{landau}{
@@ -355,7 +355,7 @@
 \RequirePackage{suffix}
 \RequirePackage{etoolbox}
 \RequirePackage{environ}
-%\RequirePackage{xspace}
+\RequirePackage{xspace}
 \RequirePackage{xkeyval}
 
 \ifpc@advantage
